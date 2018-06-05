@@ -1,0 +1,23 @@
+module Workarea
+  decorate Shipping::Sku, with: :flow_io do
+    def length
+      dimensions.first
+    end
+
+    def width
+      dimensions.second
+    end
+
+    def height
+      dimensions.third
+    end
+
+    def length_units
+      Workarea.config.shipping_options[:units] == :imperial ? :inches : :centimeters
+    end
+
+    def weight_units
+      Workarea.config.shipping_options[:units] == :imperial ? :grams : :ounces
+    end
+  end
+end
