@@ -1,0 +1,22 @@
+module Workarea
+  decorate Storefront::ApplicationController, with: :flow_io do
+    decorated do
+      before_action :sync_flow_session
+    end
+
+    def sync_flow_session
+      # if flow cookie not present or if the flow session is already set and the
+      # user didn't override their country with session picker, exit
+      return if cookies['_f60_session'].blank? ||
+        (session[:flow_io].present? && params[:country].blank?)
+
+      session[:flow_io] = FlowIo.client.sessions.get_by_session(cookies['_f60_session']).to_hash
+    end
+
+    def flow_session
+      return unless session[:flow_io]
+
+      @flow_session ||= ::Io::Flow::V0::Models::Session.from_json(session[:flow_io])
+    end
+  end
+end
