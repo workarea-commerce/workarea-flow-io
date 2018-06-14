@@ -1,0 +1,108 @@
+module Workarea
+  decorate Pricing::SkuTest, with: :flow_io do
+    def test_import_flow_local_price
+      sku = create_pricing_sku(id: "432981453-6")
+      sku.import_flow_local_item flow_local_item
+      # import a second time to test duplicates aren't created
+      sku.import_flow_local_item flow_local_item
+
+      assert_equal(1, sku.flow_io_local_items.count)
+
+      local_item = sku.flow_io_local_items.first
+
+      assert_equal("exp-f9ec9be879a341ddb8a67e9a1f34775b", local_item.experience.id)
+      assert_equal("europe", local_item.experience.key)
+      assert_equal("Europe", local_item.experience.name)
+      assert_equal(Country["GB"], local_item.experience.country)
+      assert_equal("EUR", local_item.experience.currency)
+      assert_equal("en", local_item.experience.language)
+
+      assert_equal({ key: "vat", label: "Includes VAT" }, local_item.pricing.included_levies)
+
+      sell_price = local_item.pricing.sell
+      assert_equal(Money.new(5000, "CAD"), sell_price.price)
+      assert_equal("CA$50.00", sell_price.label)
+
+      regular_price = local_item.pricing.regular
+      assert_equal(Money.new(5000, "CAD"), regular_price.price)
+      assert_equal("CA$50.00", regular_price.label)
+
+      sale_price = local_item.pricing.sale
+      assert_equal(Money.new(4000, "CAD"), sale_price.price)
+      assert_equal("CA$40.00", sale_price.label)
+
+      msrp = local_item.pricing.msrp
+      assert_equal(Money.new(6000, "CAD"), msrp.price)
+      assert_equal("CA$60.00", msrp.label)
+    end
+
+    private
+
+      def flow_local_item
+        Io::Flow::V0::Models::LocalItem.new(
+          "id" => "mit-65fa028edd2e4a3592dbf8a499cccf4e",
+          "experience" => {
+            "id" => "exp-f9ec9be879a341ddb8a67e9a1f34775b",
+            "key" => "europe",
+            "name" => "Europe",
+            "country" => "GBR",
+            "currency" => "EUR",
+            "language" => "en"
+          },
+          "item" => {
+            "id" => "mit-65fa028edd2e4a3592dbf8a499cccf4e",
+            "number" => "432981453-6"
+          },
+          "pricing": {
+            "price": {
+              "currency": "CAD",
+              "amount": 50,
+              "label": "CA$50.00",
+              "base": {
+                "amount": 36.59,
+                "currency": "USD",
+                "label": "US$36.59"
+              },
+              "includes" => {
+                "key" => "vat",
+                "label" => "Includes VAT"
+              }
+            },
+            "attributes": {
+              "msrp": {
+                "currency": "CAD",
+                "amount": 60,
+                "label": "CA$60.00",
+                "base": {
+                  "amount": 43.9,
+                  "currency": "USD",
+                  "label": "US$43.90"
+                }
+              },
+              "regular_price": {
+                "currency": "CAD",
+                "amount": 50,
+                "label": "CA$50.00",
+                "base": {
+                  "amount": 36.59,
+                  "currency": "USD",
+                  "label": "US$36.59"
+                }
+              },
+              "sale_price": {
+                "currency": "CAD",
+                "amount": 40,
+                "label": "CA$40.00",
+                "base": {
+                  "amount": 29.27,
+                  "currency": "USD",
+                  "label": "US$29.27"
+                }
+              }
+            }
+          },
+          "status" => "included"
+        )
+      end
+  end
+end

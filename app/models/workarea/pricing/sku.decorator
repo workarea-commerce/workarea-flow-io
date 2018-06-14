@@ -1,0 +1,26 @@
+module Workarea
+  decorate Pricing::Sku, with: :flow_io do
+    decorated do
+      embeds_many :flow_io_local_items,
+        class_name: "Workarea::Pricing::FlowIoLocalItem"
+    end
+
+    # @param Io::Flow::V0::Models::LocalItem
+    def import_flow_local_item(flow_local_item)
+      flow_io_local_items.find_or_initialize_by(id: flow_local_item.id).tap do |local_item|
+        local_item.update_from_flow_local_item(flow_local_item)
+      end
+
+      Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) { save! }
+    end
+
+    # @param Io::Flow::V0::Models::Item
+    def import_flow_item(flow_item)
+      flow_io_local_items.find_or_initialize_by(id: flow_item.id).tap do |item|
+        item.update_from_flow_item(flow_item)
+      end
+
+      Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) { save! }
+    end
+  end
+end

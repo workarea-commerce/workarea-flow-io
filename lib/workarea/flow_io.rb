@@ -37,5 +37,13 @@ module Workarea
         FlowIo::BogusClient.new
       end
     end
+
+    def self.webhook_username
+      credentials[:webhook_username]
+    end
+
+    def self.webhook_password
+      credentials[:webhook_password]
+    end
   end
 end

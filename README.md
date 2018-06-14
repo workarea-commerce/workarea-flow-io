@@ -3,6 +3,14 @@ Workarea Flow Io
 
 Flow Io plugin for the Workarea platform.
 
+Secrets
+--------------------------------------------------------------------------------
+    flow_io:
+      api_token:
+      organziation_id:
+      webhook_username:
+      webhook_password:
+
 Configuration
 --------------------------------------------------------------------------------
 
