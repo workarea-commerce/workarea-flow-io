@@ -3,6 +3,7 @@ module Workarea
     decorated do
       helper_method :flow_experience
       helper Workarea::Storefront::FlowContentHelper
+      helper Workarea::Storefront::FlowAnalyticsHelper
 
       etag { flow_experience&.key }
     end

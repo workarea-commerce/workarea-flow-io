@@ -1,0 +1,28 @@
+module Workarea
+  decorate Storefront::AnalyticsSystemTest, with: :flow_io do
+      def test_announcing_add_to_cart_confirmation_event
+        super
+
+        events = find_analytics_events(for_event: 'addToCart')
+        payload = events.first['arguments'].first
+
+        assert_equal('USD', payload['currency_code'])
+      end
+
+      def test_announcing_checkout_order_placed_event
+        super
+
+        events = find_analytics_events(for_event: 'checkoutOrderPlaced')
+        assert_equal(1, events.count)
+        payload = events.first['arguments'].first
+
+        order_item = payload['items'].first
+
+        assert_equal("USD", payload['total_price_currency_code'])
+        assert_equal("USD", payload['shipping_total_currency_code'])
+        assert_equal("USD", payload['tax_total_currency_code'])
+
+        assert_equal("USD", order_item['currency_code'])
+      end
+  end
+end
