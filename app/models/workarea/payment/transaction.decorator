@@ -1,0 +1,8 @@
+module Workarea
+  decorate Payment::Transaction, with: :flow_io do
+    def tender_type
+      tender.payment.operation_tender_type ||  super
+    end
+  end
+end
+

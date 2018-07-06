@@ -1,0 +1,8 @@
+module Workarea
+  decorate Payment, with: :flow_io do
+    decorated do
+      field :operation_tender_type, type: String
+    end
+  end
+end
+

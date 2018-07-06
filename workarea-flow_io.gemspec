@@ -10,9 +10,10 @@ Gem::Specification.new do |s|
   s.homepage    = ""
   s.summary     = "Flow Commerce integration for Workarea"
   s.description = "Integration Flow Commerce internationl checkout"
-  
+
   s.files = `git ls-files`.split("\n")
 
   s.add_dependency 'workarea', '~> 3.x'
   s.add_dependency 'flowcommerce'
+  s.add_dependency 'flowcommerce-activemerchant'
 end

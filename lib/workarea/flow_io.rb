@@ -1,4 +1,7 @@
 require 'flowcommerce'
+require 'flowcommerce-activemerchant'
+require 'active_merchant/billing/bogus_flow_gateway'
+require 'active_merchant/billing/flow_gateway'
 
 require 'workarea'
 require 'workarea/storefront'
@@ -44,6 +47,18 @@ module Workarea
 
     def self.webhook_password
       credentials[:webhook_password]
+    end
+
+    # Conditionally use the real gateway when secrets are present.
+    # Otherwise, use the bogus gateway.
+    #
+    # @return [ActiveMerchant::Billing::Gateway]
+    def self.gateway
+      if credentials.present?
+        ActiveMerchant::Billing::FlowGateway.new(api_key: Workarea::FlowIo.api_token, organization: Workarea::FlowIo.organization_id )
+      else
+        ActiveMerchant::Billing::BogusGateway.new
+      end
     end
   end
 end
