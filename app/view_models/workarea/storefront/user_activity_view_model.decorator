@@ -1,0 +1,18 @@
+module Workarea
+  decorate Storefront::UserActivityViewModel, with: :flow_io do
+    # TODO base bug, product isn't passing options into product view models
+    def products
+      @products ||=
+        begin
+          product_ids = model.product_ids.uniq.first(display_count)
+          models = Catalog::Product.any_in(_id: product_ids).to_a
+          models = models.select(&:active?)
+
+          product_ids.map do |id|
+            product = models.detect { |p| p.id == id }
+            Storefront::ProductViewModel.wrap(product, options) if product
+          end.compact
+        end
+    end
+  end
+end

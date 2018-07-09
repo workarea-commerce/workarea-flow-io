@@ -5,20 +5,65 @@ module Workarea
         class_name: "Workarea::Pricing::FlowIoLocalItem"
     end
 
+    # @return Money
+    def msrp_for_experience(experience)
+      local_item = flow_io_local_items.detect do |item|
+        item.experience.key == experience.key
+      end
+
+      return unless local_item.present?
+
+      local_item.pricing.msrp&.price
+    end
+
+    # @return Money
+    def sale_price_for_experience(experience)
+      local_item = flow_io_local_items.detect do |item|
+        item.experience.key == experience.key
+      end
+
+      return unless local_item.present?
+
+      local_item.pricing.sale&.price
+    end
+
+    # Find the price to sell at for a specific options.
+    #
+    # Takes options :quantity, :experience (::Io::Flow::V0::Models::ExperienceSummary)
+    #
+    # @param [Hash]
+    # @return [Pricing::Price]
+    #
+    def find_price(options = {})
+      return super unless options[:experience].present?
+
+      # TODO needed for quantity based pricing
+      # quantity = options[:quantity] || 1
+
+      local_item = flow_io_local_items.detect do |item|
+        item.experience.key == options[:experience].key
+      end
+
+      local_item&.to_price ||
+        Pricing::Price.new(regular: 0.to_m(options[:experience].currency))
+    end
+
     # @param Io::Flow::V0::Models::LocalItem
     def import_flow_local_item(flow_local_item)
-      flow_io_local_items.find_or_initialize_by(id: flow_local_item.id).tap do |local_item|
-        local_item.update_from_flow_local_item(flow_local_item)
-      end
+      local_item = flow_io_local_items.detect { |li| li.experience.key == flow_local_item.experience.key } ||
+        flow_io_local_items.new
+
+      local_item.update_from_flow_local_item(flow_local_item)
 
       Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) { save! }
     end
 
     # @param Io::Flow::V0::Models::Item
     def import_flow_item(flow_item)
-      flow_io_local_items.find_or_initialize_by(id: flow_item.id).tap do |item|
-        item.update_from_flow_item(flow_item)
-      end
+      local_item = flow_io_local_items.detect { |li| li.experience.key == flow_item.local.experience.key } ||
+        flow_io_local_items.new
+
+      local_item.update_from_flow_item(flow_item)
 
       Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) { save! }
     end

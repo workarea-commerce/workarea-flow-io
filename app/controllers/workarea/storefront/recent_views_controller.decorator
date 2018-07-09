@@ -1,0 +1,15 @@
+module Workarea
+  decorate Storefront::RecentViewsController, with: :flow_io do
+    # TODO base bag product isn't passing view model options
+    def show
+      if stale?(
+        etag: user_activity,
+        last_modified: user_activity.updated_at,
+        public: true
+      )
+        @recent_views = Storefront::UserActivityViewModel.new(user_activity, view_model_options)
+        render params[:view].in?(allowed_alt_views) ? params[:view] : :show
+      end
+    end
+  end
+end

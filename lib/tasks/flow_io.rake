@@ -63,7 +63,7 @@ namespace :workarea do
           offset += page_size
 
           items.each do |item|
-            sku = item.number.downcase
+            sku = item.number
             begin
               Workarea::Pricing::Sku.find(sku).import_flow_item(item)
             rescue Mongoid::Errors::DocumentNotFound => _error

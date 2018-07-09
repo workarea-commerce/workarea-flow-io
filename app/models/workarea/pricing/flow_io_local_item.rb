@@ -3,13 +3,13 @@ module Workarea
     class FlowIoLocalItem
       include ApplicationDocument
 
+      embedded_in :sku, class_name: "Workarea::Pricing::Sku"
       embeds_one :experience, class_name: "Workarea::FlowIo::ExperienceSummary"
       embeds_one :pricing, class_name: "Workarea::Pricing::FlowIoLocalItemPricing"
 
       # @param Io::Flow::V0::Models::LocalItem
       def update_from_flow_local_item(local_item)
         self.attributes = {
-          id: local_item.id,
           experience: {
             id: local_item.experience.id,
             key: local_item.experience.key,
@@ -25,7 +25,6 @@ module Workarea
       # @param Io::Flow::V0::Models::Item
       def update_from_flow_item(item)
         self.attributes = {
-          id: item.id,
           experience: {
             id: item.local.experience.id,
             key: item.local.experience.key,
@@ -36,6 +35,21 @@ module Workarea
           },
           pricing: FlowIoLocalItemPricing.build_from_local(item.local)
         }
+      end
+
+      # Creates a Pricing::Price from this local item
+      # used in Pricing::Sku#find_price
+      #
+      # @return [Pricing::Price]
+      #
+      def to_price
+        Price.new(
+          sku: self.sku,
+          # TODO change when quantity based pricing in implemented
+          min_quantity: 1,
+          regular: pricing.regular.price,
+          sale: pricing.sale.price
+        )
       end
     end
   end

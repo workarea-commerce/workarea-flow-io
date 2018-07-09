@@ -1,0 +1,118 @@
+module Workarea
+  decorate Pricing::CollectionTest, with: :flow_io do
+    decorated do
+      include Workarea::FlowIo::FlowFixtures
+    end
+
+    def test_regular_min_price_in_flow_experience
+      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"))
+      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"))
+
+      create_pricing_sku_with_flow(id: 'SKU1', flow_io_local_items: [item_1])
+      create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
+
+      collection = Pricing::Collection.new(%w(SKU1 SKU2)).tap do |col|
+        col.flow_experience = canada_experience
+      end
+      assert_equal(5.to_m("CAD"), collection.regular_min_price)
+    end
+
+    def test_regular_max_price_in_flow_experience
+      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"))
+      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"))
+
+      create_pricing_sku_with_flow(id: 'SKU1', flow_io_local_items: [item_1])
+      create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
+
+      collection = Pricing::Collection.new(%w(SKU1 SKU2)).tap do |col|
+        col.flow_experience = canada_experience
+      end
+
+      assert_equal(7.to_m("CAD"), collection.regular_max_price)
+    end
+
+    def test_sale_min_price_in_flow_experience
+      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
+
+      create_pricing_sku_with_flow(id: 'SKU1', flow_io_local_items: [item_1])
+      create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
+
+      collection = Pricing::Collection.new(%w(SKU1 SKU2)).tap do |col|
+        col.flow_experience = canada_experience
+      end
+
+      assert_equal(4.to_m("CAD"), collection.sale_min_price)
+    end
+
+    def test_sale_max_price_in_flow_experience
+      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
+
+      create_pricing_sku_with_flow(id: 'SKU1', flow_io_local_items: [item_1])
+      create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
+
+      collection = Pricing::Collection.new(%w(SKU1 SKU2)).tap do |col|
+        col.flow_experience = canada_experience
+      end
+
+      assert_equal(6.to_m("CAD"), collection.sale_max_price)
+    end
+
+    def test_sell_min_price_in_flow_experience
+      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
+
+      create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
+      create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
+
+      collection = Pricing::Collection.new(%w(SKU1 SKU2)).tap do |col|
+        col.flow_experience = canada_experience
+      end
+
+      assert_equal(4.to_m("CAD"), collection.sell_min_price)
+    end
+
+    def test_sell_max_price_in_flow_experience
+      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
+
+      create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
+      create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
+
+      collection = Pricing::Collection.new(%w(SKU1 SKU2)).tap do |col|
+        col.flow_experience = canada_experience
+      end
+
+      assert_equal(7.to_m("CAD"), collection.sell_max_price)
+    end
+
+    def test_msrp_min_price_in_flow_experience
+      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), msrp: 4.to_m("CAD"))
+      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), msrp: 6.to_m("CAD"))
+
+      create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
+      create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
+
+      collection = Pricing::Collection.new(%w(SKU1 SKU2)).tap do |col|
+        col.flow_experience = canada_experience
+      end
+
+      assert_equal(4.to_m("CAD"), collection.msrp_min_price)
+    end
+
+    def test_msrp_max_price_in_flow_experience
+      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), msrp: 4.to_m("CAD"))
+      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), msrp: 6.to_m("CAD"))
+
+      create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
+      create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
+
+      collection = Pricing::Collection.new(%w(SKU1 SKU2)).tap do |col|
+        col.flow_experience = canada_experience
+      end
+
+      assert_equal(6.to_m("CAD"), collection.msrp_max_price)
+    end
+  end
+end

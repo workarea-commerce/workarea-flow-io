@@ -1,0 +1,42 @@
+module Workarea
+  decorate Storefront::ContentBlocks::ProductInsightsViewModel, with: :flow_io do
+    # TODO base bug, product isn't passing options into product view models
+    def top_products
+      @top_products ||= begin
+        aggregations = Analytics::ProductRevenue.top.limit(10)
+        catalog_products = Catalog::Product
+                            .active
+                            .find_ordered(aggregations.map(&:id))
+                            .to_a
+
+        catalog_products.take(results_count).map do |product|
+          Storefront::ProductViewModel.wrap(product, options)
+        end
+      end
+    end
+
+    # TODO base bug, product isn't passing options into product view models
+    def trending_products
+      @trending_products ||= begin
+        aggregations = Analytics::ProductRevenue.trending_up.limit(10)
+        catalog_products = Catalog::Product
+                            .active
+                            .find_ordered(aggregations.map(&:id))
+                            .to_a
+
+        catalog_products.take(results_count).map do |product|
+          Storefront::ProductViewModel.wrap(product, options)
+        end
+      end
+    end
+
+    # TODO base bug, product isn't passing options into product view models
+    def newest_products
+      @newest_products ||=
+        Storefront::ProductViewModel.wrap(
+          Catalog::Product.active.recent(results_count),
+          options
+        ).to_a
+    end
+  end
+end

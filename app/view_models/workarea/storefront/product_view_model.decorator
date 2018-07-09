@@ -1,0 +1,11 @@
+module Workarea
+  decorate Storefront::ProductViewModel, with: :flow_io do
+    def pricing
+      super.tap do |pricing_collection|
+        if options[:flow_experience]
+          pricing_collection.flow_experience = options[:flow_experience]
+        end
+      end
+    end
+  end
+end

@@ -1,0 +1,17 @@
+module Workarea
+  decorate Pricing::Price, with: :flow_io do
+    decorated do
+      before_validation :guard_negative_prices
+    end
+
+    def guard_negative_prices
+      if regular < 0
+        self.regular = regular.abs
+      end
+
+      if sale.present? && sale < 0
+        self.sale = sale.abs
+      end
+    end
+  end
+end

@@ -1,0 +1,11 @@
+module Workarea
+  decorate Storefront::ContentBlocks::CategorySummaryViewModel, with: :flow_io do
+    # TODO base bug, product isn't passing options into product view models
+    def products
+      return [] unless category.present?
+      @products ||= search.results.take(product_count).map do |result|
+        Storefront::ProductViewModel.wrap(result[:model], options)
+      end
+    end
+  end
+end

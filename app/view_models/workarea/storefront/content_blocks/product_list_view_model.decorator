@@ -1,0 +1,13 @@
+module Workarea
+  decorate Storefront::ContentBlocks::ProductListViewModel, with: :flow_io do
+    # TODO base bug, product isn't passing options into product view models
+    def products
+      return [] unless data['products'].present?
+
+      @products ||=
+        Catalog::Product
+        .find_ordered_for_display(data['products'])
+        .map { |product| Storefront::ProductViewModel.wrap(product, options) }
+    end
+  end
+end
