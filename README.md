@@ -3,40 +3,20 @@ Workarea Flow Io
 
 Flow Io plugin for the Workarea platform.
 
-Getting Started
+Configuration
 --------------------------------------------------------------------------------
 
-This gem contains a rails engine that must be mounted onto a host Rails application.
+### Localization Attributes
 
-To access Workarea gems and source code, you must be an employee of WebLinc or a licensed retailer or partner.
+The plugin provides localization attributes for: `original_price`, `sale_price`, `msrp`, `product_id` and `digital`
+These correspond to values of the `attributes` when exporting an item to flow and come back in the `local_item_pricing` `attributes` field.
+Other fields include `gtin`, `brand`, `hazardous` see https://docs.flow.io/module/localization/resource/attributes and
+https://docs.flow.io/type/attribute-form
 
-Workarea gems are hosted privately at https://gems.weblinc.com/.
-You must have individual or team credentials to install gems from this server. Add your gems server credentials to Bundler:
+Installation
+--------------------------------------------------------------------------------
 
-    bundle config gems.weblinc.com my_username:my_password
-
-Or set the appropriate environment variable in a shell startup file:
-
-    export BUNDLE_GEMS__WEBLINC__COM='my_username:my_password'
-
-Then add the gem to your application's Gemfile specifying the source:
-
-    # ...
-    gem 'workarea-flow_io', source: 'https://gems.weblinc.com'
-    # ...
-
-Or use a source block:
-
-    # ...
-    source 'https://gems.weblinc.com' do
-      gem 'workarea-flow_io'
-    end
-    # ...
-
-Update your application's bundle.
-
-    cd path/to/application
-    bundle
+    bundle exec rake workarea:flow_io:create_localization_attributes
 
 Workarea Platform Documentation
 --------------------------------------------------------------------------------

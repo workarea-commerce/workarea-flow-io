@@ -15,6 +15,7 @@ module Workarea
           @product ||=
             begin
               prod = create_product(
+                id: "EEC66E04BC",
                 variants: [{
                   sku: 'SKU',
                   regular: 5.00,
@@ -46,8 +47,11 @@ module Workarea
             price: 5.0,
             categories: ["Test Category"],
             attributes: {
+              "product_id" => "EEC66E04BC",
               "Color" =>"Red",
-              "Size" =>"X-Small"
+              "Size" =>"X-Small",
+              "regular_price" => "5.0",
+              "fulfillment_method" => "physical"
             },
             dimensions: {
               packing: {
