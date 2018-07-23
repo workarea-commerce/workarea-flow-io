@@ -1,0 +1,20 @@
+- if order.flow?
+  .grid__cell
+    .card{ class: card_classes(:flow, local_assigns[:active]) }
+      = link_to order_path(order), class: 'card__header' do
+        %span.card__header-text= t('workarea.admin.orders.attributes.flow.title')
+        = inline_svg 'workarea/admin/icons/link.svg', class: 'card__icon'
+
+      - if local_assigns[:active].blank?
+        .card__body
+          %ul.list-reset
+            %li
+              %strong= t('workarea.admin.orders.cards.flow.id')
+              = order.flow_order_id
+            %li
+              %strong= t('workarea.admin.orders.cards.flow.imported_at')
+              - if order.imported_from_flow_at.present?
+                #{local_time_ago(order.imported_from_flow_at)}
+              - else
+                #{t('workarea.admin.orders.cards.flow.pending_import')}
+

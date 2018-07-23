@@ -28,6 +28,8 @@ Workarea.configure do |config|
   # Exclude the trailing slash.
   config.flow_io.checkout_uri = "https://checkout.flow.io"
 
+  config.tender_types.prepend(:flow_payment)
+
   # The locale in which the content of the catalog is written.
   config.flow_io.original_locale = "en_US"
 

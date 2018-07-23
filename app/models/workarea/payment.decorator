@@ -2,6 +2,9 @@ module Workarea
   decorate Payment, with: :flow_io do
     decorated do
       field :operation_tender_type, type: String
+
+      embeds_one :flow_payment,
+        class_name: "Workarea::Payment::Tender::FlowPayment"
     end
   end
 end

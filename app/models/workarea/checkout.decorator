@@ -1,0 +1,14 @@
+module Workarea
+  decorate Checkout, with: :flow_io do
+    def shippable?
+      # WA does not have all the available shipping methods
+      # that flow supports, So by default the order will be
+      # shippable from flow
+      return true if order.flow?
+      super
+    end
+  end
+end
+
+
+

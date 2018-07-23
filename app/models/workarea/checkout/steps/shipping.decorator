@@ -1,0 +1,21 @@
+module Workarea
+  decorate Checkout::Steps::Shipping, with: :flow_io do
+    def update_shipping_service(params)
+      return unless update_shipping_service?(params)
+
+      # Flow does not need to match to a valid
+      # workarea shipping method because it orginates
+      # off site where the shippign method does
+      # not exist in WA
+      return if params[:flow_order]
+
+      shipping_option = shipping_options.find_valid(
+        params[:shipping_service]
+      )
+
+      raise Workarea::Checkout::Steps::Shipping::NoAvailableShippingOption if shipping_option.blank?
+      shipping.set_shipping_service(shipping_option.to_h)
+    end
+  end
+end
+

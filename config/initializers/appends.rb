@@ -13,6 +13,11 @@ Workarea.append_partials(
   'workarea/storefront/flow_io_country_picker'
 )
 
+Workarea.append_partials(
+  'admin.order_cards',
+  'workarea/admin/orders/flow'
+)
+
 Workarea::Plugin.append_stylesheets(
   'storefront.components',
   'flow_io/storefront/country_picker'

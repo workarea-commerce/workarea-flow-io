@@ -1,0 +1,13 @@
+module Workarea
+  decorate ShippingTest, with: :flow_io do
+    def test_set_flow_shipping
+      shipping = Shipping.new
+      shipping.set_flow_shipping!('test shipping', 5.00)
+
+      shipping.reload
+
+      assert_equal(1, shipping.price_adjustments.size)
+      assert_equal("test shipping", shipping.shipping_service.name)
+    end
+  end
+end

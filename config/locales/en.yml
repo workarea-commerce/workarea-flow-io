@@ -1,0 +1,12 @@
+en:
+  workarea:
+    admin:
+      orders:
+        cards:
+          flow:
+            id: Flow Order ID
+            imported_at: Imported At
+            pending_import: Pending Import
+        attributes:
+            flow:
+              title: Flow

@@ -1,0 +1,19 @@
+module Workarea
+  decorate Shipping, with: :flow_io do
+    def set_flow_shipping!(shipping_service, amount)
+      # clear out shipping old price that were defaulted in the cart
+      self.price_adjustments = []
+
+      self.price_adjustments.build(
+        price: "shipping",
+        description: "Flow Shipping Price",
+        calculator: "Workarea::Shipping",
+        amount:  amount
+      )
+
+      self.build_shipping_service(name: shipping_service)
+      save!
+    end
+  end
+end
+

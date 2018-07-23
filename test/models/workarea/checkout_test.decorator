@@ -1,0 +1,20 @@
+module Workarea
+  decorate CheckoutTest, with: :flow_io do
+    def test_shippable
+      checkout = Checkout.new(Order.new)
+      assert(checkout.shippable?)
+
+      checkout = Checkout.new(@order)
+      Checkout::ShippingOptions.any_instance.expects(:valid?).returns(false)
+      refute(checkout.shippable?)
+
+      checkout = Checkout.new(@order)
+      Checkout::ShippingOptions.any_instance.expects(:valid?).returns(true)
+      assert(checkout.shippable?)
+
+      flow_order = create_order(flow: true, items: [{ product_id: @product.id, sku: 'SKU' }])
+      checkout = Checkout.new(flow_order)
+      assert(checkout.shippable?)
+    end
+  end
+end
