@@ -17,7 +17,7 @@ module Workarea
 
 
       class Sessions
-        def get_by_session(session=1)
+        def get_by_session(session = 1)
           if session == 1
             domestic_attributes
           else

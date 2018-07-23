@@ -11,14 +11,14 @@ module Workarea
 
         if FlowIo::Session.needs_sync?(request)
           env["rack-cache.force-pass"] = true
-        else
+        elsif cookies[:flow_io].present?
           flow_session = ::Io::Flow::V0::Models::Session.from_json(JSON.parse(cookies[:flow_io]))
           env["flow.io.session"] = flow_session
           env['Vary'] = 'X-Requested-With, X-Flash-Messages, X-Flow-Experience'
-          env['X-Flow-Experience'] = flow_session&.experience&.key
+          env['HTTP_X_FLOW_EXPERIENCE'] = flow_session&.experience&.key
         end
-
-        @app.call env
+      ensure
+        return @app.call env
       end
     end
   end

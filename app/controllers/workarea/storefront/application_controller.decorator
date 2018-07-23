@@ -8,7 +8,7 @@ module Workarea
     end
 
     def sync_flow_session
-      return if FlowIo::Session.needs_sync?(request)
+      return unless FlowIo::Session.needs_sync?(request)
 
       cookies[:flow_io] = JSON.generate(FlowIo.client.sessions.get_by_session(cookies['_f60_session']).to_hash)
     end
@@ -20,6 +20,7 @@ module Workarea
         elsif cookies[:flow_io]
           ::Io::Flow::V0::Models::Session.from_json(JSON.parse(cookies[:flow_io]))
         end
+    rescue JSON::ParserError => _error
     end
 
     def flow_experience
