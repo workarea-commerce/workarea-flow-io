@@ -52,6 +52,8 @@ WORKAREA.registerModule('flowCountryPicker', (function () {
          * @memberof WORKAREA.flowCountryPicker
          */
         init = function ($scope) {
+            if (_.isUndefined(window.flow) || _.isUndefined(flow.beacon)) { return; }
+
             var $container = $("#country-picker", $scope);
 
             if (_.isEmpty($container)) { return; }
