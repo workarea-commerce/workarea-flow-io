@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 gemspec
 
 gem 'workarea', '>= 3.2.0', source: 'https://gems.weblinc.com'
+gem 'workarea-ci', source: "https://gems.weblinc.com"
 
 group :test do
   gem 'simplecov', require: false
