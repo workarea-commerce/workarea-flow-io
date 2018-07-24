@@ -75,7 +75,7 @@ module Workarea
         @app ||= Rack::Builder.new do
           use AddEnvMiddleware
           use RackCacheConfigMiddleware
-          use FlowIo::SessionMiddleware
+          use Workarea::FlowIo::SessionMiddleware
           use Rack::Cache, metastore: 'heap:/', entitystore: 'heap:/', verbose: true
           use ActionDispatch::Cookies
           run Rails.application.endpoint

@@ -30,6 +30,39 @@ namespace :workarea do
       end
     end
 
+    desc 'create webhooks'
+    task create_webhooks: :environment do
+      unless Workarea::FlowIo.webhook_username.present? &&
+          Workarea::FlowIo.webhook_password.present?
+        warn <<~eos
+          **************************************************
+          ⛔️ Webhooks require flow.webhook_username and flow.webhook_password to be set in your credentials/secrets
+          **************************************************
+        eos
+        next
+      end
+
+      client = Workarea::FlowIo.client
+      organization_id = Workarea::FlowIo.organization_id
+      host = Workarea.config.host
+      webhook_username = Workarea::FlowIo.webhook_username
+      webhook_password = Workarea::FlowIo.webhook_password
+
+      webhook_url = Workarea::Storefront::Engine
+        .routes
+        .url_helpers
+        .flow_io_webhook_url(host: host, protocol: "https")
+        .gsub("https://", "https://#{webhook_username}:#{webhook_password}@")
+
+      client.webhooks.post(
+        organization_id,
+        Io::Flow::V0::Models::WebhookForm.new(
+          events: Workarea::FlowIo.config.webhook_events,
+          url: webhook_url
+        )
+      )
+    end
+
     desc 'delete items'
     task delete_products: :environment do
       client = FlowCommerce.instance(token: Workarea::FlowIo.api_token)

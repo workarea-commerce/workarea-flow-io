@@ -1,9 +1,16 @@
 module Workarea
   module Storefront
     class FlowIoWebhookController < Storefront::ApplicationController
-      abstract!
       skip_before_action :verify_authenticity_token
       before_action :authenticate
+
+      def event
+        FlowIo::Webhook.process(Io::Flow::V0::Models::Event.from_json(params.to_unsafe_hash))
+
+        successful_response
+      rescue FlowIo::Webhook::NotFound, FlowIo::Webhook::UnhandledWebhook => _error
+        not_found_response
+      end
 
       private
 
@@ -22,6 +29,10 @@ module Workarea
 
         def unsuccessful_response
           head :bad_request
+        end
+
+        def not_found_response
+          render json: { status: 404 }
         end
     end
   end

@@ -2,18 +2,19 @@ require 'test_helper'
 
 module Workarea
   module Storefront
-    class FlowIoLocalItemIntegrationTest < Workarea::IntegrationTest
-      include Workarea::FlowIo::WebhookIntegrationTest
+    module FlowIoWebHooks
+      class LocalItemIntegrationTest < Workarea::IntegrationTest
+        include Workarea::FlowIo::WebhookIntegrationTest
 
-      def test_local_item_update
-        _sku = create_pricing_sku(id: "432981453-6")
-        post storefront.flow_io_local_item_path, params: local_item_upserted, headers: headers
-        assert(response.ok?)
-        assert_equal({ "status" => 200 }, JSON.parse(response.body))
-        assert_equal(200, response.status)
-      end
+        def test_local_item_update
+          _sku = create_pricing_sku(id: "432981453-6")
+          post storefront.flow_io_webhook_path, params: local_item_upserted, headers: headers
+          assert(response.ok?)
+          assert_equal({ "status" => 200 }, JSON.parse(response.body))
+          assert_equal(200, response.status)
+        end
 
-      private
+        private
 
         def local_item_upserted
           {
@@ -87,6 +88,7 @@ module Workarea
             "discriminator" => "local_item_upserted"
           }.to_json
         end
+      end
     end
   end
 end

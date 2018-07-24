@@ -88,4 +88,8 @@ Workarea.configure do |config|
       type: 'String'
     }
   ]
+
+  config.flow_io.webhook_events = [
+    "local_item_upserted"
+  ]
 end

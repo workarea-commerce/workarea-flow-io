@@ -1,3 +1,3 @@
 Workarea::Storefront::Engine.routes.draw do
-  post :local_item, as: :flow_io_local_item, controller: 'flow_io_local_item', action: 'upserted'
+  post :flow_webhook, as: :flow_io_webhook, controller: 'flow_io_webhook', action: 'event'
 end
