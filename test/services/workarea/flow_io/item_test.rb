@@ -48,8 +48,8 @@ module Workarea
             categories: ["Test Category"],
             attributes: {
               "product_id" => "EEC66E04BC",
-              "Color" =>"Red",
-              "Size" =>"X-Small",
+              "Color" => "Red",
+              "Size" => "X-Small",
               "regular_price" => "5.0",
               "fulfillment_method" => "physical"
             },

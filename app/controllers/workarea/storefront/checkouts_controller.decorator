@@ -13,11 +13,13 @@ module Workarea
     end
 
     def send_to_flow?
-      flow_session.geo.present? && !FlowIo.config.domestic_order_origins.map(&:alpha3).include?(flow_country)
+      flow_session&.geo&.present? &&
+        flow_country.present? &&
+        !FlowIo.config.domestic_order_origins.map(&:alpha3).include?(flow_country)
     end
 
     def flow_country
-      flow_session.geo.country.iso_3166_3
+      flow_session&.geo&.country.iso_3166_3
     end
 
     def flow_checkout_params

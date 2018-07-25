@@ -19,14 +19,14 @@ module Workarea
       def create_pricing_sku_with_flow(overrides = {})
         attributes = {
           id: "004056270-0",
-          msrp: {cents: 9241.0, currency_iso: "USD"},
+          msrp: { cents: 9241.0, currency_iso: "USD" },
           tax_code: "001",
           on_sale: false,
           prices: [
             {
               min_quantity: 1,
-              regular: {cents: 8241.0, currency_iso: "USD"},
-              sale: {cents: 8141.0, currency_iso: "USD"}
+              regular: { cents: 8241.0, currency_iso: "USD" },
+              sale: { cents: 8141.0, currency_iso: "USD" }
             }
           ],
           flow_io_local_items: overrides[:flow_io_local_items] || [build_pricing_flow_io_local_item]
@@ -45,7 +45,7 @@ module Workarea
           id: "mit-86beca991a514dac9a5fd48443f00b6b",
           experience: build_flow_io_experience_summary,
           pricing: {
-            included_levies: {key: nil, label: nil},
+            included_levies: { key: nil, label: nil },
             sell: {
               price: sell,
               label: "CA$120.00"

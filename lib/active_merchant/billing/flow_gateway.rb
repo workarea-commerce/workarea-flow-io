@@ -1,5 +1,5 @@
 ActiveMerchant::Billing::FlowGateway.class_eval do
-  def authorize amount, payment_method, options={}
+  def authorize(amount, payment_method, options = {})
     amount = assert_currency options[:currency], amount
 
     token = if payment_method.is_a?(String)
@@ -49,7 +49,7 @@ ActiveMerchant::Billing::FlowGateway.class_eval do
     end
   end
 
-  def capture _money, authorization, options={}
+  def capture(_money, authorization, options = {})
     raise ArgumentError, 'No Authorization authorization, please authorize first' unless authorization
 
     begin

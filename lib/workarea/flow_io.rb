@@ -55,7 +55,7 @@ module Workarea
     # @return [ActiveMerchant::Billing::Gateway]
     def self.gateway
       if credentials.present?
-        ActiveMerchant::Billing::FlowGateway.new(api_key: Workarea::FlowIo.api_token, organization: Workarea::FlowIo.organization_id )
+        ActiveMerchant::Billing::FlowGateway.new(api_key: Workarea::FlowIo.api_token, organization: Workarea::FlowIo.organization_id)
       else
         ActiveMerchant::Billing::BogusGateway.new
       end

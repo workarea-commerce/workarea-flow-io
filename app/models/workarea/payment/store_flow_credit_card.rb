@@ -26,4 +26,3 @@ module Workarea
     end
   end
 end
-

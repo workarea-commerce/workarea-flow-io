@@ -35,7 +35,7 @@ WORKAREA.registerModule('flowCountryPicker', (function () {
         },
 
         pathLocale = function (path) {
-            var parts = _.filter(path.split("/"), function(part) { return part != "" } ),
+            var parts = _.filter(path.split("/"), function(part) { return part !== ""; } ),
                 matches = (parts[0] || "").match(/^(\w{2})$/);
 
             if (matches === null) {
@@ -52,15 +52,15 @@ WORKAREA.registerModule('flowCountryPicker', (function () {
          * @memberof WORKAREA.flowCountryPicker
          */
         init = function ($scope) {
-            if (_.isUndefined(window.flow) || _.isUndefined(flow.beacon)) { return; }
+            if (_.isUndefined(window.flow) || _.isUndefined(window.flow.beacon)) { return; }
 
             var $container = $("#country-picker", $scope);
 
             if (_.isEmpty($container)) { return; }
 
             getScript().done(function() {
-                flow.beacon('on', 'ready', initCountryPicker);
-            })
+                window.flow.beacon('on', 'ready', initCountryPicker);
+            });
         };
 
         return {

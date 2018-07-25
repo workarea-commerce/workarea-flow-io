@@ -60,7 +60,7 @@ module Workarea
           "regular_price" => sku_price.regular.dollars.to_f,
           "sale_price" => sku_price.sale&.dollars&.to_f,
           "fulfillment_method" => product.digital ? "digital" : "physical"
-        ).compact.map { |k,v| [k, v.to_s] }.to_h
+        ).compact.map { |k, v| [k, v.to_s] }.to_h
       end
 
       def dimensions
@@ -113,7 +113,7 @@ module Workarea
         end
 
         def variant_attributes
-          variant.details.map { |k,v| [k, v.join(', ')] }.to_h
+          variant.details.map { |k, v| [k, v.join(', ')] }.to_h
         end
 
         def mounted_core
