@@ -25,7 +25,7 @@ module Workarea
         end
 
         def flow_order
-          ::Io::Flow::V0::Models::OrderUpsertedV2.new(canadian_webhook_payload)
+          ::Io::Flow::V0::Models::OrderUpsertedV2.new(canadian_webhook_payload).order
         end
     end
   end

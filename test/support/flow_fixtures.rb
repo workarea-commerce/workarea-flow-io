@@ -37,7 +37,7 @@ module Workarea
 
         order.add_item(product_id: product.id, sku: 'SKU', quantity: 2)
 
-        flow_order = ::Io::Flow::V0::Models::OrderUpsertedV2.new(canadian_webhook_payload)
+        flow_order = ::Io::Flow::V0::Models::OrderUpsertedV2.new(canadian_webhook_payload).order
 
         checkout = Workarea::FlowIo::Checkout.new(flow_order, order).build
 

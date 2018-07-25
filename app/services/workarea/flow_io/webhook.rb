@@ -1,8 +1,9 @@
 module Workarea
   module FlowIo
     class Webhook
-      class NotFound < RuntimeError; end
-      class UnhandledWebhook < RuntimeError; end
+      class Error < RuntimeError; end
+      class Error::NotFound < RuntimeError; end
+      class Error::UnhandledWebhook < RuntimeError; end
 
       # @param ::Io::Flow::V0::Models::Event
       def self.process(event)
@@ -10,10 +11,11 @@ module Workarea
           .constantize
           .new(event)
           .process
-      rescue NameError
-        raise UnhandledWebhook
+      rescue NameError => _error
+        byebug
+        raise Error::UnhandledWebhook
       rescue Mongoid::Errors::DocumentNotFound
-        raise NotFound
+        raise Error::NotFound
       end
 
       attr_reader :event

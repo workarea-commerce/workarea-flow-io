@@ -5,8 +5,9 @@ module Workarea
 
       attr_reader :order, :flow_order
 
+      # @param ::Io::Flow::V0::Models::Order,
+      # @param  ::Workarea::Order
       def initialize(flow_order, order)
-
         @order = order
         @flow_order = flow_order
       end
@@ -23,7 +24,7 @@ module Workarea
         checkout.update(
           flow_order: true,
           email: customer.email,
-          shipping_address: shipping_address_params(flow_order.order.destination),
+          shipping_address: shipping_address_params(flow_order.destination),
           billing_address: billing_address_params(flow_payments.first.address),
           shipping_service: shipping_service
         )
@@ -34,7 +35,7 @@ module Workarea
         flow_payments.each do |flow_payment|
           checkout.payment.build_flow_payment(
             details: flow_payment.to_hash,
-            payment_type: flow_payment. type,
+            payment_type: flow_payment.type,
             description: flow_payment.description,
             amount: flow_payment.total.amount)
         end
@@ -79,26 +80,26 @@ module Workarea
         end
 
         def flow_payments
-          flow_order.order.payments
+          flow_order.payments
         end
 
         def customer
-          @customer ||= flow_order.order.customer
+          @customer ||= flow_order.customer
         end
 
         def get_region_by_name(country, region_name)
-          reg, _reg_struct = country.subdivisions.detect { |k,v| v.name == region_name }
+          reg, _reg_struct = country.subdivisions.detect { |k, v| v.name == region_name }
           reg
         end
 
         def flow_shipping_method_ids
-          @flow_shipping_method_ids ||= flow_order.order.selections
+          @flow_shipping_method_ids ||= flow_order.selections
         end
 
         def flow_shipping_method
           method_id = flow_shipping_method_ids.first
 
-          delivery = flow_order.order.deliveries.detect do |d|
+          delivery = flow_order.deliveries.detect do |d|
             d.options.detect do  |o|
               o.id == method_id
             end
@@ -120,7 +121,7 @@ module Workarea
         end
 
         def shipping
-          @shippipng ||=  Shipping.find_or_create_by(order_id: order.id)
+          @shippipng ||= Shipping.find_or_create_by(order_id: order.id)
         end
     end
   end

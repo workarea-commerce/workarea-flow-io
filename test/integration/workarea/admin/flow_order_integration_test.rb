@@ -7,7 +7,7 @@ module Workarea
       include Workarea::FlowIo::FlowFixtures
 
       def test_returns_flow_order_details
-        order =  create_placed_canadian_flow_order
+        order = create_placed_canadian_flow_order
 
         get admin.order_path(order)
 

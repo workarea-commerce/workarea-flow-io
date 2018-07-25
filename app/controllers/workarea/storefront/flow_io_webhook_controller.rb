@@ -8,8 +8,11 @@ module Workarea
         FlowIo::Webhook.process(Io::Flow::V0::Models::Event.from_json(params.to_unsafe_hash))
 
         successful_response
-      rescue FlowIo::Webhook::NotFound, FlowIo::Webhook::UnhandledWebhook => _error
+      rescue FlowIo::Webhook::Error::NotFound,
+        FlowIo::Webhook::Error::UnhandledWebhook => _error
         not_found_response
+      rescue RuntimeError => _error # raised when Event.from_json gets malformed data
+        unsuccessful_response
       end
 
       private
