@@ -4,6 +4,8 @@ module Workarea
       before_action :sync_flow_session
       helper_method :flow_experience
 
+      helper Workarea::Storefront::FlowContentHelper
+
       etag { flow_experience&.key }
     end
 
