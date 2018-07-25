@@ -10,14 +10,18 @@ else
   )
 end
 
-# Workarea::Cache::Varies.on { session[:flow_io]&.experience&.key }
-
 Workarea.configure do |config|
   config.cache_expirations.flow_io_country_cache = 1.hour
 
   config.flow_io ||= ActiveSupport::Configurable::Configuration.new
 
-  config.flow_io.image_sizes = [:small_thumb, :detail]
+  # hash of processor to image tags for flow
+  # see https://docs.flow.io/type/image-tag
+  config.flow_io.image_sizes = {
+    small_thumb: ["thumbnail"],
+    medium_thumb: ["thumbnail"],
+    detail: ["checkout"]
+  }
 
   # The countries that will be considered domestic
   # countries not in array will be sent to a

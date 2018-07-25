@@ -100,8 +100,8 @@ module Workarea
 
       def images
         @images ||= (variant_specific_images || [product.images.first]).flat_map do |image|
-          FlowIo.image_sizes.map do |image_size|
-            { url: product_image_url(image, image_size), tags: [image_size.to_s] }
+          FlowIo.image_sizes.map do |processor, tags|
+            { url: product_image_url(image, processor), tags: tags }
           end
         end
       end

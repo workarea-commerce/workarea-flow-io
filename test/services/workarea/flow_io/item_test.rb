@@ -20,11 +20,15 @@ module Workarea
                   sku: 'SKU',
                   regular: 5.00,
                   details: { "Color" => "Red", "Size" => "X-Small" }
-                }]
+                }],
+                images: [
+                  { image: product_image_file, option: 'blue' },
+                  { image: product_image_file, option: 'red' },
+                  { image: product_image_file, option: 'Blue' }
+                ]
               )
 
               prod.variants.each do |variant|
-
                 Shipping::Sku.create!(
                   id: variant.sku,
                   weight: 5,
