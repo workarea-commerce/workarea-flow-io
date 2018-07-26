@@ -1,18 +1,46 @@
 module Workarea
   decorate Shipping, with: :flow_io do
-    def set_flow_shipping!(shipping_service, amount)
+    decorated do
+      embeds_many :flow_price_adjustments,
+        class_name: 'Workarea::PriceAdjustment',
+        extend: PriceAdjustmentExtension
+    end
+
+    # @param String shipping_service
+    # @param [::Io::Flow::V0::Models::OrderPriceDetail] flow_prices
+    def set_flow_shipping!(shipping_service, flow_prices)
       # clear out shipping old price that were defaulted in the cart
       self.price_adjustments = []
 
-      self.price_adjustments.build(
-        price: "shipping",
-        description: "Flow Shipping Price",
-        calculator: "Workarea::Shipping",
-        amount:  amount
-      )
+      flow_prices.each do |price|
+        # build price adjustments in the base price of the site, this keeps
+        # reporting in admin in the base price, usually USD
+        self.price_adjustments.build(
+          price: price_name(price.name),
+          description: price.name,
+          calculator: "Workarea::Shipping",
+          amount: Money.from_amount(price.base.amount, price.base.currency),
+          data: price.to_hash
+        )
+
+        # build price adjustments in the currency the user checked out in.
+        self.flow_price_adjustments.build(
+          price: price_name(price.name),
+          description: price.name,
+          calculator: "Workarea::Shipping",
+          amount: Money.from_amount(price.amount, price.currency),
+          data: price.to_hash
+        )
+      end
 
       self.build_shipping_service(name: shipping_service)
       save!
+    end
+
+    private
+
+    def price_name(price)
+      price == "Shipping" ? "shipping" : "tax"
     end
   end
 end

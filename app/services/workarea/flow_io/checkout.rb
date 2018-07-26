@@ -16,10 +16,7 @@ module Workarea
         checkout = Workarea::Checkout.new(order)
 
         # apply the shipping price adjustments to the shipping model
-        shipping.set_flow_shipping!(shipping_service, shipping_amount)
-
-        # re run priing to get the new adjustments
-        Pricing.perform(order, shipping)
+        shipping.set_flow_shipping!(shipping_service, flow_shipping_prices)
 
         checkout.update(
           flow_order: true,
@@ -37,7 +34,9 @@ module Workarea
             details: flow_payment.to_hash,
             payment_type: flow_payment.type,
             description: flow_payment.description,
-            amount: flow_payment.total.amount)
+            amount: Money.from_amount(flow_payment.total.base.amount, flow_payments.first.total.base.currency),
+            flow_amount: Money.from_amount(flow_payment.total.amount, flow_payments.first.total.currency)
+          )
         end
 
         checkout.payment.save!
@@ -96,6 +95,7 @@ module Workarea
           @flow_shipping_method_ids ||= flow_order.selections
         end
 
+        # @return ::Io::Flow::V0::Models::DeliveryOption
         def flow_shipping_method
           method_id = flow_shipping_method_ids.first
 
@@ -108,12 +108,9 @@ module Workarea
           delivery.options.detect { |o|  o.id == method_id }
         end
 
+        # @return String
         def shipping_service
           flow_shipping_method.tier.name
-        end
-
-        def shipping_amount
-          flow_shipping_method.cost.amount
         end
 
         def payment
@@ -122,6 +119,11 @@ module Workarea
 
         def shipping
           @shippipng ||= Shipping.find_or_create_by(order_id: order.id)
+        end
+
+        # @return [::Io::Flow::V0::Models::OrderPriceDetail]
+        def flow_shipping_prices
+          flow_order.prices.reject { |p| p.name == 'Item subtotal' }
         end
     end
   end

@@ -96,12 +96,12 @@ module Workarea
                     "prices": [
                       {
                         "currency": "CAD",
-                        "amount": 5.00,
-                        "label": "CA$5.00",
+                        "amount": 6.53,
+                        "label": "CA$6.53",
                         "base": {
                           "amount": 5.00,
                           "currency": "USD",
-                          "label": "US$50.99"
+                          "label": "US$5.00"
                         },
                         "key": "localized_item_price"
                       }
@@ -121,12 +121,12 @@ module Workarea
                     "price_attributes": {
                       "sale_price": {
                         "currency": "CAD",
-                        "amount": 5,
-                        "label": "CA$5.00",
+                        "amount": 6.53,
+                        "label": "CA$6.53",
                         "base": {
-                          "amount": 50.99,
+                          "amount": 5.00,
                           "currency": "USD",
-                          "label": "US$50.99"
+                          "label": "US$5.00"
                         }
                       }
                     }
@@ -145,12 +145,12 @@ module Workarea
                     "prices": [
                       {
                         "currency": "CAD",
-                        "amount": 5,
-                        "label": "CA$5.00",
+                        "amount": 6.53,
+                        "label": "CA$6.53",
                         "base": {
-                          "amount": 36.42,
+                          "amount": 5.00,
                           "currency": "USD",
-                          "label": "US$36.42"
+                          "label": "US$5.00"
                         },
                         "key": "localized_item_price"
                       }
@@ -190,11 +190,11 @@ module Workarea
                       "number": "386555310-9",
                       "quantity": 1,
                       "price": {
-                        "amount": 5,
+                        "amount": 6.53,
                         "currency": "CAD"
                       },
                       "attributes": {
-                        "base_amount": "50.99",
+                        "base_amount": "5",
                         "base_currency": "USD"
                       }
                     },
@@ -202,11 +202,11 @@ module Workarea
                       "number": "332477498-5",
                       "quantity": 1,
                       "price": {
-                        "amount": 5,
+                        "amount": 6.53,
                         "currency": "CAD"
                       },
                       "attributes": {
-                        "base_amount": "36.42",
+                        "base_amount": "5.00",
                         "base_currency": "USD"
                       }
                     }
@@ -630,12 +630,12 @@ module Workarea
                   "description": "VISA ending with 1111",
                   "total": {
                     "currency": "CAD",
-                    "amount": 19.42,
-                    "label": "CA$172.27",
+                    "amount": 62.27,
+                    "label": "CA$62.27",
                     "base": {
-                      "amount": 125.5,
+                      "amount": 48.09,
                       "currency": "USD",
-                      "label": "US$125.50"
+                      "label": "US$48.09"
                     }
                   },
                   "address": {
