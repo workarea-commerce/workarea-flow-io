@@ -14,6 +14,16 @@ module Workarea
           assert_equal(200, response.status)
         end
 
+        def test_missing_sku
+          post storefront.flow_io_webhook_path, params: local_item_upserted, headers: headers
+          refute(response.ok?)
+          assert_equal(404, response.status)
+
+          json_response = JSON.parse(response.body)
+          assert_equal(["432981453-6"], json_response["params"])
+          assert_equal("Document(s) not found for class Workarea::Pricing::Sku with id(s) 432981453-6.", json_response["problem"])
+        end
+
         private
 
         def local_item_upserted

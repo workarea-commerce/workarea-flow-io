@@ -12,10 +12,7 @@ module Workarea
           .new(event)
           .process
       rescue NameError => _error
-        byebug
         raise Error::UnhandledWebhook
-      rescue Mongoid::Errors::DocumentNotFound
-        raise Error::NotFound
       end
 
       attr_reader :event

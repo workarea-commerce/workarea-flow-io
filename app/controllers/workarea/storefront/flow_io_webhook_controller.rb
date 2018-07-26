@@ -5,14 +5,16 @@ module Workarea
       before_action :authenticate
 
       def event
-        FlowIo::Webhook.process(Io::Flow::V0::Models::Event.from_json(params.to_unsafe_hash))
-
+        event = Io::Flow::V0::Models::Event.from_json(params.to_unsafe_hash)
+        FlowIo::Webhook.process(event)
         successful_response
-      rescue FlowIo::Webhook::Error::NotFound,
-        FlowIo::Webhook::Error::UnhandledWebhook => _error
-        not_found_response
-      rescue RuntimeError => _error # raised when Event.from_json gets malformed data
-        unsuccessful_response
+
+      rescue Mongoid::Errors::DocumentNotFound => error
+        not_found_response(params: error.params, problem: error.problem)
+      rescue FlowIo::Webhook::Error::NotFound, FlowIo::Webhook::Error::UnhandledWebhook => _error
+        not_found_response(error: "UnhandledWebhook")
+      rescue RuntimeError => error # raised when Event.from_json gets malformed data
+        error_response(error: error.to_s)
       end
 
       private
@@ -34,8 +36,13 @@ module Workarea
           head :bad_request
         end
 
-        def not_found_response
-          render json: { status: 404 }
+
+        def error_response(payload)
+          render json: payload, status: :unprocessable_entity
+        end
+
+        def not_found_response(payload)
+          render json: payload, status: :not_found
         end
     end
   end
