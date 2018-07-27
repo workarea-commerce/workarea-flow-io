@@ -1,0 +1,39 @@
+module Workarea
+  decorate Pricing::Calculators::ItemCalculator, with: :flow_io do
+    def adjust
+      return super unless order.experience.present?
+
+      order.items.each do |item|
+        price = pricing.for_sku(item.sku, quantity: item.quantity)
+
+        item.adjust_pricing(
+          price: 'item',
+          quantity: item.quantity,
+          calculator: self.class.name,
+          amount: price.sell * item.quantity,
+          description: 'Item Subtotal',
+          data: {
+            'on_sale' => price.on_sale?,
+            'original_price' => price.regular.to_f,
+            'tax_code' => price.tax_code
+          }
+        )
+
+        local_price = pricing.for_sku(item.sku, quantity: item.quantity, experience: order.experience)
+
+        item.adjust_flow_pricing(
+          price: 'item',
+          quantity: item.quantity,
+          calculator: self.class.name,
+          amount: local_price.sell * item.quantity,
+          description: 'Item Subtotal',
+          data: {
+            'on_sale' => local_price.on_sale?,
+            'original_price' => local_price.regular.to_f,
+            'tax_code' => local_price.tax_code
+          }
+        )
+      end
+    end
+  end
+end

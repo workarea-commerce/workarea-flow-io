@@ -1,0 +1,15 @@
+module Workarea
+  decorate Storefront::CartViewModel, with: :flow_io do
+    def subtotal_price
+      return super unless model.experience.present?
+
+      model.flow_subtotal_price
+    end
+
+    def total_price
+      return super unless model.experience.present?
+
+      model.flow_total_price
+    end
+  end
+end

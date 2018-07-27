@@ -23,6 +23,30 @@ module Workarea
         )
       end
 
+      def canada_experience_geo
+        @canada_experience_geo ||= build_flow_io_experience_geo(
+          key: "canada",
+          name: "Canada",
+          region: { id: "can" },
+          country: "CAN",
+          currency: "CAD",
+          language: "en",
+          measurement_system: "metric"
+        )
+      end
+
+      def europe_experience_geo
+        @canada_experience_geo ||= build_flow_io_experience_geo(
+          key: "europe",
+          name: "Europe",
+          region: { id: "europe" },
+          country: "GBR",
+          currency: "EUR",
+          language: "en",
+          measurement_system: "metric"
+        )
+      end
+
       def create_placed_canadian_flow_order
         order_id = "123ABC"
         params = canadian_webhook_payload
@@ -47,7 +71,7 @@ module Workarea
       end
 
       def canadian_webhook_payload(order_id = "6F3A2186EB")
-        @canadian_webhook_payload = {
+        @canadian_webhook_payload ||= {
             "event_id": "evt-cd51260b774c437296321d8f54cd9ad2",
             "timestamp": "2018-07-18T18:27:43.907Z",
             "organization": "workarea-sandbox",

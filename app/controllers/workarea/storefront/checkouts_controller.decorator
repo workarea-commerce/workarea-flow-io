@@ -23,7 +23,7 @@ module Workarea
     end
 
     def flow_checkout_params
-      FlowIo::OrderForm.new(current_order).to_h.merge(
+      FlowIo::OrderForm.new(current_order).to_query_param_hash.merge(
         country: flow_country,
         flow_session_id: flow_session.id,
       )

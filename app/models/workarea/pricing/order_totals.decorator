@@ -1,0 +1,53 @@
+module Workarea
+  decorate Pricing::OrderTotals, with: :flow_io do
+    def total
+      super
+
+      return unless @order.experience.present?
+
+      set_flow_item_totals
+      set_flow_subtotal
+      set_flow_shipping_totals
+      set_flow_tax_totals
+      set_flow_total
+      set_flow_total_value
+    end
+
+    private
+
+      def flow_price_adjustments
+        @flow_price_adjustments ||= @order.flow_price_adjustments +
+          @shippings.map(&:flow_price_adjustments).reduce(:+)
+      end
+
+      def set_flow_item_totals
+        @order.items.each do |item|
+          item.flow_total_value = item.flow_price_adjustments.reject do |adjustment|
+            adjustment.price.in?(%w(tax shipping))
+          end.sum(&:amount)
+
+          item.flow_total_price = item.flow_price_adjustments.adjusting('item').sum
+        end
+      end
+
+      def set_flow_subtotal
+        @order.flow_subtotal_price = flow_price_adjustments.adjusting('item').sum
+      end
+
+      def set_flow_shipping_totals
+        @order.flow_shipping_total = flow_price_adjustments.adjusting('shipping').sum
+      end
+
+      def set_flow_tax_totals
+        @order.flow_tax_total = flow_price_adjustments.adjusting('tax').sum
+      end
+
+      def set_flow_total
+        @order.flow_total_price = flow_price_adjustments.sum
+      end
+
+      def set_flow_total_value
+        @order.flow_total_value = @order.flow_total_price - @order.flow_shipping_total - @order.flow_tax_total
+      end
+  end
+end

@@ -1,0 +1,43 @@
+module Workarea
+  decorate Order::Item, with: :flow do
+    decorated do
+      field :flow_total_value, type: Money
+      field :flow_total_price, type: Money
+
+      embeds_many :flow_price_adjustments,
+        class_name: 'Workarea::PriceAdjustment',
+        extend: PriceAdjustmentExtension
+    end
+
+    def reset_price_adjustments
+      __build__(:price_adjustments, [], relations["price_adjustments"])
+    end
+
+    def reset_flow_price_adjustments
+      __build__(:flow_price_adjustments, [], relations["flow_price_adjustments"])
+    end
+
+    # Adds a flow price adjustment to the item. Does not persist.
+    #
+    # @return [self]
+    #
+    def adjust_flow_pricing(options = {})
+      flow_price_adjustments.build(options)
+    end
+
+    # The flow unit price of the item including all currently attached
+    # flow price adjustments.
+    #
+    # @return [Money]
+    #
+    def current_flow_unit_price
+      return 0.to_m(order.currency) if flow_price_adjustments.blank?
+
+      flow_price_adjustments
+        .adjusting('item')
+        .map(&:unit)
+        .sum
+        .to_m(order.currency)
+    end
+  end
+end

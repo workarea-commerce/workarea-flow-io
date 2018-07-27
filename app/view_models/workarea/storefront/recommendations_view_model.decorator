@@ -12,7 +12,7 @@ module Workarea
             )
           end
 
-          Storefront::ProductViewModel.wrap(results.uniq, options).take(result_count)
+          Storefront::ProductViewModel.wrap(results.uniq, options.except(:sku)).take(result_count)
         end
     end
 

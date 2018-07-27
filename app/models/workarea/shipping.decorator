@@ -1,6 +1,11 @@
 module Workarea
   decorate Shipping, with: :flow_io do
     decorated do
+      field :flow_shipping_total, type: Money
+      field :flow_tax_total, type: Money
+
+      embeds_one :experience, class_name: "Workarea::FlowIo::ExperienceGeo", as: :experienceable
+
       embeds_many :flow_price_adjustments,
         class_name: 'Workarea::PriceAdjustment',
         extend: PriceAdjustmentExtension

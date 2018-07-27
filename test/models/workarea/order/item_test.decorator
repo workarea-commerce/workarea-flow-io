@@ -1,0 +1,46 @@
+module Workarea
+  decorate Order::ItemTest, with: :flow_io do
+    decorated { include Workarea::FlowIo::FlowFixtures } 
+
+    def test_current_flow_unit_price_with_no_price_adjustments
+      order = Order.new(
+        experience: canada_experience_geo,
+        items: [
+          {
+            product_id: "1234",
+            sku: "1234",
+            quantity: 1
+          }
+        ] 
+      )
+
+      item = order.items.first
+
+      assert_equal(0.to_m("CAD"), item.current_flow_unit_price)
+    end
+
+    def test_current_flow_unit_price
+      order = Order.new(
+        experience: canada_experience_geo,
+        items: [
+          {
+            product_id: "1234",
+            sku: "1234",
+            quantity: 1,
+            flow_price_adjustments: [
+              {
+                price: "item",
+                quantity: 2,
+                amount: 10.to_m("CAD")
+              }
+            ]
+          }
+        ] 
+      )
+
+      item = order.items.first
+
+      assert_equal(5.to_m("CAD"), item.current_flow_unit_price)
+    end
+  end
+end

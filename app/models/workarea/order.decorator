@@ -1,9 +1,41 @@
 module Workarea
   decorate Order, with: :flow_io do
     decorated do
+      delegate :currency, to: :experience, allow_nil: true
+
+      embeds_one :experience,
+        class_name: "Workarea::FlowIo::ExperienceGeo",
+        as: :experienceable
+
       field :flow, type: Boolean, default: false
       field :flow_order_id, type: String
       field :imported_from_flow_at, type: DateTime
+
+      field :flow_subtotal_price, type: Money
+      field :flow_shipping_total, type: Money
+      field :flow_tax_total,      type: Money
+      field :flow_total_value,    type: Money
+      field :flow_total_price,    type: Money
+    end
+
+    # All flow price adjustments on this order.
+    #
+    # @return [FlowPriceAdjustmentSet]
+    #
+    def flow_price_adjustments
+      FlowPriceAdjustmentSet.new(items.flat_map(&:flow_price_adjustments), experience)
+    end
+
+    def discount_ids
+      super + price_adjustments
+        .flat_map { |pa| pa.data['discount_ids'] }
+        .compact
+        .uniq
+    end
+
+    def build_experience_from_flow_model(experience_geo)
+      country = Country.find_country_by_alpha3(experience_geo.country)
+      build_experience(experience_geo.to_hash.merge(country: country))
     end
 
     def complete_flow!(flow_id)

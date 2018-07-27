@@ -29,7 +29,7 @@ module Workarea
 
     # Find the price to sell at for a specific options.
     #
-    # Takes options :quantity, :experience (::Io::Flow::V0::Models::ExperienceSummary)
+    # Takes options :quantity, :experience (::Io::Flow::V0::Models::ExperienceSummary || ::Io::Flow::V0::Models::ExperienceGeo)
     #
     # @param [Hash]
     # @return [Pricing::Price]

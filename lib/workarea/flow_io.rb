@@ -6,6 +6,7 @@ require 'active_merchant/billing/flow_gateway'
 require 'workarea'
 require 'workarea/storefront'
 require 'workarea/admin'
+require 'workarea/freedom_patches/flow_io'
 
 require 'workarea/flow_io/engine'
 require 'workarea/flow_io/version'

@@ -3,24 +3,31 @@ require 'test_helper'
 module Workarea
   module FlowIo
     class OrderFormTest < Workarea::TestCase
-      def test_to_h
+      def test_to_query_param_hash
         expected_hash = {
           attributes: { number: '1234' },
           items: {
-            0 => { quantity: 1, number: "sku1", discount: { amount: 0.to_m, currency: 'USD' } },
-            1 => { quantity: 2, number: "sku2", discount: { amount: 0.to_m, currency: 'USD' } }
-          },
-          discount: { amount: 0.to_m, currency: 'USD' }
+            0 => { quantity: 1, number: "sku1" },
+            1 => { quantity: 2, number: "sku2" },
+            2 => { quantity: 2, number: "sku3" }
+          }
         }
-        assert_equal(expected_hash, OrderForm.new(order).to_h)
+        assert_equal(expected_hash, OrderForm.new(order).to_query_param_hash)
       end
 
-      def test_to_h_with_discount
+      def test_to_query_param_hash_with_discount
         create_product(
           id: "PRODUCT1",
           variants: [
             { sku: "sku1", regular: 5.00 },
             { sku: "sku2", regular: 5.00 }
+          ])
+
+        create_product(
+          id: "PRODUCT2",
+          variants: [
+            { sku: "sku3", regular: 5.00 },
+            { sku: "sku4", regular: 5.00 }
           ])
 
         product_discount = create_product_discount(amount: 5)
@@ -36,16 +43,18 @@ module Workarea
         product_discount.save!
 
         Pricing.perform(order)
+
         expected_hash = {
           attributes: { number: '1234' },
           items: {
-            0 => { quantity: 1, number: "sku1", discount: { amount: 0.75.to_m, currency: 'USD' } },
-            1 => { quantity: 2, number: "sku2", discount: { amount: 0.75.to_m, currency: 'USD' } }
+            0 => { quantity: 1, number: "sku1", discount: { amount: 0.25, currency: 'USD' } },
+            1 => { quantity: 2, number: "sku2", discount: { amount: 0.50, currency: 'USD' } },
+            2 => { quantity: 2, number: "sku3" }
           },
-          discount: { amount: 1.to_m, currency: 'USD' }
+          discount: { amount: 1, currency: 'USD' }
         }
 
-        assert_equal(expected_hash, OrderForm.new(order).to_h)
+        assert_equal(expected_hash, OrderForm.new(order).to_query_param_hash)
       end
 
       private
@@ -55,7 +64,8 @@ module Workarea
             id: "1234",
             items: [
               { quantity: 1, sku: "sku1", product_id: "PRODUCT1" },
-              { quantity: 2, sku: "sku2", product_id: "PRODUCT1" }
+              { quantity: 2, sku: "sku2", product_id: "PRODUCT1" },
+              { quantity: 2, sku: "sku3", product_id: "PRODUCT2" }
             ]
           )
         end

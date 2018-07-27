@@ -1,0 +1,65 @@
+module Workarea
+  decorate Pricing::Calculators::ItemCalculatorTest, with: :flow_io do
+    decorated { include Workarea::FlowIo::FlowFixtures }
+
+    def test_adjust_in_flow_experience
+      create_pricing_sku_with_flow(
+        id: 'SKU1',
+        prices: [
+          {
+            min_quantity: 1,
+            regular: { cents: 824.0, currency_iso: "USD" },
+            sale: { cents: 714.0, currency_iso: "USD" }
+          }
+        ],
+        flow_io_local_items: [
+          build_pricing_flow_io_local_item(
+            { experience: canada_experience },
+            regular: 8.to_m("CAD")
+          )
+        ]
+      )
+      create_pricing_sku_with_flow(
+        id: 'SKU2',
+        prices: [
+          {
+            min_quantity: 1,
+            regular: { cents: 820.0, currency_iso: "USD" },
+            sale: { cents: 814.0, currency_iso: "USD" }
+          }
+        ],
+        flow_io_local_items: [
+          build_pricing_flow_io_local_item(
+            { experience: canada_experience },
+            regular: 5.to_m("CAD")
+          )
+        ]
+      )
+
+      session = FlowIo::BogusClient.new.sessions.get_by_session(2)
+      order = Order.new.tap do |o|
+        o.build_experience_from_flow_model(session.experience)
+      end
+      order.add_item(product_id: 'PRODUCT', sku: 'SKU1', quantity: 2)
+      order.add_item(product_id: 'PRODUCT', sku: 'SKU2', quantity: 1)
+
+      Pricing::Calculators::ItemCalculator.test_adjust(order)
+
+      assert_equal(1, order.items.first.price_adjustments.length)
+      assert_equal('item', order.items.first.price_adjustments.first.price)
+      assert_equal(16.48.to_m("USD"), order.items.first.price_adjustments.first.amount)
+
+      assert_equal(1, order.items.first.flow_price_adjustments.length)
+      assert_equal('item', order.items.first.flow_price_adjustments.first.price)
+      assert_equal(16.to_m("CAD"), order.items.first.flow_price_adjustments.first.amount)
+
+      assert_equal(1, order.items.second.price_adjustments.length)
+      assert_equal('item', order.items.second.price_adjustments.first.price)
+      assert_equal(8.2.to_m("USD"), order.items.second.price_adjustments.first.amount)
+
+      assert_equal(1, order.items.second.flow_price_adjustments.length)
+      assert_equal('item', order.items.second.flow_price_adjustments.first.price)
+      assert_equal(5.to_m("CAD"), order.items.second.flow_price_adjustments.first.amount)
+    end
+  end
+end

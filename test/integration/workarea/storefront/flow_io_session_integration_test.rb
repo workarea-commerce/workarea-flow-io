@@ -32,7 +32,7 @@ module Workarea
         Workarea.with_config do |config|
           config.strip_http_caching_in_tests = false
 
-          session = FlowIo.client.sessions.get_by_session(1)
+          session = FlowIo.client.sessions.get_by_session(1).to_hash
           session_cookie_string = Rack::Utils.add_cookie_to_header(nil, "flow_io", JSON.generate(session))
 
           get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })
@@ -49,18 +49,18 @@ module Workarea
         Workarea.with_config do |config|
           config.strip_http_caching_in_tests = false
 
-          session = FlowIo.client.sessions.get_by_session(1)
+          session = FlowIo.client.sessions.get_by_session(1).to_hash
           session_cookie_string = Rack::Utils.add_cookie_to_header(nil, "flow_io", JSON.generate(session))
           get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })
           assert_equal('miss, store', response.headers['X-Rack-Cache'])
 
-          session = FlowIo.client.sessions.get_by_session(2)
+          session = FlowIo.client.sessions.get_by_session(2).to_hash
           session_cookie_string = Rack::Utils.add_cookie_to_header(nil, "flow_io", JSON.generate(session))
           get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })
           assert_equal('miss, store', response.headers['X-Rack-Cache'])
           assert_equal('canada', response.headers["X-Flow-Experience"])
 
-          session = FlowIo.client.sessions.get_by_session(2)
+          session = FlowIo.client.sessions.get_by_session(2).to_hash
           session_cookie_string = Rack::Utils.add_cookie_to_header(nil, "flow_io", JSON.generate(session))
 
           get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })

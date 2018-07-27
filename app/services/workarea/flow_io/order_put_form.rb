@@ -1,22 +1,25 @@
 module Workarea
   module FlowIo
-    class OrderForm
-      attr_reader :order
-
-      def initialize(order)
-        @order = order
+    class OrderPutForm
+      def self.from(order:, shippings: nil)
+        new(order: order, shippings: shippings).to_flow_model
       end
 
-      def to_query_param_hash
-        {
-          attributes: { number: order.id },
-          items: order.items.map.with_index do |item, index|
-            [
-              index,
-              FlowIo::LineItemForm.new(order_item: item).to_h
-            ]
-          end.to_h
-        }.merge(discount)
+      attr_reader :order, :shippings
+
+      def initialize(order:, shippings: nil)
+        @order = order
+        @shippings = shippings || []
+      end
+
+      def to_flow_model
+        ::Io::Flow::V0::Models::OrderPutForm.new(
+          {
+            attributes: { number: order.id },
+            customer: customer,
+            items: items
+          }.merge(discount)
+        )
       end
 
       private
@@ -37,6 +40,10 @@ module Workarea
           @user ||= Workarea::User.find(order.user_id) rescue nil
         end
 
+        def items
+          order.items.map { |item| FlowIo::LineItemForm.from(order_item: item) }
+        end
+
         def discount
           discount_amount = order
             .price_adjustments
@@ -48,10 +55,6 @@ module Workarea
           return {} if discount_amount.amount.zero?
 
           { discount: { amount: discount_amount.to_f, currency: discount_amount.currency.iso_code } }
-        end
-
-        def items
-          order.items.map { |item| FlowIo::LineItemForm.from(order_item: item) }
         end
     end
   end

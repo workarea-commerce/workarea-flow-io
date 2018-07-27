@@ -1,0 +1,21 @@
+module Workarea
+  decorate Pricing::PriceDistributorTest, with: :flow_io do
+    def test_results_for_flow
+      units = [{ id: '1234', price: 0.to_m("CAD") }]
+      distributor = Pricing::PriceDistributor.new(0.to_m("CAD"), units, "CAD")
+      assert_equal({ '1234' => 0.to_m("CAD") }, distributor.results)
+
+       units = [
+         { id: '1', price: 43.to_m("EUR") },
+         { id: '2', price: 43.to_m("EUR") },
+         { id: '3', price: 54.to_m("EUR") },
+         { id: '4', price: 54.to_m("EUR") },
+         { id: '5', price: 108.to_m("EUR") },
+         { id: '6', price: 0.to_m("EUR") }
+       ]
+
+       distributor = Pricing::PriceDistributor.new(3.to_m("EUR"), units, "EUR")
+       assert_equal(3.to_m("EUR"), distributor.results.values.sum)
+    end
+  end
+end

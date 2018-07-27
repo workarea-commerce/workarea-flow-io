@@ -16,6 +16,20 @@ module Workarea
         Workarea::FlowIo::ExperienceSummary.new(attributes)
       end
 
+      def build_flow_io_experience_geo(overrides = {})
+        attributes = {
+          key: "canada",
+          name: "Canada",
+          region: { id: "can" },
+          country: "CAN",
+          currency: "CAD",
+          language: "en",
+          measurement_system: "metric"
+        }.merge(overrides)
+
+        Workarea::FlowIo::ExperienceGeo.new(attributes)
+      end
+
       def create_pricing_sku_with_flow(overrides = {})
         attributes = {
           id: "004056270-0",

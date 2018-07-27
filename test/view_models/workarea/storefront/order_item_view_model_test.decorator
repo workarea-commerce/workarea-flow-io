@@ -1,0 +1,24 @@
+module Workarea
+  decorate Storefront::OrderItemViewModelTest, with: :flow_io do
+    decorated { include Workarea::FlowIo::FlowFixtures }
+
+    def test_total_price_with_flow
+      order = Order.new(
+        experience: europe_experience_geo,
+        items: [
+          {
+            product_id: '1234',
+            sku: '1234',
+            quantity: 1,
+            flow_total_price: 10.to_m("EUR")
+          }
+        ]
+      )
+
+      item = order.items.first
+      view_model = Storefront::OrderItemViewModel.new(item)
+
+      assert_equal(10.to_m("EUR"), view_model.total_price)
+    end
+  end
+end

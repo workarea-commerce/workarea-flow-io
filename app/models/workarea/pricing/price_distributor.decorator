@@ -1,0 +1,51 @@
+module Workarea
+  decorate Pricing::PriceDistributor, with: :flow_io do
+    class_methods do
+      def for_flow_order(price, order)
+        units = []
+
+        order.items.each do |item|
+          item.quantity.times do
+            units << { id: item.id, price: item.current_flow_unit_price }
+          end
+        end
+
+        new(price, units, order.currency)
+      end
+    end
+
+    def initialize(total_value, units, currency_code = nil)
+      super(total_value, units)
+      @currency_code = currency_code
+    end
+
+    private
+
+      def distributed_results
+        tmp = Hash.new(0.to_m(@currency_code))
+
+        @units.each do |unit|
+          next if @total_value.to_f.zero? ||
+                  unit[:price].to_f.zero? ||
+                  @total_price.to_f.zero?
+
+          unit_value = @total_value.to_f *
+            (unit[:price].to_f / @total_price.to_f)
+
+          @total_price -= unit[:price]
+          @total_value -= unit_value.to_m(@currency_code)
+
+          tmp[unit[:id]] += unit_value.to_m(@currency_code)
+        end
+
+        tmp
+      end
+
+      def empty_results
+        @units.inject({}) do |memo, unit|
+          memo[unit[:id]] ||= 0.to_m(@currency_code)
+          memo
+        end
+      end
+  end
+end

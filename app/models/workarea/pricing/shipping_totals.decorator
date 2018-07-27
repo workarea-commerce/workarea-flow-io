@@ -1,0 +1,24 @@
+module Workarea
+  decorate Pricing::ShippingTotals, with: :flow_io do
+    def total
+      super
+
+      return unless @shipping.experience.present?
+
+      set_flow_shipping_total
+      set_flow_tax_total
+    end
+
+    def flow_price_adjustments
+      @flow_price_adjustments ||= PriceAdjustmentSet.new(@shipping.flow_price_adjustments)
+    end
+
+    def set_flow_shipping_total
+      @shipping.flow_shipping_total = flow_price_adjustments.adjusting('shipping').sum
+    end
+
+    def set_flow_tax_total
+      @shipping.flow_tax_total = flow_price_adjustments.adjusting('tax').sum
+    end
+  end
+end

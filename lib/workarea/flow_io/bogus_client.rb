@@ -1,6 +1,8 @@
 module Workarea
   module FlowIo
     class BogusClient
+      require 'workarea/flow_io/bogus_client/orders'
+
       def items
         @items ||= Items.new
       end
@@ -11,6 +13,10 @@ module Workarea
 
       def sessions
         @sessions ||= Sessions.new
+      end
+
+      def orders
+        @orders ||= Orders.new
       end
 
       class Items
@@ -56,14 +62,15 @@ module Workarea
         end
       end
 
-
       class Sessions
         def get_by_session(session = 1)
-          if session == 1
+          attributes = if session == 1
             domestic_attributes
           else
             foreign_attributes
           end
+
+          ::Io::Flow::V0::Models::Session.from_json(attributes)
         end
 
         def domestic_attributes
@@ -97,7 +104,6 @@ module Workarea
             discriminator: "organization_session"
           }
         end
-
 
         def foreign_attributes
           {

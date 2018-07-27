@@ -1,5 +1,19 @@
 module Workarea
   decorate Checkout, with: :flow_io do
+    decorated do
+      delegate :experience, to: :order
+    end
+
+    def shippings
+      super.tap do |workarea_shippings|
+        next unless experience.present?
+
+        workarea_shippings.each do |shipping|
+          shipping.build_experience experience.as_document
+        end
+      end
+    end
+
     def shippable?
       # WA does not have all the available shipping methods
       # that flow supports, So by default the order will be
@@ -9,6 +23,4 @@ module Workarea
     end
   end
 end
-
-
 

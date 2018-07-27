@@ -83,6 +83,8 @@ Workarea.configure do |config|
     }
   ]
 
+  config.pricing_calculators << "Workarea::Pricing::Calculators::FlowLocalizationCalculator"
+
   config.flow_io.webhook_events = [
     "local_item_upserted",
     "order_upserted_v2"

@@ -2,8 +2,8 @@ module Workarea
   decorate Storefront::ApplicationController, with: :flow_io do
     decorated do
       before_action :sync_flow_session
-      helper_method :flow_experience
 
+      helper_method :flow_experience
       helper Workarea::Storefront::FlowContentHelper
 
       etag { flow_experience&.key }
@@ -37,6 +37,14 @@ module Workarea
       return super unless flow_locale.present?
 
       super.merge(locale: flow_locale)
+    end
+
+    def current_order
+      @current_order ||= super.tap do |order|
+        if flow_experience.present?
+          order.build_experience_from_flow_model(flow_experience)
+        end
+      end
     end
 
     private
