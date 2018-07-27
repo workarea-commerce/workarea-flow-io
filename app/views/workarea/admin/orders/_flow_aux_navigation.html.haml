@@ -1,0 +1,2 @@
+- if order.flow? && order.flow_order_id.present?
+  .grid__cell= link_to t('workarea.admin.orders.view_flow_order'), "https://console.flow.io/#{Workarea::FlowIo.organization_id}/orders/#{order.flow_order_id}", class: 'workflow-bar__button workflow-bar__button--update'

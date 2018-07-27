@@ -2,6 +2,7 @@ en:
   workarea:
     admin:
       orders:
+        view_flow_order: View Order in Flow Console
         cards:
           flow:
             id: Flow Order ID

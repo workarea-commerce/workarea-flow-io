@@ -18,6 +18,11 @@ Workarea.append_partials(
   'workarea/admin/orders/flow'
 )
 
+Workarea.append_partials(
+  'admin.order_show_workflow_bar_left',
+  'workarea/admin/orders/flow_aux_navigation'
+)
+
 Workarea::Plugin.append_stylesheets(
   'storefront.components',
   'flow_io/storefront/country_picker'
