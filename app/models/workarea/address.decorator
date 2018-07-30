@@ -1,0 +1,12 @@
+module Workarea
+  decorate Address, with: :flow_io do
+    decorated do
+      field :flow, type: Boolean, default: false
+    end
+
+    def region_presence
+      return if flow?
+      super
+    end
+  end
+end

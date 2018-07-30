@@ -1,0 +1,20 @@
+module Workarea
+  decorate AddressTest, with: :flow_io do
+    def test_flow_region
+      address = Address.new(
+        first_name: 'Jeff',
+        last_name: 'Yuci ',
+        street: '22 S. 3rd St.',
+        street_2: 'Second Floor',
+        city: 'Cologn',
+        region: nil,
+        postal_code: '19106',
+        country: 'DE',
+        phone_number: '2159251800',
+        flow: true
+      )
+
+      assert(address.valid?)
+    end
+  end
+end

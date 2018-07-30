@@ -59,7 +59,8 @@ module Workarea
             region: region,
             postal_code: address.postal,
             country: country,
-            phone_number: address.contact.phone
+            phone_number: address.contact.phone,
+            flow: true
           }
         end
 
@@ -74,7 +75,8 @@ module Workarea
             city: address.city,
             region: region,
             postal_code: address.postal,
-            country: country
+            country: country,
+            flow: true
           }
         end
 
