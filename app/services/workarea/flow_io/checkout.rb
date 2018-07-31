@@ -39,6 +39,9 @@ module Workarea
           )
         end
 
+        # update the order and shipping totals with the
+        # new price adjusments
+        total_order
         checkout.payment.save!
 
         checkout
@@ -126,6 +129,14 @@ module Workarea
         # @return [::Io::Flow::V0::Models::OrderPriceDetail]
         def flow_shipping_prices
           flow_order.prices.reject { |p| p.name == 'Item subtotal' }
+        end
+
+        def total_order
+          Pricing::ShippingTotals.new(shipping).total
+          Pricing::OrderTotals.new(order, [shipping]).total
+
+          order.save!
+          shipping.save!
         end
     end
   end

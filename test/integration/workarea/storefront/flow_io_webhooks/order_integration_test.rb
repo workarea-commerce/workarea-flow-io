@@ -11,9 +11,15 @@ module Workarea
           product = create_product(name: 'Intelligent Bronze Pants')
           product_2 = create_product(name: 'Marble Clock')
 
+          shipping_service = create_shipping_service
+
           order = create_order(id: '6F3A2186EB')
           order.add_item(product_id: product.id, sku: 'SKU', quantity: 1)
           order.add_item(product_id: product_2.id, sku: 'SKU', quantity: 1)
+
+          shipping = Workarea::Shipping.find_or_create_by(order_id: order.id)
+
+          Workarea::Pricing.perform(order, shipping)
 
           post storefront.flow_io_webhook_path, params: order_upserted, headers: headers
           assert(response.ok?)
@@ -37,8 +43,7 @@ module Workarea
           tender = payment.tenders.first
           assert_equal(48.09.to_m, tender.amount)
 
-          shipping = Shipping.find_by_order(order.id)
-
+          shipping.reload
           assert(shipping.address.valid?)
 
           assert_equal(3, shipping.price_adjustments.size)

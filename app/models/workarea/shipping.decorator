@@ -12,6 +12,9 @@ module Workarea
       # clear out shipping old price that were defaulted in the cart
       self.price_adjustments = []
 
+      # clear the default shipping service.
+      self.shipping_service = nil
+
       flow_prices.each do |price|
         # build price adjustments in the base price of the site, this keeps
         # reporting in admin in the base price, usually USD
