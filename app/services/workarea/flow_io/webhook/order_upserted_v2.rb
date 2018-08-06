@@ -9,7 +9,10 @@ module Workarea
         workarea_order.save!
 
         # Service class to build a valid workarea checkout
-        checkout = Workarea::FlowIo::Checkout.new(flow_order, workarea_order).build
+        checkout = Workarea::FlowIo::Checkout.new(flow_order, workarea_order)
+
+        # builds the orders shipping and payment details
+        checkout.build
 
         # attempt to complete the order
         if checkout.place_order

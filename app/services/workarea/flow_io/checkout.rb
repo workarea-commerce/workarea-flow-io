@@ -12,25 +12,47 @@ module Workarea
         @flow_order = flow_order
       end
 
+      def place_order
+        return false unless shipping.valid?
+        return false unless payment.valid?
+
+        inventory.purchase
+        return false unless inventory.captured?
+
+        unless payment_collection.purchase
+          inventory.rollback
+          return false
+        end
+
+        result = order.place
+
+        if result
+          CreateFulfillment.new(order).perform
+          SaveOrderAnalytics.new(order).perform
+        end
+
+        result
+      end
+
+
       def build
-        checkout = Workarea::Checkout.new(order)
+        order.update_attributes!(
+          flow: true,
+          email: customer.email
+        )
 
         # apply the shipping price adjustments to the shipping model
         shipping.set_flow_shipping!(shipping_service, flow_shipping_prices)
 
-        checkout.update(
-          flow_order: true,
-          email: customer.email,
-          shipping_address: shipping_address_params(flow_order.destination),
-          billing_address: billing_address_params(flow_payments.first.address),
-          shipping_service: shipping_service
-        )
+        # set the shipping and billing addresses
+        shipping.set_address(shipping_address_params(flow_order.destination))
+        payment.set_address(billing_address_params(flow_payments.first.address))
 
         # Out of the box the payments will be authed and captured by flow
         # at the time of purchase, these tenders are generated to
         # keep the order modeling intact.
         flow_payments.each do |flow_payment|
-          checkout.payment.build_flow_payment(
+          payment.build_flow_payment(
             details: flow_payment.to_hash,
             payment_type: flow_payment.type,
             description: flow_payment.description,
@@ -38,13 +60,8 @@ module Workarea
             flow_amount: Money.from_amount(flow_payment.total.amount, flow_payments.first.total.currency)
           )
         end
-
-        # update the order and shipping totals with the
-        # new price adjusments
+        payment.save!
         total_order
-        checkout.payment.save!
-
-        checkout
       end
 
       private
@@ -137,6 +154,22 @@ module Workarea
 
           order.save!
           shipping.save!
+        end
+
+        def inventory
+          @inventory ||= Inventory::Transaction.from_order(
+            order.id,
+            order.items.inject({}) do |memo, item|
+              memo[item.sku] ||= 0
+              memo[item.sku] += item.quantity
+              memo
+            end
+          )
+        end
+
+        def payment_collection
+          wa_checkout = Workarea::Checkout.new(order)
+          @payment_collection ||= Workarea::Checkout::CollectPayment.new(wa_checkout)
         end
     end
   end

@@ -39,8 +39,8 @@ module Workarea
 
         flow_order = ::Io::Flow::V0::Models::OrderUpsertedV2.new(canadian_webhook_payload).order
 
-        checkout = Workarea::FlowIo::Checkout.new(flow_order, order).build
-
+        checkout = Workarea::FlowIo::Checkout.new(flow_order, order)
+        checkout.build
         checkout.place_order
 
         order
@@ -446,12 +446,12 @@ module Workarea
                     {
                       "key": "rounding",
                       "currency": "CAD",
-                      "amount": 10.57,
-                      "label": "CA$10.57",
+                      "amount": 1.37,
+                      "label": "CA$1.37",
                       "base": {
-                        "amount": 7.7,
+                        "amount": 1.0,
                         "currency": "USD",
-                        "label": "US$7.70"
+                        "label": "US$1.00"
                       },
                       "name": "Rounding"
                     }
@@ -630,7 +630,7 @@ module Workarea
                   "description": "VISA ending with 1111",
                   "total": {
                     "currency": "CAD",
-                    "amount": 62.27,
+                    "amount": 63.44,
                     "label": "CA$62.27",
                     "base": {
                       "amount": 48.09,

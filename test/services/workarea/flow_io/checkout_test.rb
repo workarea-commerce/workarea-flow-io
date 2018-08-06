@@ -6,17 +6,24 @@ module Workarea
       include Workarea::FlowIo::FlowFixtures
 
       def test_build
-        checkout = Workarea::FlowIo::Checkout.new(flow_order, order).build
+        order = workarea_order
+        Workarea::FlowIo::Checkout.new(flow_order, order).build
 
-        assert(checkout.complete?)
-        assert_equal(1, checkout.payment.tenders.size)
-        assert(checkout.payment.address.valid?)
-        assert(checkout.shipping.address.valid?)
+        shipping = Workarea::Shipping.find_by_order(order.id)
+        payment = Workarea::Payment.find(order.id)
+
+        assert(payment.valid?)
+        assert_equal(1, payment.tenders.size)
+        assert(payment.address.valid?)
+
+        assert(shipping.valid?)
+        assert(shipping.address.valid?)
+        assert(shipping.shipping_service.valid?)
       end
 
       private
 
-        def order
+        def workarea_order
           product = create_product(name: 'Intelligent Bronze Pants')
           order = create_order(id: '6F3A2186EB')
           order.add_item(product_id: product.id, sku: 'SKU', quantity: 2)
