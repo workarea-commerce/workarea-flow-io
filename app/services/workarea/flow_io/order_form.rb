@@ -21,22 +21,6 @@ module Workarea
 
       private
 
-        def customer
-          return nil unless user.present?
-
-          {
-            email: user.email,
-            name: user.name,
-            phone: user.default_shipping_address&.phone_number
-          }
-        end
-
-        def user
-          return unless order.user_id.present?
-
-          @user ||= Workarea::User.find(order.user_id) rescue nil
-        end
-
         def discount
           discount_amount = order
             .price_adjustments

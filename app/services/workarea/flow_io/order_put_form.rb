@@ -29,7 +29,10 @@ module Workarea
 
           {
             email: user.email,
-            name: user.name,
+            name: {
+              first: user.first_name,
+              last: user.last_name
+            },
             phone: user.default_shipping_address&.phone_number
           }
         end
