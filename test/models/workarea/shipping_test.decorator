@@ -2,11 +2,11 @@ module Workarea
   decorate ShippingTest, with: :flow_io do
     def test_set_flow_shipping
       shipping = Shipping.new
-      shipping.set_flow_shipping!('test shipping', flow_prices)
+      shipping.set_flow_shipping!(flow_shipping_method, flow_prices)
 
       shipping.reload
 
-      assert_equal("test shipping", shipping.shipping_service.name)
+      assert_equal("Standard Shipping", shipping.shipping_service.name)
 
       assert_equal(3, shipping.price_adjustments.size)
       assert_equal(
@@ -19,9 +19,66 @@ module Workarea
         %w(shipping tax tax),
         shipping.flow_price_adjustments.map(&:price).sort
       )
+
+      assert_equal("paid", shipping.delivery_duty)
     end
 
     private
+
+    def flow_shipping_method
+      ::Io::Flow::V0::Models::DeliveryOption.new(
+        {
+         id:"opt-f5cb8850c9914d0a97caa533633d6745",
+         cost:
+          {currency:"CAD",
+           amount:9.42,
+           label:"CA$9.42",
+           base:{amount:6.86, currency:"USD", label:"US$6.86"}},
+         cost_details:
+          [{source:"ratecard",
+            currency:"CAD",
+            amount:9.42,
+            label:"CA$9.42",
+            base:{amount:6.86, currency:"USD", label:"US$6.86"},
+            components:
+             [{key:"ratecard_base_cost",
+               currency:"CAD",
+               amount:9.42,
+               label:"CA$9.42",
+               base:{amount:6.86, currency:"USD", label:"US$6.86"}}]}],
+         delivered_duty:"paid",
+         price:
+          {currency:"CAD",
+           amount:9.42,
+           label:"CA$9.42",
+           base:{amount:6.86, currency:"USD", label:"US$6.86"}},
+         service:
+          {id:"landmark-global",
+           carrier:{id:"landmark"},
+           name:"Global",
+           center_code:nil},
+         tier:
+          {id:"tie-fc0ec702c4384dc8805ae645ef6156e8",
+           experience:{id:"canada", currency:"CAD"},
+           integration:"information",
+           name:"Standard Shipping",
+           services:["landmark-global", "dhl-express-worldwide"],
+           strategy:"lowest_cost",
+           visibility:"public",
+           currency:"CAD",
+           display:{estimate:{type:"calculated", label:"2-5 Business Days"}}},
+         window:
+          {from:"Fri, 20 Jul 2018 000000 +0000",
+           to:"Wed, 25 Jul 2018 000000 +0000",
+           timezone:"America/Toronto",
+           label:"2-5 Business Days"},
+         rule_outcome:{ignore:nil, discriminator:"at_cost"},
+         weight:
+          {gravitational:{value:"2.50", units:"pound"},
+           dimensional:{value:"2.12", units:"inch"}},
+         send_to:nil}
+    )
+    end
 
     def flow_prices
       [

@@ -3,6 +3,7 @@ module Workarea
     decorated do
       field :flow_shipping_total, type: Money
       field :flow_tax_total, type: Money
+      field :delivery_duty, type: String
 
       embeds_one :experience, class_name: "Workarea::FlowIo::ExperienceGeo", as: :experienceable
 
@@ -11,9 +12,9 @@ module Workarea
         extend: PriceAdjustmentExtension
     end
 
-    # @param String shipping_service
+    # @param ::Io::Flow::V0::Models::DeliveryOption flow_shipping_method
     # @param [::Io::Flow::V0::Models::OrderPriceDetail] flow_prices
-    def set_flow_shipping!(shipping_service, flow_prices)
+    def set_flow_shipping!(flow_shipping_method, flow_prices)
       # clear out shipping old price that were defaulted in the cart
       self.price_adjustments = []
 
@@ -41,7 +42,9 @@ module Workarea
         )
       end
 
-      self.build_shipping_service(name: shipping_service)
+      self.delivery_duty = flow_shipping_method.delivered_duty.value
+
+      self.build_shipping_service(name: flow_shipping_method.tier.name)
       save!
     end
 

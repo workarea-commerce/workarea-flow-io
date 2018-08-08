@@ -49,6 +49,7 @@ module Workarea
           assert_equal(3, shipping.price_adjustments.size)
           assert_equal(3, shipping.flow_price_adjustments.size)
           assert_equal(6.86.to_m, shipping.shipping_total)
+          assert_equal("paid", shipping.delivery_duty)
         end
 
         def test_order_not_found

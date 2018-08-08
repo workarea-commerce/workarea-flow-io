@@ -56,7 +56,8 @@ module Workarea
           id: order_id,
           flow: true,
           flow_order_id: params[:order][:id],
-          imported_from_flow_at: DateTime.now
+          imported_from_flow_at: DateTime.now,
+          experience: canada_experience
          )
 
         order.add_item(product_id: product.id, sku: 'SKU', quantity: 2)

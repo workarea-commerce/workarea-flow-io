@@ -42,7 +42,7 @@ module Workarea
         )
 
         # apply the shipping price adjustments to the shipping model
-        shipping.set_flow_shipping!(shipping_service, flow_shipping_prices)
+        shipping.set_flow_shipping!(flow_shipping_method, flow_shipping_prices)
 
         # set the shipping and billing addresses
         shipping.set_address(shipping_address_params(flow_order.destination))
@@ -128,11 +128,6 @@ module Workarea
           end
 
           delivery.options.detect { |o|  o.id == method_id }
-        end
-
-        # @return String
-        def shipping_service
-          flow_shipping_method.tier.name
         end
 
         def payment
