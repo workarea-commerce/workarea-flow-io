@@ -2,6 +2,7 @@ require 'simplecov'
 
 SimpleCov.start "rails" do
   add_group "View Models", "app/view_models"
+  add_group "Services", "app/services"
   add_group "Decorators", %r{.decorator$}
 
   add_filter 'lib/workarea/flow_io/version.rb'

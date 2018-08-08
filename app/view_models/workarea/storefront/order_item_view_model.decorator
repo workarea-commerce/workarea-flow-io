@@ -3,7 +3,7 @@ module Workarea
     def original_unit_price
       return super unless order.experience.present?
 
-      return 0.to_m(order.experience.currency) if price_adjustments.blank?
+      return 0.to_m(order.currency) if flow_price_adjustments.blank?
       flow_price_adjustments.first.unit.to_m
     end
 
@@ -24,6 +24,12 @@ module Workarea
       return super unless order.experience.present?
 
       @total_adjustments ||= flow_price_adjustments.reduce_by_description('item')
+    end
+
+    def original_price
+      return super unless order.experience.present?
+
+      flow_price_adjustments.first.data['original_price'].to_m(order.currency)
     end
   end
 end

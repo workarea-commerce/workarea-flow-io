@@ -55,66 +55,11 @@ module Workarea
 
       def adjust_items
         order.items.each do |order_item|
-          order_item_discount_ids = order_item
-            .price_adjustments
-            .adjusting("item")
-            .map { |pa| pa.data['discount_id'] }
-            .compact
-            .uniq
-
-          order_item.reset_price_adjustments
-          order_item.reset_flow_price_adjustments
-
           flow_item = flow_order.items.detect do |localized_line_item|
             localized_line_item.number == order_item.sku
           end
 
-          localized_item_price = flow_item
-            .local
-            .prices
-            .detect { |localized_price| localized_price.key == "localized_item_price" }
-
-          order_item.adjust_pricing(
-            item_adjustment_data.merge(
-              quantity: order_item.quantity,
-              amount: localized_item_price.base.to_m * order_item.quantity,
-              description: 'Flow Localized Item Price Base',
-              data: localized_item_price.to_hash
-            )
-          )
-
-          order_item.adjust_flow_pricing(
-            item_adjustment_data.merge(
-              quantity: order_item.quantity,
-              amount: localized_item_price.to_m * order_item.quantity,
-              description: 'Flow Localized Item Price'
-            )
-          )
-
-          if flow_item.discount.present?
-            order_item.adjust_pricing(
-              item_adjustment_data.merge(
-                quantity: order_item.quantity,
-                amount: -flow_item.discount.base.to_m,
-                description: 'Flow Localized Line Item Discount Base',
-                data: flow_item.discount.to_hash.merge(
-                  discount_amount: flow_item.discount.base.to_m,
-                  discount_ids: order_item_discount_ids
-                )
-              )
-            )
-
-            order_item.adjust_flow_pricing(
-              item_adjustment_data.merge(
-                quantity: order_item.quantity,
-                amount: -flow_item.discount.to_m,
-                description: 'Flow Localized Line Item Discount',
-                data: {
-                  "discount_amount" => flow_item.discount.to_m
-                }
-              )
-            )
-          end
+          ItemApplier.perform(order_item: order_item, localized_line_item: flow_item)
         end
       end
 
@@ -130,8 +75,9 @@ module Workarea
               calculator: self.class.name,
               quantity: item.quantity,
               amount: -item_base_total,
-              description: 'Flow Localized Order Discount Base',
+              description: 'Discount',
               data: {
+                "description" => 'Flow Localized Order Discount Base',
                 "discount_ids" => order_discount_ids,
                 "discount_value" => item_base_total
               }
@@ -144,9 +90,12 @@ module Workarea
               price: 'order',
               calculator: self.class.name,
               quantity: item.quantity,
-              amount: 0 - item_local_total,
-              description: 'Flow Localized Order Discount',
-              data: { "discount_value" => item_local_total }
+              amount: -item_local_total,
+              description: 'Discount',
+              data: {
+                "discount_value" => item_local_total,
+                "description" => 'Flow Localized Order Discount'
+              }
             }
           )
         end
@@ -157,13 +106,6 @@ module Workarea
         @localized_order_discount ||= flow_order
           .prices
           .detect { |order_price_detail| order_price_detail.key.value == "discount" }
-      end
-
-      def item_adjustment_data
-        {
-          price: 'item',
-          calculator: self.class.name
-        }
       end
     end
   end

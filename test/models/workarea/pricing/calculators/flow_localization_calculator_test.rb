@@ -120,6 +120,18 @@ module Workarea
           shipping = Shipping.new
 
           FlowLocalizationCalculator.test_adjust(order, shipping)
+
+          item = order.items.first
+
+          assert_equal(
+            104.03.to_m("USD"),
+            item.price_adjustments.adjusting("item").sum
+          )
+
+          assert_equal(
+            92.72.to_m("EUR"),
+            item.flow_price_adjustments.adjusting("item").sum
+          )
         end
       end
     end

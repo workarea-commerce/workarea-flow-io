@@ -11,5 +11,11 @@ module Workarea
 
       model.flow_total_price
     end
+
+    def total_adjustments
+      return super unless model.experience.present?
+
+      @total_adjustments ||= flow_price_adjustments.reduce_by_description('order')
+    end
   end
 end

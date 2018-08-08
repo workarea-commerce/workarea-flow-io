@@ -21,3 +21,9 @@ class ::Io::Flow::V0::Models::OrderPriceDetail
     Money.from_amount(amount, currency)
   end
 end
+
+class ::Io::Flow::V0::Models::PriceWithBase
+  def to_m
+    Money.from_amount(amount, currency)
+  end
+end

@@ -9,9 +9,19 @@ module Workarea
           Catalog::Product => :save,
           Shipping::Sku => :save,
           Pricing::Sku => :save,
-          with: -> { [self.class.name, id] }
+          Pricing::Price => :save,
+          with: -> { ItemExporter.perform_with(self) }
         }
       )
+
+      def self.perform_with(model)
+        case model.class.name
+        when "Workarea::Pricing::Price"
+          [model.sku.class.name, model.sku.id]
+        else
+          [model.class.name, model.id]
+        end
+      end
 
       def perform(class_name, id)
         product, skus =

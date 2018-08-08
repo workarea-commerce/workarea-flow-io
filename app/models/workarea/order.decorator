@@ -34,8 +34,12 @@ module Workarea
     end
 
     def build_experience_from_flow_model(experience_geo)
-      country = Country.find_country_by_alpha3(experience_geo.country)
-      build_experience(experience_geo.to_hash.merge(country: country))
+      if experience_geo.present?
+        country = Country.find_country_by_alpha3(experience_geo.country)
+        build_experience(experience_geo.to_hash.merge(country: country))
+      else
+        self.experience = nil
+      end
     end
 
     def complete_flow!(flow_id)
@@ -45,4 +49,3 @@ module Workarea
     end
   end
 end
-

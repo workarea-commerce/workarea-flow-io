@@ -41,9 +41,7 @@ module Workarea
 
     def current_order
       @current_order ||= super.tap do |order|
-        if flow_experience.present?
-          order.build_experience_from_flow_model(flow_experience)
-        end
+        order.build_experience_from_flow_model(flow_experience)
       end
     end
 
