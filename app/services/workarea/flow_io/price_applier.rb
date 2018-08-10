@@ -1,15 +1,16 @@
 module Workarea
   module FlowIo
     class PriceApplier
-      def self.perform(order:, flow_order:)
-        new(order: order, flow_order: flow_order).perform!
+      def self.perform(order:, flow_order:, shipping: nil)
+        new(order: order, flow_order: flow_order, shipping: shipping).perform!
       end
 
-      attr_reader :order, :flow_order, :order_discount_ids
+      attr_reader :order, :flow_order, :order_discount_ids, :shipping
 
-      def initialize(order:, flow_order:)
+      def initialize(order:, flow_order:, shipping: nil)
         @order = order
         @flow_order = flow_order
+        @shipping = shipping
         @order_discount_ids = order
           .price_adjustments
           .adjusting("order")
@@ -21,9 +22,36 @@ module Workarea
       def perform!
         adjust_items
         add_order_discount if localized_order_discount.present?
+        adjust_shipping
       end
 
       private
+
+      def adjust_shipping
+        return unless shipping.present? && order.requires_shipping?
+
+        flow_prices = flow_order.prices.reject { |p| p.name == 'Item subtotal' } # everything but the item prices
+
+        flow_prices.each do |price|
+          price_slug = price.name == "Shipping" ? "shipping" : "tax"
+          shipping.adjust_pricing(
+            price: price_slug,
+            description: price.name,
+            calculator: self.class.name,
+            amount: Money.from_amount(price.base.amount, price.base.currency),
+            data: price.to_hash
+          )
+
+          # build price adjustments in the currency the user checked out in.
+          shipping.adjust_flow_pricing(
+            price: price_slug,
+            description: price.name,
+            calculator: self.class.name,
+            amount: Money.from_amount(price.amount, price.currency),
+            data: price.to_hash
+          )
+        end
+      end
 
       def adjust_items
         order.items.each do |order_item|

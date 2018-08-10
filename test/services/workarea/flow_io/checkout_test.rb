@@ -24,9 +24,13 @@ module Workarea
       private
 
         def workarea_order
-          product = create_product(name: 'Intelligent Bronze Pants')
-          order = create_order(id: '6F3A2186EB')
-          order.add_item(product_id: product.id, sku: 'SKU', quantity: 2)
+          product = create_product(variants: [{ sku: '386555310-9', regular: 5.00 }])
+          product_2 = create_product(variants: [{ sku: '332477498-5', regular: 5.00 }])
+
+          order = create_order
+
+          order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)
+          order.add_item(product_id: product_2.id, sku: '332477498-5', quantity: 1)
 
           order
         end

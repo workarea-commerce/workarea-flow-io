@@ -2,23 +2,10 @@ module Workarea
   decorate ShippingTest, with: :flow_io do
     def test_set_flow_shipping
       shipping = Shipping.new
-      shipping.set_flow_shipping!(flow_shipping_method, flow_prices)
+
+      shipping.set_flow_shipping!(flow_shipping_method)
 
       shipping.reload
-
-      assert_equal("Standard Shipping", shipping.shipping_service.name)
-
-      assert_equal(3, shipping.price_adjustments.size)
-      assert_equal(
-        %w(shipping tax tax),
-        shipping.price_adjustments.map(&:price).sort
-      )
-
-      assert_equal(3, shipping.flow_price_adjustments.size)
-      assert_equal(
-        %w(shipping tax tax),
-        shipping.flow_price_adjustments.map(&:price).sort
-      )
 
       assert_equal("paid", shipping.delivery_duty)
     end
@@ -77,77 +64,7 @@ module Workarea
           {gravitational:{value:"2.50", units:"pound"},
            dimensional:{value:"2.12", units:"inch"}},
          send_to:nil}
-    )
-    end
-
-    def flow_prices
-      [
-        ::Io::Flow::V0::Models::OrderPriceDetail.new(
-          key: "vat",
-          currency: "CAD",
-          amount: 21.25,
-          label: "CA$21.25",
-          base: {amount: 15.49, currency: "USD", label: "US$15.49"},
-          components: [
-            {
-              key: "vat_item_price",
-              currency: "CAD",
-              amount: 18.0,
-              label: "CA$18.00",
-              base: {amount: 13.11, currency: "USD", label: "US$13.11"},
-              name: "HST on item price"
-            },
-            {
-              key: "vat_duties_item_price",
-              currency: "CAD",
-              amount: 3.25,
-              label: "CA$3.25",
-              base: {amount: 2.38, currency: "USD", label: "US$2.38"},
-              name: "HST on duties on item price"
-            }
-          ],
-          name: "HST",
-          rate: nil
-        ),
-        ::Io::Flow::V0::Models::OrderPriceDetail.new(
-          key: "duty",
-          currency: "CAD",
-          amount: 21.6,
-          label: "CA$21.60",
-          base: {amount: 15.74, currency: "USD", label: "US$15.74"},
-          components: [
-            {
-              key: "duties_item_price",
-              currency: "CAD",
-              amount: 21.6,
-              label: "CA$21.60",
-              base: {amount: 15.74, currency: "USD", label: "US$15.74"},
-              name: "Duties on item price"
-            }
-          ],
-          name: "Duties",
-          rate: nil
-        ),
-        ::Io::Flow::V0::Models::OrderPriceDetail.new(
-          key: "shipping",
-          currency: "CAD",
-          amount: 9.42,
-          label: "CA$9.42",
-          base: {amount: 6.86, currency: "USD", label: "US$6.86"},
-          components: [
-            {
-              key: "shipping",
-              currency: "CAD",
-              amount: 9.42,
-              label: "CA$9.42",
-              base: {amount: 6.86, currency: "USD", label: "US$6.86"},
-              name: "Shipping"
-            }
-          ],
-          name: "Shipping",
-          rate: nil
-        )
-      ]
+      )
     end
   end
 end

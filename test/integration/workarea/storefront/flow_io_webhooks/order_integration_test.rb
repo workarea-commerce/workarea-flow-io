@@ -8,28 +8,35 @@ module Workarea
          include Workarea::FlowIo::FlowFixtures
 
         def test_order_update
-          product = create_product(name: 'Intelligent Bronze Pants')
-          product_2 = create_product(name: 'Marble Clock')
+          product = create_product(variants: [{ sku: '386555310-9', regular: 5.00 }])
+          product_2 = create_product(variants: [{ sku: '332477498-5', regular: 5.00 }])
 
           shipping_service = create_shipping_service
 
-          order = create_order(id: '6F3A2186EB')
-          order.add_item(product_id: product.id, sku: 'SKU', quantity: 1)
-          order.add_item(product_id: product_2.id, sku: 'SKU', quantity: 1)
+          order = create_order(id: '6F3A2186EB', experience: canada_experience)
+
+          order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)
+          order.add_item(product_id: product_2.id, sku: '332477498-5', quantity: 1)
 
           shipping = Workarea::Shipping.find_or_create_by(order_id: order.id)
 
           Workarea::Pricing.perform(order, shipping)
 
           post storefront.flow_io_webhook_path, params: order_upserted, headers: headers
+
           assert(response.ok?)
           assert_equal({ "status" => 200 }, JSON.parse(response.body))
           assert_equal(200, response.status)
 
           order.reload
-
           assert_equal("flow-test@weblinc.com", order.email)
-          assert_equal(48.09.to_m, order.total_price)
+          assert_equal(171.55.to_m, order.total_price)
+
+          assert_equal(Money.from_amount(180.00, "CAD"), order.flow_total_value)
+          assert_equal(Money.from_amount(232.31, "CAD"), order.flow_total_price)
+          assert_equal(Money.from_amount(9.29, "CAD"), order.flow_shipping_total)
+          assert_equal(Money.from_amount(43.02, "CAD"), order.flow_tax_total)
+
           assert(order.imported_from_flow_at.present?)
           assert(order.flow_order_id.present?)
           assert(order.placed?)
@@ -41,7 +48,7 @@ module Workarea
           assert_equal(1, payment.tenders.first.transactions.size)
 
           tender = payment.tenders.first
-          assert_equal(48.09.to_m, tender.amount)
+          assert_equal(171.55.to_m, tender.amount)
 
           shipping.reload
           assert(shipping.address.valid?)

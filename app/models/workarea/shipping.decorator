@@ -12,46 +12,17 @@ module Workarea
         extend: PriceAdjustmentExtension
     end
 
-    # @param ::Io::Flow::V0::Models::DeliveryOption flow_shipping_method
-    # @param [::Io::Flow::V0::Models::OrderPriceDetail] flow_prices
-    def set_flow_shipping!(flow_shipping_method, flow_prices)
-      # clear out shipping old price that were defaulted in the cart
-      self.price_adjustments = []
-
-      # clear the default shipping service.
-      self.shipping_service = nil
-
-      flow_prices.each do |price|
-        # build price adjustments in the base price of the site, this keeps
-        # reporting in admin in the base price, usually USD
-        self.price_adjustments.build(
-          price: price_name(price.name),
-          description: price.name,
-          calculator: "Workarea::Shipping",
-          amount: Money.from_amount(price.base.amount, price.base.currency),
-          data: price.to_hash
-        )
-
-        # build price adjustments in the currency the user checked out in.
-        self.flow_price_adjustments.build(
-          price: price_name(price.name),
-          description: price.name,
-          calculator: "Workarea::Shipping",
-          amount: Money.from_amount(price.amount, price.currency),
-          data: price.to_hash
-        )
-      end
-
-      self.delivery_duty = flow_shipping_method.delivered_duty.value
-
-      self.build_shipping_service(name: flow_shipping_method.tier.name)
-      save!
+    def adjust_flow_pricing(options = {})
+      flow_price_adjustments.build(options)
     end
 
-    private
-
-    def price_name(price)
-      price == "Shipping" ? "shipping" : "tax"
+    # @param ::Io::Flow::V0::Models::DeliveryOption flow_shipping_method
+    def set_flow_shipping!(flow_shipping_method)
+      # clear the default shipping service.
+      self.shipping_service = nil
+      self.delivery_duty = flow_shipping_method.delivered_duty.value
+      self.build_shipping_service(name: flow_shipping_method.tier.name)
+      save!
     end
   end
 end
