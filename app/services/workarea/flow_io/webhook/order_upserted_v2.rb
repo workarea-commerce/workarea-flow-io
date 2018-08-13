@@ -5,6 +5,8 @@ module Workarea
         return unless flow_order.submitted_at.present?
 
         workarea_order = Order.find(flow_order.attributes["number"])
+        workarea_order.lock!
+
         workarea_order.flow = true
         workarea_order.save!
 
@@ -20,6 +22,9 @@ module Workarea
         else
           raise Webhook::Error
         end
+
+       ensure
+        workarea_order.unlock!
       end
 
       private
