@@ -87,6 +87,8 @@ Workarea.configure do |config|
 
   config.flow_io.webhook_events = [
     "local_item_upserted",
-    "order_upserted_v2"
+    "order_upserted_v2",
+    "experience_deleted_v2",
+    "experience_upserted_v2"
   ]
 end
