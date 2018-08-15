@@ -1,0 +1,51 @@
+module Workarea
+  decorate Storefront::SearchIntegrationTest, with: :flow_io do
+    def test_localized_price_filters
+      create_pricing_sku_with_flow(
+        id: 'SKU1',
+        flow_io_local_items: [
+          build_pricing_flow_io_local_item(regular: 5.to_m("CAD"))
+        ]
+      )
+
+      create_pricing_sku_with_flow(
+        id: 'SKU2',
+        flow_io_local_items: [
+          build_pricing_flow_io_local_item(regular: 70.to_m("CAD"))
+        ]
+      )
+
+      Catalog::Product.create!(
+        name: "Cheap Shirt",
+        variants: [ sku: "SKU1" ]
+      )
+
+      Catalog::Product.create!(
+        name: "Expensive Shirt",
+        variants: [ sku: "SKU2" ]
+      )
+
+      Workarea::Search::Settings.current.update_attributes!(
+        currency_localized_facets: {
+          "CAD" => [
+            { "to" => 19.99 },
+            { "from" => 20.0, "to" => 39.99 },
+            { "from" => 40.0 }
+          ]
+        }
+      )
+
+      cookies['_f60_session'] = 2
+      get storefront.searches_path(q: "shirt", format: :json)
+      assert response.ok?
+
+      get storefront.search_path(q: "shirt")
+      assert_match("Cheap Shirt", response.body)
+      assert_match("Expensive Shirt", response.body)
+
+      get storefront.search_path(price_canada: ["*-19.99"], q: "shirt", locale: "ca")
+      assert_match("Cheap Shirt", response.body)
+      refute_match("Expensive Shirt", response.body)
+    end
+  end
+end

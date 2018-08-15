@@ -1,0 +1,5 @@
+module Workarea
+  decorate Admin::ApplicationController, with: :flow_io do
+    decorated { helper Workarea::Admin::FlowHelper }
+  end
+end

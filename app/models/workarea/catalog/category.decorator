@@ -1,0 +1,8 @@
+module Workarea
+  decorate Catalog::Category, with: :flow_io do
+    decorated do
+      # price facets for currencies other than the default transacting currency
+      field :currency_localized_facets, type: Hash, default: {}
+    end
+  end
+end

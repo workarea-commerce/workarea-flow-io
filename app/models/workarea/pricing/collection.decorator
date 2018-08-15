@@ -77,5 +77,37 @@ module Workarea
         .sort
         .last
     end
+
+    # All localized selling prices grouped by experience_key
+    # eg. { "europe" => [12.4, 34], "canada" => [11.8, 9] }
+    #
+    # @return [::Hash]
+    def localized_selling_prices
+      records.each_with_object({}) do |sku, memo|
+        sku.flow_io_local_items.each do |local_item|
+          memo[local_item.experience.key] ||= []
+          memo[local_item.experience.key] << local_item.to_price.sell.to_f
+        end
+      end
+    end
+
+    # All localized minimum selling pricea grouped by experience_key
+    # eg. { "europe" => 12.4, "canada" => 11.8 }
+    #
+    # @return [::Hash]
+    def localized_min_sell_prices
+      records.each_with_object({}) do |sku, memo|
+        sku.flow_io_local_items.each do |local_item|
+          sell_price = local_item.to_price.sell.to_f
+          experience_key = local_item.experience.key
+
+          memo[experience_key] ||= sell_price
+
+          if sell_price < memo[experience_key]
+            memo[experience_key] = sell_price
+          end
+        end
+      end
+    end
   end
 end

@@ -1,0 +1,44 @@
+module Workarea
+  decorate Admin::SearchSettingsIntegrationTest, with: :flow_io do
+    def test_updating_localized_currency_price_facets
+      patch admin.search_settings_path, params: {
+        synonyms: 'foo, bar',
+        boosts: { 'name' => 3, 'description' => 0.5 },
+        views_factor: 1.25,
+        terms_facets_list: 'color, size',
+        range_facets: {
+          'price' => [
+            { 'from' => '', 'to' => '9.99' },
+            { 'from' => '10', 'to' => '19.99' }
+          ]
+        },
+        currency_localized_facets: {
+          "CAD" => [
+            { "from"=>"", "to"=>"19.99" },
+            {"from"=>"20.0", "to"=>"39.99" },
+            { "from"=>"40.0", "to"=>"" },
+            {"from"=>"", "to"=>""}
+          ],
+          "EUR" => [{ "from"=>"", "to"=>"" }]
+        }
+      }
+
+      settings = Search::Settings.current
+
+      assert_equal('foo, bar', settings.synonyms)
+      assert_equal('3', settings.boosts['name'])
+      assert_equal('0.5', settings.boosts['description'])
+      assert_equal(1.25, settings.views_factor)
+      assert_equal(%w(color size), settings.terms_facets)
+      assert_equal(
+        { 'price' => [{ 'to' => 9.99 }, { 'from' => 10.0, 'to' => 19.99 }] },
+        settings.range_facets
+      )
+
+      assert_equal(
+        { "CAD" => [{ "to" =>19.99 }, { "from" => 20.0, "to" => 39.99 }, { "from" => 40.0 }] },
+        settings.currency_localized_facets
+      )
+    end
+  end
+end

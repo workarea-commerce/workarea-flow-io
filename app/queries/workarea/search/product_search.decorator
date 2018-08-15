@@ -1,0 +1,14 @@
+module Workarea
+  decorate Search::ProductSearch, with: :flow_io do
+    def selected_sort
+      return super unless params[:experience].present? &&
+        (params[:sort] == "price_asc" || params[:sort] == "price_desc")
+
+      if params[:sort] == "price_asc"
+        Sort.new(I18n.t('workarea.sorts.price_asc'), :price_asc, :"sorts.price_#{params[:experience].key.systemize}", :asc)
+      elsif params[:sort] == "price_desc"
+        sort.new(I18n.t('workarea.sorts.price_asc'), :price_asc, :"sorts.price_#{params[:experience].key.systemize}", :asc)
+      end
+    end
+  end
+end

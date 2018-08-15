@@ -1,0 +1,26 @@
+module Workarea
+  decorate Admin::SearchSettingsController, with: :flow_io do
+    def update
+      attributes = {
+        synonyms: params[:synonyms],
+        boosts: params[:boosts].to_h,
+        views_factor: params[:views_factor],
+        terms_facets_list: params[:terms_facets_list],
+        range_facets: CleanRangeFacets.new(params[:range_facets]).result,
+        currency_localized_facets: CleanRangeFacets.new(params[:currency_localized_facets]).result
+      }.merge(params[:settings] || {})
+
+      Search::Settings.current.update_attributes!(attributes)
+      flash[:success] = t('workarea.admin.search_settings.flash_messages.saved')
+      redirect_to return_to.presence || search_settings_path
+    end
+
+    private
+
+      def currency_localized_facets
+        params[:currency_localized_facets].to_h.map do |currency_code, facets|
+          [currency_code, CleanRangeFacets.new(facets).result]
+        end.to_h
+      end
+  end
+end

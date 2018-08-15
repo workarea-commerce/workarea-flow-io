@@ -1,0 +1,39 @@
+module Workarea
+  decorate Search::StorefrontSearch::Response, with: :flow_io do
+    decorated { attr_reader :experience }
+
+    def initialize(options = {})
+      @template = options.fetch(:template, 'show')
+      @message = options[:message]
+      @redirect = options[:redirect]
+
+      @params = options.fetch(:params, {})
+      @experience = @params[:experience]
+      @params[:terms_facets] = terms_facets
+      @params[:range_facets] = range_facets
+      @params[:experience] = options[:experience]
+      @original_params = @params.deep_dup
+
+      @customization = options[:customization]
+
+      reset!(@params)
+    end
+
+
+    private
+
+    def default_range_facets
+      Search::Settings.current.range_facets
+    end
+
+    def range_facets
+      return default_range_facets unless experience.present?
+
+      localized_price_facets = Search::Settings.current.currency_localized_facets.fetch(experience.currency, {})
+
+      default_range_facets
+        .except("price")
+        .merge("price-#{experience.key}" => localized_price_facets)
+    end
+  end
+end

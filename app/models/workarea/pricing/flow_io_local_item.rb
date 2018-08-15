@@ -44,7 +44,7 @@ module Workarea
       #
       def to_price
         Price.new(
-          sku: self.sku,
+          sku: self.sku.clone, # clone the sku so this price isn't added to #prices on real record
           # TODO change when quantity based pricing in implemented
           min_quantity: 1,
           regular: pricing.regular.price,

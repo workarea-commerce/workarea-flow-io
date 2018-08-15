@@ -1,0 +1,50 @@
+%h3= label_tag 'range_facets', t('workarea.admin.facets.price_inputs.price_ranges_label')
+
+.property
+  = label_tag 'range_facets', default_currency.name, class: 'property__name'
+  %table
+    %thead
+      %tr
+        %th= t('workarea.admin.facets.price_inputs.from')
+        %th= t('workarea.admin.facets.price_inputs.to')
+    %tbody
+      - facet.each_with_index do |range, index|
+        %tr
+          %td
+            = currency_symbol
+            = text_field_tag 'range_facets[price][][from]', range['from'], title: t('workarea.admin.facets.price_inputs.from'), class: 'text-box text-box--small', id: "range_facets[price][][from][#{index}]"
+          %td
+            = currency_symbol
+            = text_field_tag 'range_facets[price][][to]', range['to'], title: t('workarea.admin.facets.price_inputs.to'), class: 'text-box text-box--small', id: "range_facets[price][][to][#{index}]"
+      %tr{ data: { cloneable_row: '' } }
+        %td
+          = currency_symbol
+          = text_field_tag 'range_facets[price][][from]', nil, title: t('workarea.admin.facets.price_inputs.from'), class: 'text-box text-box--small'
+        %td
+          = currency_symbol
+          = text_field_tag 'range_facets[price][][to]', nil, title: t('workarea.admin.facets.price_inputs.to'), class: 'text-box text-box--small'
+
+- flow_currencies.each do |currency|
+  .property
+    = label_tag "currency_facets_#{currency.iso_code}", currency.name, class: 'property__name'
+    %table
+      %thead
+        %tr
+          %th= t('workarea.admin.facets.price_inputs.from')
+          %th= t('workarea.admin.facets.price_inputs.to')
+      %tbody
+        - (currency_localized_facets[currency.iso_code] || []).each_with_index do |range, index|
+          %tr
+            %td
+              = currency.symbol
+              = text_field_tag "currency_localized_facets[#{currency.iso_code}][][from]", range['from'], title: t('workarea.admin.facets.price_inputs.from'), class: 'text-box text-box--small', id: "currency_localized_facets[][from][#{currency.iso_code}][#{index}]"
+            %td
+              = currency.symbol
+              = text_field_tag "currency_localized_facets[#{currency.iso_code}][][to]", range['to'], title: t('workarea.admin.facets.price_inputs.to'), class: 'text-box text-box--small', id: "currency_localized_facets[][to][#{currency.iso_code}][#{index}]"
+        %tr{ data: { cloneable_row: '' } }
+          %td
+            = currency.symbol
+            = text_field_tag "currency_localized_facets[#{currency.iso_code}][][from]", nil, title: t('workarea.admin.facets.price_inputs.from'), class: 'text-box text-box--small', id: "currency_localized_facets[][from][#{currency.iso_code}]"
+          %td
+            = currency.symbol
+            = text_field_tag "currency_localized_facets[#{currency.iso_code}][][to]", nil, title: t('workarea.admin.facets.price_inputs.to'), class: 'text-box text-box--small', id: "currency_localized_facets[][to][#{currency.iso_code}]"

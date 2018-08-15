@@ -1,0 +1,25 @@
+module Workarea
+  decorate Search::Storefront::Product, with: :flow_io do
+    def numeric
+      super.merge(localized_selling_prices)
+    end
+
+    def sorts
+      super.merge(localized_sort_prices)
+    end
+
+    private
+
+      def localized_sort_prices
+        pricing.localized_min_sell_prices.map do |experience_key, price|
+          ["price_#{experience_key}".systemize, price]
+        end.to_h
+      end
+
+      def localized_selling_prices
+        pricing.localized_selling_prices.map do |experience_key, prices|
+          ["price_#{experience_key}".systemize, prices.compact.uniq]
+        end.to_h
+      end
+  end
+end

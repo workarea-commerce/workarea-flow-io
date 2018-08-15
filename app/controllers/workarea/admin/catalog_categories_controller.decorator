@@ -1,0 +1,9 @@
+module Workarea
+  decorate Admin::CatalogCategoriesController, with: :flow_io do
+    private
+
+      def set_range_facets
+        @category.currency_localized_facets = CleanRangeFacets.new(params[:currency_localized_facets]).result
+      end
+  end
+end
