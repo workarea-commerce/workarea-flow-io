@@ -440,7 +440,7 @@ module Workarea
                     price: { amount: 120, currency: "CAD" },
                     attributes: { "base_amount" => "88.66", "base_currency" => "USD" },
                     center: nil,
-                    discount: line_item_form.discount
+                    discount: line_item_form.discount&.to_hash
                   }
                 end
               end
@@ -866,7 +866,7 @@ module Workarea
                     price: { amount: 92.95, currency: "EUR" },
                     attributes: { "base_amount" => "104.28", "base_currency" => "USD" },
                     center: nil,
-                    discount: line_item_form.discount
+                    discount: line_item_form.discount&.to_hash
                   }
                 end
               end
