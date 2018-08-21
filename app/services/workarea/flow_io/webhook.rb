@@ -7,12 +7,13 @@ module Workarea
 
       # @param ::Io::Flow::V0::Models::Event
       def self.process(event)
-        "Workarea::FlowIo::Webhook::#{event.discriminator.classify}"
-          .constantize
-          .new(event)
-          .process
-      rescue NameError => _error
-        raise Error::UnhandledWebhook
+        begin
+          klass = "Workarea::FlowIo::Webhook::#{event.discriminator.classify}".constantize
+        rescue NameError => _error
+          raise Error::UnhandledWebhook, "no class defined to handle #{event.discriminator.classify}"
+        end
+
+        klass.new(event).process
       end
 
       attr_reader :event

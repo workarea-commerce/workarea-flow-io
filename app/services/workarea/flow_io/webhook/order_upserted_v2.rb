@@ -24,7 +24,7 @@ module Workarea
         end
 
        ensure
-        workarea_order.unlock!
+        workarea_order&.unlock!
       end
 
       private
