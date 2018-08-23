@@ -1,0 +1,63 @@
+module Workarea
+  decorate Fulfillment, with: :flow_io do
+
+    def ship_items(tracking_number, shipped_items)
+      shipped_items.each do |shipped_item|
+        mark_item_shipped(
+          shipped_item.merge(tracking_number: tracking_number.downcase)
+        )
+      end
+
+      save.tap do |result|
+        if result && Workarea.config.send_transactional_emails
+          Storefront::FulfillmentMailer
+            .shipped(id, tracking_number)
+            .deliver_later
+        end
+
+        if result
+          Workarea::FlowIo::ShippingNotifications.perform_async(id, tracking_number)
+        end
+      end
+    end
+
+    def cancel_items(canceled_items)
+      return unless canceled_items.present?
+
+      occured_at = Time.current
+
+      canceled_items = canceled_items.map do |canceled_item|
+        canceled_item = canceled_item.with_indifferent_access
+        next unless canceled_item['quantity'].to_i > 0
+
+        item = items.detect { |i| i.order_item_id == canceled_item['id'].to_s }
+        next unless item.present?
+
+        item.events.build(
+          status: 'canceled',
+          quantity: canceled_item['quantity'],
+          created_at: occured_at,
+          updated_at: occured_at,
+          data: canceled_item.except('id', 'quantity')
+        )
+        [canceled_item['id'].to_s, canceled_item['quantity']]
+      end.compact
+
+      return unless canceled_items.present?
+
+      result = save
+
+      if result && Workarea.config.send_transactional_emails
+        Storefront::FulfillmentMailer
+          .canceled(id, Hash[canceled_items])
+          .deliver_later
+      end
+
+      if result
+        Workarea::FlowIo::FulfillmentCancellation.perform_async(id, Hash[canceled_items])
+      end
+
+      result
+    end
+  end
+end

@@ -3,30 +3,32 @@ module Workarea
     class BogusClient
       require 'workarea/flow_io/bogus_client/orders'
 
-      def items
-        @items ||= Items.new
-      end
-
-      def organizations
-        @organization ||= Organizations.new
-      end
-
       def experiences
         @experiences || Experiences.new
       end
 
-      def sessions
-        @sessions ||= Sessions.new
+      def fulfillments
+        @fulfillments ||= Fulfillments.new
+      end
+
+      def items
+        @items ||= Items.new
       end
 
       def orders
         @orders ||= Orders.new
       end
 
-      class Items
-        def put_by_number(organization, number, form); end
+      def organizations
+        @organization ||= Organizations.new
+      end
 
-        def delete_by_number(organization_id, number); end
+      def sessions
+        @sessions ||= Sessions.new
+      end
+
+      def shipping_notifications
+        @shipping_notifications = ShippingNotifications.new
       end
 
       class Experiences
@@ -103,6 +105,16 @@ module Workarea
             )
           ]
         end
+      end
+
+      class Fulfillments
+        def put_cancellations(_organization, _number, _fulfillment_cancellation_form); end
+      end
+
+      class Items
+        def put_by_number(organization, number, form); end
+
+        def delete_by_number(organization_id, number); end
       end
 
       class Organizations
@@ -231,6 +243,11 @@ module Workarea
             experiment: nil,
             discriminator: "organization_session"
           }
+        end
+      end
+
+      class ShippingNotifications
+        def post(_organization, _shipping_notification_form)
         end
       end
     end

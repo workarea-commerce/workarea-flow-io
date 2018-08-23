@@ -87,6 +87,25 @@ module Workarea
           end
         end
       end
+
+      def create_shipping_service(overrides = {})
+        attributes = {
+          name: "Test #{shipping_service_count}",
+          service_code: shipping_service_count,
+          rates: [{ price: 1.to_m }]
+        }.merge(overrides)
+
+        Shipping::Service.new(attributes.except(:rates)).tap do |service|
+          if attributes[:rates].present?
+            attributes[:rates].each do |attrs|
+              service.rates.build(attrs)
+            end
+          end
+
+          service.save!
+          Factories.shipping_service_count += 1
+        end
+      end
     end
   end
 end
