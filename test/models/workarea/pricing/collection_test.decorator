@@ -5,8 +5,8 @@ module Workarea
     end
 
     def test_regular_min_price_in_flow_experience
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"))
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"))
 
       create_pricing_sku_with_flow(id: 'SKU1', flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -18,8 +18,8 @@ module Workarea
     end
 
     def test_regular_max_price_in_flow_experience
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"))
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"))
 
       create_pricing_sku_with_flow(id: 'SKU1', flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -32,8 +32,8 @@ module Workarea
     end
 
     def test_sale_min_price_in_flow_experience
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
 
       create_pricing_sku_with_flow(id: 'SKU1', flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -46,8 +46,8 @@ module Workarea
     end
 
     def test_sale_max_price_in_flow_experience
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
 
       create_pricing_sku_with_flow(id: 'SKU1', flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -60,8 +60,8 @@ module Workarea
     end
 
     def test_sell_min_price_in_flow_experience
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
 
       create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -74,8 +74,8 @@ module Workarea
     end
 
     def test_sell_max_price_in_flow_experience
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"), sale: 6.to_m("CAD"))
 
       create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -88,8 +88,8 @@ module Workarea
     end
 
     def test_msrp_min_price_in_flow_experience
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), msrp: 4.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), msrp: 6.to_m("CAD"))
+      item_1 = build_flow_io_local_item(msrp: { price: 4.to_m("CAD"), label: "CA$4.00" })
+      item_2 = build_flow_io_local_item(msrp: { price: 6.to_m("CAD"), label: "CA$6.00" })
 
       create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -102,8 +102,8 @@ module Workarea
     end
 
     def test_msrp_max_price_in_flow_experience
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), msrp: 4.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), msrp: 6.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"), msrp: { price: 4.to_m("CAD"), label: "CA$4.00" })
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"), msrp: { price: 6.to_m("CAD"), label: "CA$6.00" })
 
       create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -116,8 +116,8 @@ module Workarea
     end
 
     def test_localized_selling_prices
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), msrp: 4.to_m("CAD"), sale: 4.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), msrp: 6.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"), sale: 4.to_m("CAD"))
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"),)
 
       create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])
@@ -127,8 +127,8 @@ module Workarea
     end
 
     def test_localized_min_sell_prices
-      item_1 = build_pricing_flow_io_local_item(regular: 5.to_m("CAD"), msrp: 4.to_m("CAD"))
-      item_2 = build_pricing_flow_io_local_item(regular: 7.to_m("CAD"), msrp: 6.to_m("CAD"))
+      item_1 = build_flow_io_local_item(regular: 5.to_m("CAD"))
+      item_2 = build_flow_io_local_item(regular: 7.to_m("CAD"))
 
       create_pricing_sku_with_flow(id: 'SKU1', on_sale: true, flow_io_local_items: [item_1])
       create_pricing_sku_with_flow(id: 'SKU2', flow_io_local_items: [item_2])

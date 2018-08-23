@@ -13,10 +13,7 @@ module Workarea
           }
         ],
         flow_io_local_items: [
-          build_pricing_flow_io_local_item(
-            { experience: canada_experience },
-            regular: 8.to_m("CAD")
-          )
+          build_flow_io_local_item(regular: 8.to_m("CAD"), experience: canada_experience)
         ]
       )
       create_pricing_sku_with_flow(
@@ -29,10 +26,7 @@ module Workarea
           }
         ],
         flow_io_local_items: [
-          build_pricing_flow_io_local_item(
-            { experience: canada_experience },
-            regular: 5.to_m("CAD")
-          )
+          build_flow_io_local_item(regular: 5.to_m("CAD"), experience: canada_experience)
         ]
       )
 

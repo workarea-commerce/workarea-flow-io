@@ -1,17 +1,10 @@
 module Workarea
   decorate Pricing::SkuTest, with: :flow_io do
-    decorated do
-      include Workarea::FlowIo::FlowFixtures
-    end
+    decorated { include Workarea::FlowIo::FlowFixtures }
 
     def test_find_price_with_flow_experience
-      canadian_item = build_pricing_flow_io_local_item(
-        { experience: canada_experience },
-        regular: 5.to_m("CAD"))
-      european_item = build_pricing_flow_io_local_item(
-        { experience: europe_experience },
-        regular: 4.to_m("EUR")
-      )
+      canadian_item = build_flow_io_local_item(regular: 5.to_m("CAD"), experience: canada_experience)
+      european_item = build_flow_io_local_item(regular: 4.to_m("EUR"), experience: europe_experience)
 
       sku = create_pricing_sku_with_flow(
         id: 'SKU',
@@ -23,10 +16,7 @@ module Workarea
     end
 
     def test_find_price_with_flow_experience_returns_in_correct_currency
-      canadian_item = build_pricing_flow_io_local_item(
-        { experience: canada_experience },
-        regular: 5.to_m("CAD"))
-
+      canadian_item = build_flow_io_local_item(regular: 5.to_m("CAD"), experience: canada_experience)
       sku = create_pricing_sku_with_flow(
         id: 'SKU',
         flow_io_local_items: [canadian_item]
@@ -39,14 +29,8 @@ module Workarea
     end
 
     def test_msrp_for_experience
-      canadian_item = build_pricing_flow_io_local_item(
-        { experience: canada_experience },
-        msrp: 5.to_m("CAD"))
-      european_item = build_pricing_flow_io_local_item(
-        { experience: europe_experience },
-        regular: 4.to_m("EUR"),
-        msrp: nil
-      )
+      canadian_item = build_flow_io_local_item(msrp: { price: 5.to_m("CAD"), label: "CA$5.00" }, experience: canada_experience)
+      european_item = build_flow_io_local_item(regular: 4.to_m("EUR"), msrp: nil, experience: europe_experience)
 
       sku = create_pricing_sku_with_flow(
         id: 'SKU',
@@ -55,61 +39,6 @@ module Workarea
 
       assert_equal(5.to_m("CAD"), sku.msrp_for_experience(canada_experience))
       assert_nil(sku.msrp_for_experience(europe_experience))
-    end
-
-    def test_sale_price_for_experience
-      canadian_item = build_pricing_flow_io_local_item(
-        { experience: canada_experience },
-        sale: 5.to_m("CAD"))
-      european_item = build_pricing_flow_io_local_item(
-        { experience: europe_experience },
-        regular: 4.to_m("EUR"),
-        sale: nil
-      )
-
-      sku = create_pricing_sku_with_flow(
-        id: 'SKU',
-        flow_io_local_items: [canadian_item, european_item]
-      )
-
-      assert_equal(5.to_m("CAD"), sku.sale_price_for_experience(canada_experience))
-      assert_nil(sku.sale_price_for_experience(europe_experience))
-    end
-
-    def test_import_flow_local_price
-      sku = create_pricing_sku(id: "432981453-6")
-      sku.import_flow_local_item flow_local_item
-      # import a second time to test duplicates aren't created
-      sku.import_flow_local_item flow_local_item
-
-      assert_equal(1, sku.flow_io_local_items.count)
-
-      local_item = sku.flow_io_local_items.first
-
-      assert_equal("exp-f9ec9be879a341ddb8a67e9a1f34775b", local_item.experience.id)
-      assert_equal("europe", local_item.experience.key)
-      assert_equal("Europe", local_item.experience.name)
-      assert_equal(Country["GB"], local_item.experience.country)
-      assert_equal("EUR", local_item.experience.currency)
-      assert_equal("en", local_item.experience.language)
-
-      assert_equal({ key: "vat", label: "Includes VAT" }, local_item.pricing.included_levies)
-
-      sell_price = local_item.pricing.sell
-      assert_equal(Money.new(5000, "CAD"), sell_price.price)
-      assert_equal("CA$50.00", sell_price.label)
-
-      regular_price = local_item.pricing.regular
-      assert_equal(Money.new(5000, "CAD"), regular_price.price)
-      assert_equal("CA$50.00", regular_price.label)
-
-      sale_price = local_item.pricing.sale
-      assert_equal(Money.new(4000, "CAD"), sale_price.price)
-      assert_equal("CA$40.00", sale_price.label)
-
-      msrp = local_item.pricing.msrp
-      assert_equal(Money.new(6000, "CAD"), msrp.price)
-      assert_equal("CA$60.00", msrp.label)
     end
 
     private

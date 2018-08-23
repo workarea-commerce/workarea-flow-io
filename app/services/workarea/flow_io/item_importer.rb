@@ -1,7 +1,17 @@
 module Workarea
   module FlowIo
-    class Webhook::LocalItemUpserted < Webhook
-      def process
+    class ItemImporter
+      def self.perform!(item)
+        new(item).perform!
+      end
+
+      attr_reader :item
+
+      def initialize(item)
+        @item = item
+      end
+
+      def perform!
         if local_item.present?
           local_item.update_attributes local_item_attributes
         else
@@ -11,14 +21,11 @@ module Workarea
       end
 
       private
-        delegate :experience, :pricing, to: :upserted_local_item
+        delegate :local, to: :item
+        delegate :experience, to: :local
 
         def sku
-          @sku ||= event.local_item.item.number
-        end
-
-        def upserted_local_item
-          @upserted_local_item ||= event.local_item
+          item.number
         end
 
         def pricing_sku
@@ -32,7 +39,7 @@ module Workarea
         end
 
         def pricing_attributes
-          @pricing_attributes || pricing.attributes.symbolize_keys
+          @pricing_attributes || local.price_attributes.symbolize_keys
         end
 
         def msrp

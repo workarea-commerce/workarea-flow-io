@@ -24,7 +24,7 @@ module Workarea
       return super unless flow_experience.present?
 
       @sale_min_price ||= records
-        .map { |pricing_sku| pricing_sku.sale_price_for_experience(flow_experience) }
+        .map { |pricing_sku| pricing_sku.find_price(experience: flow_experience).sale }
         .compact
         .sort
         .first
@@ -34,7 +34,7 @@ module Workarea
       return super unless flow_experience.present?
 
       @sale_max_price ||= records
-        .map { |pricing_sku| pricing_sku.sale_price_for_experience(flow_experience) }
+        .map { |pricing_sku| pricing_sku.find_price(experience: flow_experience).sale }
         .compact
         .sort
         .last

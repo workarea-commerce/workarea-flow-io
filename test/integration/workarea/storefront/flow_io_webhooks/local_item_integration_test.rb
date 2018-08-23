@@ -6,12 +6,21 @@ module Workarea
       class LocalItemIntegrationTest < Workarea::IntegrationTest
         include Workarea::FlowIo::WebhookIntegrationTest
 
+        setup :setup_sidekiq
+        teardown :teardown_sidekiq
+
         def test_local_item_update
           _sku = create_pricing_sku(id: "432981453-6")
+          Workarea::IndexSkus.clear
+
           post_signed storefront.flow_io_webhook_path, params: local_item_upserted
+          # post a second time to ensure updating doesn't throw errors
+          post_signed storefront.flow_io_webhook_path, params: local_item_upserted
+
           assert(response.ok?)
           assert_equal({ "status" => 200 }, JSON.parse(response.body))
           assert_equal(200, response.status)
+          assert_equal(1, Workarea::IndexSkus.jobs.size)
         end
 
         def test_missing_sku
@@ -25,6 +34,19 @@ module Workarea
         end
 
         private
+
+          def setup_sidekiq
+            Sidekiq::Testing.fake!
+
+            Sidekiq::Callbacks.async(Workarea::IndexSkus)
+            Sidekiq::Callbacks.enable(Workarea::IndexSkus)
+
+            Workarea::IndexSkus.clear
+          end
+
+          def teardown_sidekiq
+            Sidekiq::Testing.inline!
+          end
 
         def local_item_upserted
           {

@@ -2,6 +2,7 @@ namespace :workarea do
   namespace :flow_io do
     desc 'export products'
     task export_products: :environment do
+      puts "Exporting products..."
       client = FlowCommerce.instance(token: Workarea::FlowIo.api_token)
       organization_id = Workarea::FlowIo.organization_id
 
@@ -17,6 +18,7 @@ namespace :workarea do
 
     desc 'create localization attributes'
     task create_localization_attributes: :environment do
+      puts "Creating localization attributes..."
       client = Workarea::FlowIo.client
       organization_id = Workarea::FlowIo.organization_id
 
@@ -32,6 +34,7 @@ namespace :workarea do
 
     desc 'create webhooks'
     task create_webhooks: :environment do
+      puts "Creating webhooks..."
       unless Workarea::FlowIo.webhook_shared_secret.present?
         warn <<~eos
           **************************************************
@@ -59,7 +62,14 @@ namespace :workarea do
       )
     end
 
-    desc 'delete items'
+    desc 'Initialize Flow Plugin'
+    task install: :environment do
+      Rake::Task['workarea:flow_io:create_localization_attributes'].execute
+      Rake::Task['workarea:flow_io:create_webhooks'].execute
+      Rake::Task['workarea:flow_io:export_products'].execute
+    end
+
+    desc 'Delete items'
     task delete_products: :environment do
       client = FlowCommerce.instance(token: Workarea::FlowIo.api_token)
       organization_id = Workarea::FlowIo.organization_id
@@ -92,11 +102,11 @@ namespace :workarea do
           offset += page_size
 
           items.each do |item|
-            sku = item.number
+            puts item.number
             begin
-              Workarea::Pricing::Sku.find(sku).import_flow_item(item)
+              Workarea::FlowIo::ItemImporter.perform!(item)
             rescue Mongoid::Errors::DocumentNotFound => _error
-              puts "Missing pricing sku: #{sku}"
+              puts "Missing pricing sku: #{item.number}"
             end
           end
         end

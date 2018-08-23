@@ -43,49 +43,27 @@ module Workarea
               sale: { cents: 8141.0, currency_iso: "USD" }
             }
           ],
-          flow_io_local_items: overrides[:flow_io_local_items] || [build_pricing_flow_io_local_item]
+          flow_io_local_items: overrides[:flow_io_local_items] || [build_flow_io_local_item]
         }.merge(overrides)
 
         Workarea::Pricing::Sku.new(attributes).tap(&:save!)
       end
 
-      def build_pricing_flow_io_local_item(overrides = {},
-                                           sell: 120.to_m("CAD"),
-                                           msrp: 140.to_m("CAD"),
-                                           regular: 120.to_m("CAD"),
-                                           sale: 110.to_m("CAD"))
+      def build_flow_io_local_item(regular: 120.to_m("CAD"), sale: 110.to_m("CAD"), **overrides)
+        price = { regular: { price: regular, label: regular.format } }.tap do |p|
+          if sale.present?
+            p[:sale] = { price: sale, label: sale.format }
+          end
+        end
 
         attributes = {
           id: "mit-86beca991a514dac9a5fd48443f00b6b",
           experience: build_flow_io_experience_summary,
-          pricing: {
-            included_levies: { key: nil, label: nil },
-            sell: {
-              price: sell,
-              label: "CA$120.00"
-            },
-            regular: {
-              price: regular,
-              label: "CA$120.00"
-            },
-          }
+          msrp: { price: 140.to_m("CAD"), label: "CA$140.00" },
+          prices: [price]
         }.merge(overrides)
 
-        Workarea::Pricing::FlowIoLocalItem.new(attributes).tap do |local_item|
-          if msrp.present?
-            local_item.pricing.msrp = Workarea::Pricing::FlowIoPriceWithLabel.new(
-              price: msrp,
-              label: "CA$140.00"
-            )
-          end
-
-          if sale.present?
-            local_item.pricing.sale = Workarea::Pricing::FlowIoPriceWithLabel.new(
-              price: sale,
-              label: "CA$110.00"
-            )
-          end
-        end
+        Workarea::FlowIo::LocalItem.new(attributes)
       end
 
       def create_shipping_service(overrides = {})
