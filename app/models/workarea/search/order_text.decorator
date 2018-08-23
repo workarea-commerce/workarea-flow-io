@@ -1,0 +1,8 @@
+module Workarea
+  decorate Search::OrderText, with: :flow_io do
+    def text
+      return super unless @order.flow_order_id.present?
+      super +  " #{@order.flow_order_id}"
+    end
+  end
+end
