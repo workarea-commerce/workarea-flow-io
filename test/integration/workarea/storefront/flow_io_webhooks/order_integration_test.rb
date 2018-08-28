@@ -18,11 +18,8 @@ module Workarea
           order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)
           order.add_item(product_id: product_2.id, sku: '332477498-5', quantity: 1)
 
-          shipping = Workarea::Shipping.find_or_create_by(order_id: order.id)
-
-          Workarea::Pricing.perform(order, shipping)
-
           post storefront.flow_io_webhook_path, params: order_upserted, headers: headers
+          shipping = Workarea::Shipping.find_or_create_by(order_id: order.id)
 
           assert(response.ok?)
           assert_equal({ "status" => 200 }, JSON.parse(response.body))

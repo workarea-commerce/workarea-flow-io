@@ -182,7 +182,13 @@ module Workarea
         end
 
         def shipping
-          @shippipng ||= Shipping.find_or_create_by(order_id: order.id)
+          @shippipng ||=
+          begin
+            # get rid of anything that could be a holdover from the
+            # workarea checkout
+            Workarea::Shipping.where(order_id: order.id).destroy_all
+            Shipping.create(order_id: order.id)
+          end
         end
 
         # @return [::Io::Flow::V0::Models::OrderPriceDetail]

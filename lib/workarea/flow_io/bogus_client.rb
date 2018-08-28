@@ -156,7 +156,7 @@ module Workarea
 
       class Sessions
         def get_by_session(session = 1)
-          attributes = if session == 1
+          if session == 1
             domestic_attributes
           else
             foreign_attributes
