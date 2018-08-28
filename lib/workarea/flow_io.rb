@@ -10,6 +10,7 @@ require 'workarea/freedom_patches/flow_io'
 
 require 'workarea/flow_io/engine'
 require 'workarea/flow_io/version'
+require 'workarea/flow_io/http_handler'
 require 'workarea/flow_io/bogus_client'
 
 module Workarea
@@ -34,9 +35,16 @@ module Workarea
       config.image_sizes
     end
 
-    def self.client
+    def self.client(timeout: nil, open_timeout: nil, read_timeout: nil, **_options)
+      timeout ||= config.default_timeout
+      read_timeout ||= timeout
+      open_timeout ||= timeout
+
       if api_token.present?
-        FlowCommerce.instance(token: Workarea::FlowIo.api_token)
+        FlowCommerce.instance(
+          token: Workarea::FlowIo.api_token,
+          http_handler: Workarea::FlowIo::HttpHandler.new(open_timeout: open_timeout, read_timeout: read_timeout)
+        )
       else
         FlowIo::BogusClient.new
       end

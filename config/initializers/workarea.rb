@@ -3,6 +3,9 @@ Workarea.configure do |config|
 
   config.flow_io ||= ActiveSupport::Configurable::Configuration.new
 
+  # default timeout on flow api calls
+  config.flow_io.default_timeout = 2
+
   # hash of processor to image tags for flow
   # see https://docs.flow.io/type/image-tag
   config.flow_io.image_sizes = {
