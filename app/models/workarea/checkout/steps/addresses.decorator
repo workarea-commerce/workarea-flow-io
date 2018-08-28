@@ -1,9 +1,0 @@
-module Workarea
-  decorate Checkout::Steps::Addresses, with: :flow_io do
-    def set_default_shipping_option
-      return if order.flow?
-      super
-    end
-  end
-end
-
