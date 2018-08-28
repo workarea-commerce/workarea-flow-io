@@ -1,7 +1,7 @@
 - if order.flow?
   .grid__cell
     .card{ class: card_classes(:flow, local_assigns[:active]) }
-      = link_to order_path(order), class: 'card__header' do
+      = link_to flow_order_path(order), class: 'card__header' do
         %span.card__header-text= t('workarea.admin.orders.attributes.flow.title')
         = inline_svg 'workarea/admin/icons/link.svg', class: 'card__icon'
 
@@ -17,4 +17,9 @@
                 #{local_time_ago(order.imported_from_flow_at)}
               - else
                 #{t('workarea.admin.orders.cards.flow.pending_import')}
-
+            %li
+              %strong= t('workarea.admin.orders.cards.flow.flow_total_price')
+              = number_to_currency order.flow_total_price
+            %li
+              %strong= t('workarea.admin.orders.cards.flow.flow_tax_total')
+              = number_to_currency order.flow_tax_total

@@ -8,6 +8,33 @@ en:
             id: Flow Order ID
             imported_at: Imported At
             pending_import: Pending Import
+            flow_total_price: Flow Total Price
+            flow_tax_total: Flow Tax Total
         attributes:
-            flow:
-              title: Flow
+          flow:
+            title: Flow
+        flow:
+          imported_at: Imported At
+          console: View in Flow Console
+          flow_order_id: Flow Order ID
+          checkout:
+            title: Flow Checkout
+            customer: 'Customer:'
+            status: 'Status:'
+          items:
+            flow_pricing: "Flow Pricing (%{currency})"
+            pricing: "Base Pricing (%{currency})"
+            product: Product
+            quantity: Quantity
+            title: Items
+          title: "%{name} Details"
+          totals:
+            base_totals: Base Totals (%{currency})
+            flow_totals: "Flow Totals (%{currency})"
+            shipping: Shipping
+            subtotal: Subtotal
+            tax: Tax
+            title: Totals
+            total_price: Total Price
+            total_value: Total Value
+

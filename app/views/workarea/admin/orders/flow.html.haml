@@ -1,0 +1,112 @@
+- @page_title = t('workarea.admin.orders.flow.title', name: @order.name)
+
+.view
+  .view__header
+    .grid.grid--middle.grid--right
+      .grid__cell.grid__cell--50
+        .view__heading
+          = link_to_index_for(@order)
+          %h1= link_to @order.name, url_for(@order)
+      .grid__cell.grid__cell--25
+        = render_aux_navigation_for(@order)
+
+  .view__container
+    = render_cards_for(@order, :flow)
+
+  .view__container.view__container--narrow
+    .grid
+      .grid__cell.grid__cell--25
+        %h2= t('workarea.admin.orders.flow.checkout.title')
+        %ul.list-reset
+        - if @order.user.present? || @order.email.present?
+          %li
+            %strong= t('workarea.admin.orders.flow.checkout.customer')
+            - if @order.user.present?
+              = link_to @order.user.name, user_path(@order.user)
+            - else
+              = @order.email
+          %li
+            %strong= t('workarea.admin.orders.flow.checkout.status')
+            = @order.model.status.to_s.titleize
+          %li
+            %strong= t('workarea.admin.orders.flow.flow_order_id')
+            = @order.flow_order_id
+          %li
+            %strong= t('workarea.admin.orders.flow.imported_at')
+            - if @order.placed?
+              = local_time_ago(@order.imported_from_flow_at)
+          %li
+            %br
+            %strong= link_to t('workarea.admin.orders.flow.console'), "https://console.flow.io/#{Workarea::FlowIo.organization_id}/orders/#{@order.flow_order_id}"
+      .grid__cell.grid__cell--75
+        %h2= t('workarea.admin.orders.flow.items.title')
+        %table
+          %thead
+            %tr
+              %th= t('workarea.admin.orders.flow.items.product')
+              %th.align-center= t('workarea.admin.orders.flow.items.quantity')
+              %th.align-right= t('workarea.admin.orders.flow.items.pricing', currency: @order.total_price.currency.iso_code)
+              %th.align-right= t('workarea.admin.orders.flow.items.flow_pricing', currency: @order.flow_total_price.currency.iso_code)
+          %tbody
+            - @order.items.each do |item|
+              %tr
+                %td
+                  .grid.grid--auto
+                    .grid__cell
+                      = link_to image_tag(product_image_url(item.image, :small), alt: item.product.name), catalog_product_url(item.product, sku: item.sku)
+                    .grid__cell
+                      %p= link_to item.product.name, catalog_product_path(item.product, sku: item.sku)
+                      %p= item.sku
+                      - if item.customizations.any?
+                        - item.customizations.each do |name, value|
+                          %p #{name.titleize}: #{value}
+                      = append_partials('admin.order_attributes_item_details', item: item)
+                %td.align-center= item.quantity
+                %td.align-right
+                  - item.price_adjustments.each do |adjustment|
+                    %p
+                      %strong= price_adjustment_description_for(adjustment)
+                      %span= number_to_currency(adjustment.amount)
+                %td.align-right
+                  - item.flow_price_adjustments.each do |adjustment|
+                    %p
+                      %strong= price_adjustment_description_for(adjustment)
+                      %span= number_to_currency(adjustment.amount)
+
+        .grid.grid--right
+          .grid__cell.grid__cell--50
+            %table.data-pairs
+              %tbody
+                %tr
+                  %td
+                  %td
+                    %strong= t('workarea.admin.orders.flow.totals.base_totals', currency: @order.total_price.currency.iso_code)
+                  %td
+                    %strong= t('workarea.admin.orders.flow.totals.flow_totals', currency: @order.flow_total_price.currency.iso_code)
+                %tr
+                  %th
+                    %span.data-pairs__name= t('workarea.admin.orders.flow.totals.subtotal')
+                  %td= number_to_currency @order.subtotal_price
+                  %td= number_to_currency @order.flow_subtotal_price
+                %tr
+                  %th
+                    %span.data-pairs__name= t('workarea.admin.orders.flow.totals.shipping')
+                  %td= number_to_currency @order.shipping_total
+                  %td= number_to_currency @order.flow_shipping_total
+                %tr
+                  %th
+                    %span.data-pairs__name= t('workarea.admin.orders.flow.totals.tax')
+                  %td= number_to_currency @order.tax_total
+                  %td= number_to_currency @order.flow_tax_total
+                %tr
+                  %th
+                    %span.data-pairs__name= t('workarea.admin.orders.flow.totals.total_price')
+                  %td
+                    %strong= number_to_currency @order.total_price
+                  %td
+                    %strong= number_to_currency @order.flow_total_price
+                %tr
+                  %th
+                    %span.data-pairs__name= t('workarea.admin.orders.flow.totals.total_value')
+                  %td= number_to_currency @order.total_value
+                  %td= number_to_currency @order.flow_total_value
