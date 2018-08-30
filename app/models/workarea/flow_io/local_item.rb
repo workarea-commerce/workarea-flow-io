@@ -21,7 +21,7 @@ module Workarea
       def to_price(quantity = 1)
         prices.sort_by(&:min_quantity).reverse.detect do |localized_price|
           quantity >= localized_price.min_quantity
-        end&.to_price || Price.new(regular: 0.to_m(experience.currency))
+        end&.to_price || Workarea::Pricing::Price.new(regular: 0.to_m(experience.currency))
       end
     end
   end
