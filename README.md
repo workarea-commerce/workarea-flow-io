@@ -8,8 +8,7 @@ Secrets
     flow_io:
       api_token:
       organziation_id:
-      webhook_username:
-      webhook_password:
+      webhook_shared_secret:
 
 Configuration
 --------------------------------------------------------------------------------

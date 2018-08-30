@@ -17,7 +17,7 @@ module Workarea
       end
 
       def test_safelist_webhook_requests
-        post "/", params: {}, headers: headers
+        post_signed "/", params: { faked: "request" }.to_json
         assert_equal("allow flow webhooks", @rack_attack_rules["rack.attack.matched"])
         assert_equal(:safelist, @rack_attack_rules["rack.attack.match_type"])
       end

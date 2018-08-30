@@ -6,14 +6,25 @@ module Workarea
         test.teardown :restore_credentials
       end
 
+      def post_signed(path, params:, **args)
+        digest = OpenSSL::Digest.new('sha256')
+        signature = "sha-256=#{OpenSSL::HMAC.hexdigest(digest, webhook_shared_secret, params.to_s)}"
+
+        headers = {
+          'X-Flow-Signature' => signature,
+          'CONTENT_TYPE' => 'application/json'
+        }
+
+        post(path, args.merge(params: params, headers: headers))
+      end
+
       private
 
         def setup_flow_io_basic_auth_credentials
           @_old_credentials = Workarea::FlowIo.credentials
 
           Rails.application.secrets.flow_io = {
-            webhook_username: "flow_io",
-            webhook_password: "password"
+            webhook_shared_secret: "password"
           }
         end
 
@@ -21,11 +32,8 @@ module Workarea
           Rails.application.secrets.flow_io = @_old_credentials
         end
 
-        def headers
-          {
-            "Authorization" => "Basic #{Base64.encode64('flow_io:password')}",
-            'CONTENT_TYPE' => 'application/json'
-          }
+        def webhook_shared_secret
+          Workarea::FlowIo.webhook_shared_secret
         end
     end
   end

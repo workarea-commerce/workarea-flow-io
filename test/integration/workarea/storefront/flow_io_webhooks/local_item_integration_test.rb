@@ -8,14 +8,14 @@ module Workarea
 
         def test_local_item_update
           _sku = create_pricing_sku(id: "432981453-6")
-          post storefront.flow_io_webhook_path, params: local_item_upserted, headers: headers
+          post_signed storefront.flow_io_webhook_path, params: local_item_upserted
           assert(response.ok?)
           assert_equal({ "status" => 200 }, JSON.parse(response.body))
           assert_equal(200, response.status)
         end
 
         def test_missing_sku
-          post storefront.flow_io_webhook_path, params: local_item_upserted, headers: headers
+          post_signed storefront.flow_io_webhook_path, params: local_item_upserted
           refute(response.ok?)
           assert_equal(404, response.status)
 

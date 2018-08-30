@@ -1,10 +1,15 @@
 class Rack::Attack
   safelist('allow flow webhooks') do |req|
-    auth = Rack::Auth::Basic::Request.new(req.env)
+    request_signature = req.env['HTTP_X_FLOW_SIGNATURE']
 
-    auth.provided? && auth.credentials == [
-      Workarea::FlowIo.webhook_username,
-      Workarea::FlowIo.webhook_password
-    ]
+    next false unless request_signature.present?
+
+    body = req.body.read
+    req.body.rewind
+
+    Workarea::FlowIo::WebhookRequestSignature.valid?(
+      request_signature: request_signature,
+      request_body: body
+    )
   end
 end

@@ -50,12 +50,8 @@ module Workarea
       end
     end
 
-    def self.webhook_username
-      credentials[:webhook_username]
-    end
-
-    def self.webhook_password
-      credentials[:webhook_password]
+    def self.webhook_shared_secret
+       credentials[:webhook_shared_secret]
     end
 
     # Conditionally use the real gateway when secrets are present.

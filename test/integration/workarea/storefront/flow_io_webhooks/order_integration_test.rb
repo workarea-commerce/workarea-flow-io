@@ -18,7 +18,7 @@ module Workarea
           order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)
           order.add_item(product_id: product_2.id, sku: '332477498-5', quantity: 1)
 
-          post storefront.flow_io_webhook_path, params: order_upserted, headers: headers
+          post_signed storefront.flow_io_webhook_path, params: order_upserted
           shipping = Workarea::Shipping.find_or_create_by(order_id: order.id)
 
           assert(response.ok?)
@@ -57,7 +57,7 @@ module Workarea
         end
 
         def test_order_not_found
-          post storefront.flow_io_webhook_path, params: invalid_order_params, headers: headers
+          post_signed storefront.flow_io_webhook_path, params: invalid_order_params
           refute(response.ok?)
 
           message = JSON.parse(response.body)

@@ -2,7 +2,7 @@ module Workarea
   module Storefront
     class FlowIoWebhookController < Storefront::ApplicationController
       skip_before_action :verify_authenticity_token
-      before_action :authenticate
+      before_action :verify_signature
 
       def event
         begin
@@ -21,13 +21,13 @@ module Workarea
 
       private
 
-        def authenticate
-          authenticated = authenticate_with_http_basic do |username, password|
-            FlowIo.webhook_username.present? && FlowIo.webhook_password.present? &&
-              username == FlowIo.webhook_username && password == FlowIo.webhook_password
-          end
+        def verify_signature
+          request_valid = FlowIo::WebhookRequestSignature.valid?(
+            request_signature: request.headers['X-Flow-Signature'],
+            request_body: request.raw_post
+          )
 
-          unsuccessful_response unless authenticated
+          unsuccessful_response unless request_valid
         end
 
         def successful_response

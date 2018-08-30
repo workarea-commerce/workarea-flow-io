@@ -45,14 +45,11 @@ namespace :workarea do
       client = Workarea::FlowIo.client
       organization_id = Workarea::FlowIo.organization_id
       host = Workarea.config.host
-      webhook_username = Workarea::FlowIo.webhook_username
-      webhook_password = Workarea::FlowIo.webhook_password
 
       webhook_url = Workarea::Storefront::Engine
         .routes
         .url_helpers
         .flow_io_webhook_url(host: host, protocol: "https")
-        .gsub("https://", "https://#{webhook_username}:#{webhook_password}@")
 
       client.webhooks.post(
         organization_id,
