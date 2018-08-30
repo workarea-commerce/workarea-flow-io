@@ -32,11 +32,10 @@ namespace :workarea do
 
     desc 'create webhooks'
     task create_webhooks: :environment do
-      unless Workarea::FlowIo.webhook_username.present? &&
-          Workarea::FlowIo.webhook_password.present?
+      unless Workarea::FlowIo.webhook_shared_secret.present?
         warn <<~eos
           **************************************************
-          ⛔️ Webhooks require flow.webhook_username and flow.webhook_password to be set in your credentials/secrets
+          ⛔️ Webhooks require flow_io.webhook_shared_secret to be set in your credentials/secrets
           **************************************************
         eos
         next
