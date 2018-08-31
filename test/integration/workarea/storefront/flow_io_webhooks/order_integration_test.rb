@@ -56,6 +56,32 @@ module Workarea
           assert_equal("paid", shipping.delivery_duty)
         end
 
+        def test_order_update_no_billing_address
+          product = create_product(variants: [{ sku: '386555310-9', regular: 5.00 }])
+          product_2 = create_product(variants: [{ sku: '332477498-5', regular: 5.00 }])
+
+          _shipping_service = create_shipping_service
+
+          order = create_order(id: '6F3A2186EB', experience: canada_experience)
+
+          order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)
+          order.add_item(product_id: product_2.id, sku: '332477498-5', quantity: 1)
+
+          shipping = Workarea::Shipping.find_or_create_by(order_id: order.id)
+
+          Workarea::Pricing.perform(order, shipping)
+
+          params = canadian_webhook_payload
+          params[:order][:payments].first.delete(:address)
+
+          post storefront.flow_io_webhook_path, params: params.to_json, headers: headers
+
+          order.reload
+          payment = Payment.find(order.id)
+
+          assert(payment.address.valid?)
+        end
+
         def test_order_not_found
           post_signed storefront.flow_io_webhook_path, params: invalid_order_params
           refute(response.ok?)

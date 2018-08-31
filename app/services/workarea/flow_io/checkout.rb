@@ -48,8 +48,8 @@ module Workarea
 
         # set the shipping and billing addresses
         shipping.set_address(shipping_address_params(flow_order.destination))
-        payment.set_address(billing_address_params(flow_payments.first.address))
 
+        payment.set_address(billing_address_params(flow_billing_address))
 
         # Out of the box the payments will be authed and captured by flow
         # at the time of purchase, these tenders are generated to
@@ -218,6 +218,10 @@ module Workarea
         def payment_collection
           wa_checkout = Workarea::Checkout.new(order)
           @payment_collection ||= Workarea::Checkout::CollectPayment.new(wa_checkout)
+        end
+
+        def flow_billing_address
+          flow_payments.first.address || flow_order.destination
         end
     end
   end
