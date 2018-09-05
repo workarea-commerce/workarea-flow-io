@@ -24,10 +24,12 @@ WORKAREA.registerModule('flowCountryPicker', (function () {
                         locale = pathLocale(path),
                         redirectUrl;
 
+                    WORKAREA.cookie.create('flow_experience', encodeURIComponent(JSON.stringify(session.experience)), 365);
+
                     if (locale !== null) {
                         url = url.replace(locale, "");
                     }
-                    redirectUrl = WORKAREA.url.updateParams(url, {sync_country: true, locale: country});
+                    redirectUrl = WORKAREA.url.updateParams(url, {locale: country});
 
                     WORKAREA.url.redirectTo(redirectUrl);
                 }

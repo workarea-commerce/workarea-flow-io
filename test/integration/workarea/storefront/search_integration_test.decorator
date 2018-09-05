@@ -43,7 +43,7 @@ module Workarea
       assert_match("Cheap Shirt", response.body)
       assert_match("Expensive Shirt", response.body)
 
-      get storefront.search_path(price_canada: ["*-19.99"], q: "shirt", locale: "ca")
+      get storefront.search_path(price_canada: ["*-19.99"], q: "shirt", locale: "can")
       assert_match("Cheap Shirt", response.body)
       refute_match("Expensive Shirt", response.body)
     end

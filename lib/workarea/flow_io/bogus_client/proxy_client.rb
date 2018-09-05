@@ -11,7 +11,9 @@ module Workarea
 
         def method_missing(method, *args)
           if client.respond_to?(method)
-            BogusClient.requests[client_name][method] << args
+            if BogusClient.store_requests
+              BogusClient.requests[client_name][method] << args
+            end
             client.send(method, *args)
           else
             super

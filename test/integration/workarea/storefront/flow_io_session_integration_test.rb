@@ -3,6 +3,10 @@ require 'test_helper'
 module Workarea
   module Storefront
     class FlowIoSessionIntegrationTest < Workarea::IntegrationTest
+      include FlowBogusClientSupport
+
+      thread_cattr_accessor :geo_headers
+
       class AddEnvMiddleware
         def initialize(app)
           @app = app
@@ -10,66 +14,80 @@ module Workarea
 
         def call(env)
           env.merge!(Rails.application.env_config)
+          if FlowIoSessionIntegrationTest.geo_headers.present?
+            env.merge!(FlowIoSessionIntegrationTest.geo_headers)
+          end
           @app.call(env)
         end
       end
 
       setup :clean_rack_cache_storage
 
-      def test_without_f60_session
+      def test_domestic_request
         Workarea.with_config do |config|
           config.strip_http_caching_in_tests = false
 
-          get('/?sync_country=true', headers: { "HTTP_COOKIE" => "_f60_session=1;" })
-          assert_equal('pass', response.headers['X-Rack-Cache'])
-          flow_session = JSON.parse(response.cookies["flow_io"])
-          assert(flow_session.present?)
+          get("/")
 
+          assert_equal('miss, store', response.headers['X-Rack-Cache'])
+          assert_match("_f60_session=F51MUamlJKDTPUwlhZ4D2bwYnFUbmlwv0ULNnlMs2UkURkioYJNmNY5pRjNHC3bH", response.headers['Set-Cookie'])
+          assert_match("flow_experience", response.headers['Set-Cookie'])
+
+          expected_session_request = [nil, { ip: "127.0.0.1" }]
+          assert_equal(expected_session_request, FlowIo::BogusClient.requests[:sessions][:post_organizations_by_organization].first)
+          assert_equal("", cookies[:flow_experience])
+
+          assert_equal(1, FlowIo::BogusClient.total_request_count)
+
+          get("/")
+          assert_equal('fresh', response.headers['X-Rack-Cache'])
+
+          assert_equal(1, FlowIo::BogusClient.total_request_count)
         end
       end
 
-      def test_with_flow_session
+      def test_foreign_session
         Workarea.with_config do |config|
           config.strip_http_caching_in_tests = false
 
-          session = FlowIo.client.sessions.get_by_session(1).to_hash
-          session_cookie_string = Rack::Utils.add_cookie_to_header(nil, "flow_io", JSON.generate(session))
+          with_geo_headers('HTTP_GEOIP_CITY_COUNTRY_CODE3' => "CAN") do
+            get("/")
 
-          get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })
-          assert_equal('miss, store', response.headers['X-Rack-Cache'])
-          assert_equal("X-Requested-With, X-Flash-Messages, X-Flow-Experience", response.headers["Vary"])
-          assert_nil(response.headers["X-Flow-Experience"])
+            assert_equal('miss, store', response.headers['X-Rack-Cache'])
+            assert_match("_f60_session=F51neI7zcfN7FVFyvuOmi9IvY1qY6CPtBk3dPJoeNL1Xy1wRxxfnjRgft8S8CapT", response.headers['Set-Cookie'])
+            assert_match("flow_experience", response.headers['Set-Cookie'])
 
-          get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })
-          assert_equal('fresh', response.headers['X-Rack-Cache'])
-        end
-      end
+            expected_session_request = [nil, { ip: "127.0.0.1", country: "CAN" }]
+            assert_equal(expected_session_request, FlowIo::BogusClient.requests[:sessions][:post_organizations_by_organization].first)
+            expected_experience = {
+              key: "canada",
+              name: "Canada",
+              region: { id: "can" },
+              country: "CAN",
+              currency: "CAD",
+              language: "en",
+              measurement_system: "metric"
+            }.deep_stringify_keys
+            assert_equal(expected_experience, JSON.parse(cookies[:flow_experience]))
 
-      def test_with_flow_session_in_experience
-        Workarea.with_config do |config|
-          config.strip_http_caching_in_tests = false
+            assert_equal(1, FlowIo::BogusClient.total_request_count)
 
-          session = FlowIo.client.sessions.get_by_session(1).to_hash
-          session_cookie_string = Rack::Utils.add_cookie_to_header(nil, "flow_io", JSON.generate(session))
-          get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })
-          assert_equal('miss, store', response.headers['X-Rack-Cache'])
+            get("/")
+            assert_equal('fresh', response.headers['X-Rack-Cache'])
 
-          session = FlowIo.client.sessions.get_by_session(2).to_hash
-          session_cookie_string = Rack::Utils.add_cookie_to_header(nil, "flow_io", JSON.generate(session))
-          get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })
-          assert_equal('miss, store', response.headers['X-Rack-Cache'])
-          assert_equal('canada', response.headers["X-Flow-Experience"])
-
-          session = FlowIo.client.sessions.get_by_session(2).to_hash
-          session_cookie_string = Rack::Utils.add_cookie_to_header(nil, "flow_io", JSON.generate(session))
-
-          get("/", headers: { "HTTP_COOKIE" => "_f60_session=1; #{session_cookie_string}" })
-          assert_equal('canada', response.headers["X-Flow-Experience"])
-          assert_equal('fresh', response.headers['X-Rack-Cache'])
+            assert_equal(1, FlowIo::BogusClient.total_request_count)
+          end
         end
       end
 
       private
+
+      def with_geo_headers(headers, &block)
+        FlowIoSessionIntegrationTest.geo_headers = headers
+        block.call
+      ensure
+        FlowIoSessionIntegrationTest.geo_headers = nil
+      end
 
       def app
         @app ||= Rack::Builder.new do

@@ -3,7 +3,7 @@ module Workarea
     class BogusClient
       class Sessions
         def get_by_session(session = 1)
-          attributes = if session == 1
+          attributes = if session == 1 || session == "F51MUamlJKDTPUwlhZ4D2bwYnFUbmlwv0ULNnlMs2UkURkioYJNmNY5pRjNHC3bH"
             domestic_attributes
           else
             foreign_attributes
@@ -13,7 +13,7 @@ module Workarea
         end
 
         def post_organizations_by_organization(_organization_id, session_form)
-          if session_form[:country] == "USA"
+          if session_form[:country].blank? || session_form[:country] == "USA"
             ::Io::Flow::V0::Models::Session.from_json(domestic_attributes)
           else
             ::Io::Flow::V0::Models::Session.from_json(foreign_attributes)

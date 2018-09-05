@@ -10,7 +10,8 @@ module Workarea
       require 'workarea/flow_io/bogus_client/sessions'
       require 'workarea/flow_io/bogus_client/shipping_notifications'
 
-      cattr_accessor :requests
+      thread_cattr_accessor :requests, :store_requests
+
 
       def self.reset_requests!
         self.requests = Hash.new do |client_hash, client_class|
@@ -20,7 +21,14 @@ module Workarea
         end
       end
 
-      reset_requests!
+      def self.total_request_count
+        self.requests.sum do |client, method_calls|
+          method_calls.sum { |_method, calls| calls.size }
+        end
+      end
+
+      self.store_requests = false
+      self.reset_requests!
 
       def method_missing(method)
         client_class = client(method)

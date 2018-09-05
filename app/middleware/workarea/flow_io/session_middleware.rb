@@ -1,24 +1,46 @@
 module Workarea
   module FlowIo
     class SessionMiddleware
+      include Rack::Utils
+
       def initialize(app)
         @app = app
       end
 
       def call(env)
-        request = ActionDispatch::Request.new(env)
-        cookies = request.cookie_jar
+        flow_session = FlowIo::Session.new(env)
 
-        if FlowIo::Session.needs_sync?(request)
-          env["rack-cache.force-pass"] = true
-        elsif cookies[:flow_io].present?
-          flow_session = ::Io::Flow::V0::Models::Session.from_json(JSON.parse(cookies[:flow_io]))
-          env["flow.io.session"] = flow_session
-          env['Vary'] = 'X-Requested-With, X-Flash-Messages, X-Flow-Experience'
-          env['HTTP_X_FLOW_EXPERIENCE'] = flow_session&.experience&.key
+        env['Vary'] = 'X-Requested-With, X-Flash-Messages, X-Flow-Experience'
+        env['HTTP_X_FLOW_EXPERIENCE'] = flow_session.experience&.key
+
+        status, headers, body = @app.call env
+
+        if %r{text/html}.match? headers['Content-Type']
+          if flow_session.set_f60_session_cookie?
+            set_cookie_header!(headers, "_f60_session", {
+              value: flow_session.id,
+              path: "/",
+              expires: 1.year.from_now
+            })
+          end
+
+          if flow_session.set_flow_experience_cookie?
+            experince_cookie_value =
+              if flow_session.experience.present?
+                JSON.generate(flow_session.experience.to_hash)
+              else
+                ""
+              end
+
+            set_cookie_header!(headers, "flow_experience", {
+              value: experince_cookie_value,
+              path: "/",
+              expires: 1.year.from_now
+            })
+          end
         end
-      ensure
-        return @app.call env
+
+        [status, headers, body]
       end
     end
   end

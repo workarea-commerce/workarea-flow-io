@@ -1,38 +1,27 @@
 module Workarea
   decorate Storefront::ApplicationController, with: :flow_io do
     decorated do
-      before_action :sync_flow_session
-
       helper_method :flow_experience
       helper Workarea::Storefront::FlowContentHelper
 
       etag { flow_experience&.key }
     end
 
-    def sync_flow_session
-      return unless FlowIo::Session.needs_sync?(request)
-
-      cookies[:flow_io] = JSON.generate(FlowIo.client.sessions.get_by_session(cookies['_f60_session']).to_hash)
-    end
-
-    def flow_session
-      @flow_session ||=
-        if request['flow.io.session']
-          request["flow.io.session"]
-        elsif cookies[:flow_io]
-          ::Io::Flow::V0::Models::Session.from_json(JSON.parse(cookies[:flow_io]))
-        end
-    rescue JSON::ParserError => _error
-    end
-
     def flow_experience
-      return unless flow_session
-
-      flow_session&.experience
+      @flow_experience ||=
+        if request.has_header?('flow.io.experience')
+          request['flow.io.experience']
+        elsif cookies[:flow_experience] && experience = JSON.parse(cookies[:flow_experience], quirks_mode: true)
+          ::Io::Flow::V0::Models::ExperienceGeo.new(experience)
+        else
+          nil
+        end
+    rescue
+      nil
     end
 
     def default_url_options(*)
-      flow_locale = flow_session&.geo&.country&.iso_3166_2&.downcase
+      flow_locale = flow_experience&.country&.downcase
 
       return super unless flow_locale.present?
 

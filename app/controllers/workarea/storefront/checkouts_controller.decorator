@@ -6,6 +6,12 @@ module Workarea
 
     private
 
+    def flow_session
+      return unless cookies['_f60_session'].present?
+
+      @flow_session ||= FlowIo.client.sessions.get_by_session(cookies['_f60_session'])
+    end
+
     def route_flow_order
       return unless send_to_flow?
 
