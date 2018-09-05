@@ -35,9 +35,22 @@ module Workarea
           @pricing_attributes || pricing.attributes.symbolize_keys
         end
 
-        def msrp
-          @msrp ||= pricing_attributes[:msrp]
+        def msrp_attributes
+          @msrp_attributes ||= pricing_attributes[:msrp]
         end
+
+        def msrp
+          return {} unless msrp_attributes.present?
+
+          {
+            msrp: {
+              price: msrp_attributes.to_m,
+              label: msrp_attributes.label,
+              base: { price: msrp_attributes.base.to_m, label: msrp_attributes.base.label }
+            }
+          }
+        end
+
 
         def local_item_attributes
           {
@@ -49,40 +62,38 @@ module Workarea
               currency: experience.currency,
               language: experience.language
             },
-            msrp: {
-              price: msrp.to_m,
-              label: msrp.label,
-              base: { price: msrp.base.to_m, label: msrp.base.label }
-            },
             prices: prices
-          }
+          }.merge(msrp)
         end
 
         def prices
           regular = pricing_attributes[:regular_price]
           sale    = pricing_attributes[:sale_price]
 
-          [
-            {
-              min_quantity: 1,
-              regular: {
-                price: regular.to_m,
-                label: regular.label,
-                base: {
-                  price: regular.base.to_m,
-                  label: regular.base.label
-                }
-              },
-              sale: {
-                price: sale.to_m,
-                label: sale.label,
-                base: {
-                  price: sale.base.to_m,
-                  label: sale.base.label
-                }
+          price = {
+            min_quantity: 1,
+            regular: {
+              price: regular.to_m,
+              label: regular.label,
+              base: {
+                price: regular.base.to_m,
+                label: regular.base.label
               }
             }
-          ]
+          }
+
+          if sale.present?
+            price[:sale] = {
+              price: sale.to_m,
+              label: sale.label,
+              base: {
+                price: sale.base.to_m,
+                label: sale.base.label
+              }
+            }
+          end
+
+          [price]
         end
     end
   end
