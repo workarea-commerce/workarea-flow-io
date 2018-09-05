@@ -8,7 +8,7 @@ module Workarea
 
       def post_signed(path, params:, **args)
         digest = OpenSSL::Digest.new('sha256')
-        signature = "sha-256=#{OpenSSL::HMAC.hexdigest(digest, webhook_shared_secret, params.to_s)}"
+        signature = "sha256=#{OpenSSL::HMAC.hexdigest(digest, webhook_shared_secret, params.to_s)}"
 
         headers = {
           'X-Flow-Signature' => signature,
