@@ -78,6 +78,17 @@ will be updated and marked as placed.
 When `Fulfillment::Item`s are shipped or cancaled in Workarea, workers will update Flow with
 `ShippingNotifications` or `FulfillmentCancellations`
 
+### Session
+A piece of middleware sits in front of `Rack::Cache` that will upsert a `Session` in Flow if the
+`_f60_session` cookie is blank, passing the `request.remote_ip` and `HTTP_GEOIP_CITY_COUNTRY_CODE3` from
+Nginx.  It updates the Http Vary header to include `X-Flow-Experience` and stores the current `Experience`
+in the `flow_experience` cookie as JSON.  If a user updates their country via the `country_picker.js` the
+`flow_experience` cookie is updated in the `onSessionUpdate` in javaascript.
+### Caching
+Cache keys are decorated to include the current `Experience` key.  The Http Vary header
+is adjusted to include `X-Flow-Experience`  The current country ISO-3166-3 code is added
+to the `locale` as added measure agaisnt browser caching and the etag is updated to include
+the `Experience` key
 Workarea Platform Documentation
 --------------------------------------------------------------------------------
 
