@@ -10,8 +10,7 @@ Workarea.configure do |config|
   # see https://docs.flow.io/type/image-tag
   config.flow_io.image_sizes = {
     small_thumb: ["thumbnail"],
-    medium_thumb: ["thumbnail"],
-    detail: ["checkout"]
+    medium_thumb: ["checkout"],
   }
 
   # The countries that will be considered domestic
