@@ -1,5 +1,9 @@
 module Workarea
   decorate Payment::Transaction, with: :flow_io do
+    decorated do
+      field :flow_amount, type: Money, default: 0
+    end
+
     def tender_type
       tender.payment.operation_tender_type ||  super
     end

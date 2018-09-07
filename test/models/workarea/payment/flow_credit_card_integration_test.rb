@@ -9,7 +9,7 @@ module Workarea
       def test_store_auth
         VCR.use_cassette 'credit_card/flow/store_auth' do
           transaction = tender.build_transaction(action: 'authorize')
-          Payment::Authorize::Flow.new(tender, transaction).complete!
+          Payment::Authorize::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?, 'expected transaction to be successful')
 
           assert(tender.token.present?)
@@ -19,7 +19,7 @@ module Workarea
       def test_store_purchase
         VCR.use_cassette 'credit_card/flow/store_purchase' do
           transaction = tender.build_transaction(action: 'purchase')
-          Payment::Purchase::Flow.new(tender, transaction).complete!
+          Payment::Purchase::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?)
 
           assert(tender.token.present?)
@@ -29,7 +29,7 @@ module Workarea
       def test_auth_capture
         VCR.use_cassette 'credit_card/flow/auth_capture' do
           transaction = tender.build_transaction(action: 'authorize')
-          Payment::Authorize::Flow.new(tender, transaction).complete!
+          Payment::Authorize::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?)
           transaction.save!
 
@@ -48,7 +48,7 @@ module Workarea
       def test_auth_void
         VCR.use_cassette 'credit_card/flow/auth_void' do
           transaction = tender.build_transaction(action: 'authorize')
-          operation = Payment::Authorize::Flow.new(tender, transaction)
+          operation = Payment::Authorize::FlowPayment.new(tender, transaction)
           operation.complete!
           assert(transaction.success?, 'expected transaction to be successful')
           transaction.save!
@@ -67,7 +67,7 @@ module Workarea
 
         VCR.use_cassette 'credit_card/flow/auth_capture_refund' do
           transaction = tender.build_transaction(action: 'authorize')
-          Payment::Authorize::Flow.new(tender, transaction).complete!
+          Payment::Authorize::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?, 'expected transaction to be successful')
           transaction.save!
 
@@ -97,7 +97,7 @@ module Workarea
 
         VCR.use_cassette 'credit_card/flow/purchase_refund' do
           transaction = tender.build_transaction(action: 'purchase')
-          Payment::Purchase::Flow.new(tender, transaction).complete!
+          Payment::Purchase::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?)
           transaction.save!
 
@@ -124,9 +124,9 @@ module Workarea
         @payment ||=
           begin
             profile = create_payment_profile
-            order = create_order
+            order = create_order(flow_total_price: 5.to_m('CAD'))
             create_payment(
-              operation_tender_type: 'Flow',
+              operation_tender_type: 'FlowPayment',
               id: order.id,
               profile_id: profile.id,
               address: {

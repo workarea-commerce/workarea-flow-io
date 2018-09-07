@@ -26,7 +26,6 @@ module Workarea
             request_signature: request.headers['X-Flow-Signature'],
             request_body: request.raw_post
           )
-
           unsuccessful_response unless request_valid
         end
 

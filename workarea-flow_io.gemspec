@@ -15,5 +15,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'workarea', '~> 3.x', ">= 3.3.0"
   s.add_dependency 'flowcommerce', ">= 0.2.66"
-  s.add_dependency 'flowcommerce-activemerchant'
+  s.add_dependency 'flowcommerce-activemerchant', ">= 0.1.3"
 end

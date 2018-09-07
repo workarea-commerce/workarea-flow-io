@@ -72,4 +72,34 @@ ActiveMerchant::Billing::FlowGateway.class_eval do
       ::ActiveMerchant::Billing::Response.new false, 'Flow capture - Error', response_options
     end
   end
+
+   def refund(amount, capture_id, options = {})
+    refund_form = {}
+    refund_form[:amount]     = amount if amount
+    refund_form[:capture_id] = capture_id if capture_id
+
+    [:authorization_id, :currency, :order_number, :key, :rma_key].each do |key|
+      refund_form[key] = options[key] if options[key]
+    end
+
+    if refund_form[:amount]
+      raise ArgumentError, 'Currency is required if amount is provided' unless refund_form[:currency]
+      refund_form[:amount] = assert_currency refund_form[:currency], refund_form[:amount]
+    end
+
+    refund_form = ::Io::Flow::V0::Models::RefundForm.new refund_form
+    response = flow_instance.refunds.post @flow_organization, refund_form
+
+    response_options = { response: response.to_hash }
+    response_amount = response_options[:response][:amount]
+    response_options[:response][:amount] = response_amount.to_i
+
+    response_options[:response].delete(:captures)
+
+    if response.id
+      ::ActiveMerchant::Billing::Response.new true, 'Flow Refund - Success', response_options
+    else
+      ::ActiveMerchant::Billing::Response.new false, 'Flow Refund - Error', response_options
+    end
+  end
 end

@@ -1,7 +1,7 @@
 module Workarea
   class Payment
     class StoreFlowCreditCard
-      include FlowCreditCardOperation
+      include FlowPaymentOperation
 
       def initialize(credit_card, options = {})
         @credit_card = credit_card

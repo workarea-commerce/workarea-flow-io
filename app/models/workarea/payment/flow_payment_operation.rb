@@ -1,6 +1,6 @@
 module Workarea
   class Payment
-    module FlowCreditCardOperation
+    module FlowPaymentOperation
       def handle_active_merchant_errors
         begin
           yield

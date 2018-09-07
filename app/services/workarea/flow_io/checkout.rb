@@ -19,11 +19,6 @@ module Workarea
         inventory.purchase
         return false unless inventory.captured?
 
-        unless payment_collection.purchase
-          inventory.rollback
-          return false
-        end
-
         result = order.place
 
         if result
@@ -51,9 +46,12 @@ module Workarea
 
         payment.set_address(billing_address_params(flow_billing_address))
 
-        # Out of the box the payments will be authed and captured by flow
-        # at the time of purchase, these tenders are generated to
-        # keep the order modeling intact.
+        # use the flow payment processor for this order going forward.
+        # this allows for using a differnt payment processor for
+        # domestic orders
+        payment.operation_tender_type = 'FlowPayment'
+
+        # build a flow payment so we can refund later if needed.
         flow_payments.each do |flow_payment|
           payment.build_flow_payment(
             details: flow_payment.to_hash,
@@ -63,6 +61,27 @@ module Workarea
             flow_amount: Money.from_amount(flow_payment.total.amount, flow_payments.first.total.currency)
           )
         end
+
+        # build a capture transaction for each
+        payment.tenders.each do |tender|
+
+          response = ActiveMerchant::Billing::Response.new(
+            true,
+            'Flow Payment Transaction',
+            { response: tender.details }
+          )
+          transaction = payment.flow_payment.build_transaction(
+            tender_id: tender.id.to_s,
+            action: Workarea.config.flow_io.default_payment_action,
+            amount: tender.amount,
+            flow_amount: tender.flow_amount,
+            success: true,
+            response: response
+          )
+
+          transaction.save!
+        end
+
         payment.save!
 
         total_order
@@ -213,11 +232,6 @@ module Workarea
               memo
             end
           )
-        end
-
-        def payment_collection
-          wa_checkout = Workarea::Checkout.new(order)
-          @payment_collection ||= Workarea::Checkout::CollectPayment.new(wa_checkout)
         end
 
         def flow_billing_address

@@ -3,6 +3,9 @@ Workarea.configure do |config|
 
   config.flow_io ||= ActiveSupport::Configurable::Configuration.new
 
+  # default payment action. FlowIO recomends purchase (auth/cap)
+  config.flow_io.default_payment_action = "purchase"
+
   # default timeout on flow api calls
   config.flow_io.default_timeout = 2
 
@@ -93,4 +96,6 @@ Workarea.configure do |config|
     "experience_deleted_v2",
     "experience_upserted_v2"
   ]
+
+  config.run_credit_card_refund_tests = true
 end

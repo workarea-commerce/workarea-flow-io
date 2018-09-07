@@ -1,6 +1,6 @@
 module Workarea
   class Payment
-    module CreditCardData
+    module FlowPaymentData
       def order
         @order ||= Workarea::Order.find(tender.payment.id)
       end
@@ -10,7 +10,7 @@ module Workarea
       end
 
       def currency_code
-        @currency_code = order.total_price.currency.iso_code
+        @currency_code = order.flow_total_price.currency.iso_code
       end
 
       def customer_data

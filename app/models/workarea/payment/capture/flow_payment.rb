@@ -1,24 +1,24 @@
 module Workarea
   class Payment
-    class Refund
-      class Flow
+    class Capture
+      class FlowPayment
         include OperationImplementation
-        include FlowCreditCardOperation
-        include CreditCardData
+        include FlowPaymentOperation
+        include FlowPaymentData
 
         def complete!
           validate_reference!
 
           transaction.response = handle_active_merchant_errors do
-            gateway.refund(
-              transaction.amount.cents,
+            gateway.capture(
+              transaction.amount.to_f,
               transaction.reference.response.authorization
             )
           end
         end
 
         def cancel!
-          # noop
+          # noop, can't cancel a capture
         end
       end
     end
