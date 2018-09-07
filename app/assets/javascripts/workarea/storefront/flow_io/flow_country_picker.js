@@ -17,7 +17,7 @@ WORKAREA.registerModule('flowCountryPicker', (function () {
                 type: "modal",
                 containerId: "country-picker",
                 onSessionUpdate: function (status, session) {
-                    var country = session.geo.country.iso_3166_2.toLowerCase(),
+                    var country = session.geo.country.iso_3166_3.toLowerCase(),
                         url = WORKAREA.url.current(),
                         parsedUrl = WORKAREA.url.parse(url),
                         path = parsedUrl.path,
