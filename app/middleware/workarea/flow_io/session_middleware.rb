@@ -11,7 +11,12 @@ module Workarea
         flow_session = FlowIo::Session.new(env)
 
         env['Vary'] = 'X-Requested-With, X-Flash-Messages, X-Flow-Experience'
-        env['HTTP_X_FLOW_EXPERIENCE'] = flow_session.experience&.key
+        begin
+          env['HTTP_X_FLOW_EXPERIENCE'] = flow_session.experience&.key
+        rescue => error
+          capture_exception error
+          return @app.call env
+        end
 
         status, headers, body = @app.call env
 
@@ -42,6 +47,16 @@ module Workarea
 
         [status, headers, body]
       end
+
+      private
+
+        def capture_exception(exception)
+          if defined?(::Raven)
+            Raven.capture_exception(exception)
+          else
+            Rails.logger.warn "Error in FlowIo::SessionMiddleware: #{exception}"
+          end
+        end
     end
   end
 end

@@ -5,6 +5,7 @@ module Workarea
 
       def initialize(env)
         @request = ActionDispatch::Request.new(env)
+        @set_f60_session_cookie = false
       end
 
       def experience
@@ -16,20 +17,15 @@ module Workarea
       end
 
       def id
-        cookies['_f60_session'] || session.id
+        session.id
       end
 
       def session
-        @session ||=
-          if cookies['_f60_session'].blank?
-            create_session!
-          else
-            FlowIo.client.sessions.get_by_session(cookies['_f60_session'])
-          end
+        @session ||= session_from_cookies || create_session!
       end
 
       def set_f60_session_cookie?
-        !cookies.key?('_f60_session')
+        @set_f60_session_cookie || !cookies.key?('_f60_session')
       end
 
       def set_flow_experience_cookie?
@@ -39,6 +35,21 @@ module Workarea
       private
 
         delegate :params, to: :request
+
+        # gets session id from cookies and pulls it from Flow API
+        # if the request 404s creates a new session
+        def session_from_cookies
+          return unless cookies['_f60_session'].present?
+
+          FlowIo.client.sessions.get_by_session(cookies['_f60_session'])
+        rescue ::Io::Flow::V0::HttpClient::ServerError => error
+          if error.code == 404
+            @set_f60_session_cookie = true
+            return create_session!
+          else
+            raise error
+          end
+        end
 
         def create_session!
           Workarea::FlowIo.client.sessions.post_organizations_by_organization(

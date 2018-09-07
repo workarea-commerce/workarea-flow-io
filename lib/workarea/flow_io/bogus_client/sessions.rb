@@ -3,11 +3,19 @@ module Workarea
     class BogusClient
       class Sessions
         def get_by_session(session = 1)
-          attributes = if session == 1 || session == "F51MUamlJKDTPUwlhZ4D2bwYnFUbmlwv0ULNnlMs2UkURkioYJNmNY5pRjNHC3bH"
-            domestic_attributes
-          else
-            foreign_attributes
-          end
+          attributes =
+            case session
+            when 1, "F51MUamlJKDTPUwlhZ4D2bwYnFUbmlwv0ULNnlMs2UkURkioYJNmNY5pRjNHC3bH"
+              domestic_attributes
+            when "404"
+              raise ::Io::Flow::V0::HttpClient::ServerError.new(
+                404,
+                "Not Found",
+                body: nil
+              )
+            else
+              foreign_attributes
+            end
 
           ::Io::Flow::V0::Models::Session.from_json(attributes)
         end

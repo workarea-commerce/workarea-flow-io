@@ -80,6 +80,19 @@ module Workarea
         end
       end
 
+      def test_flow_session_missing
+        Workarea.with_config do |config|
+          config.strip_http_caching_in_tests = false
+
+          cookies['_f60_session'] = "404"
+          get("/")
+
+          assert response.ok?
+          assert_equal("F51MUamlJKDTPUwlhZ4D2bwYnFUbmlwv0ULNnlMs2UkURkioYJNmNY5pRjNHC3bH", cookies['_f60_session'])
+          assert_equal(2, FlowIo::BogusClient.total_request_count)
+        end
+      end
+
       private
 
       def with_geo_headers(headers, &block)
