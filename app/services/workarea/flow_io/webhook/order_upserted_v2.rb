@@ -4,7 +4,9 @@ module Workarea
       def process
         return unless flow_order.submitted_at.present?
 
-        workarea_order = Order.find(flow_order.attributes["number"])
+        order_id = flow_order.attributes["number"]
+
+        workarea_order = Order.find(order_id)
         workarea_order.lock!
 
         workarea_order.flow = true
@@ -17,7 +19,7 @@ module Workarea
         checkout.build
 
         unless checkout.place_order
-          raise Webhook::Error
+          raise Webhook::Error, "failed to place order #{order_id}"
         end
 
        ensure

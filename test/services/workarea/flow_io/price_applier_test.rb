@@ -157,6 +157,34 @@ module Workarea
 
         discount_price_adjustment = item.flow_price_adjustments.second
         assert_equal(Money.from_amount(-0.23, "EUR"), discount_price_adjustment.amount)
+
+        assert_equal(
+          ["5b60ba1f87c68b6b757cde58", "5b60ba1f87c68b6b757cde59"],
+          order.discount_ids
+        )
+
+        expected_orignal_discounts = [
+          [
+            {
+              "id" => "5b60ba1f87c68b6b757cde58",
+              "quantity" => 1,
+              "amount" => { "cents" => -25.0, "currency_iso" => "USD" }
+            }
+          ],
+          [
+            { "id" => "5b60ba1f87c68b6b757cde59",
+              "quantity" => 1,
+              "amount" => { "cents" => -20.0, "currency_iso" => "USD" }
+            }
+          ]
+        ]
+
+        assert_equal(
+          expected_orignal_discounts,
+          item.price_adjustments.select(&:discount?).map do |price_adjustment|
+            price_adjustment.data["original_discounts"].map(&:deep_stringify_keys)
+          end
+        )
       end
 
       def test_rounding_line_item

@@ -8,7 +8,7 @@ module Workarea
 
       attr_reader :order_item,
         :localized_line_item,
-        :order_item_discount_ids,
+        :original_discounts,
         :item_calculator_data,
         :flow_item_calculator_data
 
@@ -19,12 +19,18 @@ module Workarea
         @localized_line_item = localized_line_item
         @item_calculator_data = order_item.price_adjustments&.first&.data || {}
         @flow_item_calculator_data = order_item.flow_price_adjustments&.first&.data || {}
-        @order_item_discount_ids = order_item
+        # Need to store original discount price adjustments: discount_id, quantity and amount
+        # for Workarea::SaveOrderAnalytics#discounts_by, used for Analytics::Discount and
+        # Analytics::DiscountsSummary.  If this is called from the webhook after the order
+        # was placed in Flow's Hosted checkout, just read the "original_discounts" already
+        # stored in the price adjustments data
+        @original_discounts = order_item
           .price_adjustments
           .adjusting("item")
-          .map { |pa| pa.data['discount_id'] }
-          .compact
-          .uniq
+          .select(&:discount?)
+          .flat_map do |pa|
+            pa.data["original_discounts"] || { id: pa.data['discount_id'], quantity: pa.quantity, amount: pa.amount }
+          end
       end
 
       def perform!
@@ -49,7 +55,7 @@ module Workarea
               data: item_calculator_data.merge(
                 "localized_item_price" => localized_item_price.to_hash,
                 "description" => 'Flow Localized Item Price Base'
-              )
+              ).deep_stringify_keys
             )
           )
 
@@ -60,7 +66,7 @@ module Workarea
               description: 'Item Subtotal',
               data: flow_item_calculator_data.merge(
                 "description" => 'Flow Localized Item Price'
-              )
+              ).deep_stringify_keys
             )
           )
         end
@@ -75,8 +81,8 @@ module Workarea
                 "localized_line_item_discount" => localized_line_item.discount.to_hash,
                 "description" => 'Flow Localized Line Item Discount Base',
                 "discount_amount" => localized_line_item.discount.base.to_m,
-                "discount_ids" => order_item_discount_ids
-              }
+                "original_discounts" => original_discounts
+              }.deep_stringify_keys
             )
           )
 

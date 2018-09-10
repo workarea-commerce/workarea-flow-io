@@ -26,10 +26,11 @@ module Workarea
     end
 
     def discount_ids
-      super + price_adjustments
-        .flat_map { |pa| pa.data['discount_ids'] }
-        .compact
-        .uniq
+      (super + price_adjustments.flat_map do |price_adjustment|
+        next unless price_adjustment.data["original_discounts"].present?
+
+        price_adjustment.data["original_discounts"].map { |info| info["id"] }
+      end).compact.uniq
     end
 
     def build_experience_from_flow_model(experience_geo)

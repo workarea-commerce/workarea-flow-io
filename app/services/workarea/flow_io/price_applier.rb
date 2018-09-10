@@ -5,18 +5,24 @@ module Workarea
         new(order: order, flow_order: flow_order, shipping: shipping).perform!
       end
 
-      attr_reader :order, :flow_order, :order_discount_ids, :shipping
+      attr_reader :order, :flow_order, :original_discounts, :shipping
 
       def initialize(order:, flow_order:, shipping: nil)
         @order = order
         @flow_order = flow_order
         @shipping = shipping
-        @order_discount_ids = order
+        # Need to store original discount price adjustments: discount_id, quantity and amount
+        # for Workarea::SaveOrderAnalytics#discounts_by, used for Analytics::Discount and
+        # Analytics::DiscountsSummary.  If this is called from the webhook after the order
+        # was placed in Flow's Hosted checkout, just read the "original_discounts" already
+        # stored in the price adjustments data
+        @original_discounts = order
           .price_adjustments
           .adjusting("order")
-          .map { |pa| pa.data['discount_id'] }
-          .compact
-          .uniq
+          .select(&:discount?)
+          .flat_map do |pa|
+            pa.data["original_discounts"] || { id: pa.data['discount_id'], quantity: pa.quantity, amount: pa.amount }
+          end
       end
 
       def perform!
@@ -30,7 +36,11 @@ module Workarea
       def adjust_shipping
         return unless shipping.present? && order.requires_shipping?
 
-        flow_prices = flow_order.prices.reject { |p| p.name == 'Item subtotal' } # everything but the item prices
+        # Prices are of types: adjustment, subtotal, vat, duty, shipping,
+        # insurance, discount.  Filter out subtotal and discount prices
+        flow_prices = flow_order.prices.reject do |order_price_detail|
+          ["subtotal", "discount"].include? order_price_detail.key.value
+        end
 
         flow_prices.each do |price|
           price_slug = price.name == "Shipping" ? "shipping" : "tax"
@@ -38,8 +48,8 @@ module Workarea
             price: price_slug,
             description: price.name,
             calculator: self.class.name,
-            amount: Money.from_amount(price.base.amount, price.base.currency),
-            data: price.to_hash
+            amount: price.base.to_m,
+            data: { "order_price_detail" => price.to_hash }
           )
 
           # build price adjustments in the currency the user checked out in.
@@ -47,8 +57,7 @@ module Workarea
             price: price_slug,
             description: price.name,
             calculator: self.class.name,
-            amount: Money.from_amount(price.amount, price.currency),
-            data: price.to_hash
+            amount: price.to_m
           )
         end
       end
@@ -78,9 +87,9 @@ module Workarea
               description: 'Discount',
               data: {
                 "description" => 'Flow Localized Order Discount Base',
-                "discount_ids" => order_discount_ids,
+                "original_discounts" => original_discounts,
                 "discount_value" => item_base_total
-              }
+              }.deep_stringify_keys
             }
           )
 
@@ -95,7 +104,7 @@ module Workarea
               data: {
                 "discount_value" => item_local_total,
                 "description" => 'Flow Localized Order Discount'
-              }
+              }.deep_stringify_keys
             }
           )
         end

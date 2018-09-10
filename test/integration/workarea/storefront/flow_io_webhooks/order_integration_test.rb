@@ -80,6 +80,14 @@ module Workarea
           assert(payment.address.valid?)
         end
 
+        def test_order_update_with_discounts
+          create_canadian_cart_with_order_discount
+
+          post_signed storefront.flow_io_webhook_path, params: canadian_discount_webhook_payload.to_json
+
+          assert response.ok?
+        end
+
         def test_order_not_found
           post_signed storefront.flow_io_webhook_path, params: invalid_order_params
           refute(response.ok?)

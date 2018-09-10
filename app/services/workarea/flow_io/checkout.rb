@@ -43,7 +43,6 @@ module Workarea
 
         # set the shipping and billing addresses
         shipping.set_address(shipping_address_params(flow_order.destination))
-
         payment.set_address(billing_address_params(flow_billing_address))
 
         # use the flow payment processor for this order going forward.
@@ -107,29 +106,13 @@ module Workarea
             begin
               result = @order.clone
               result.id = @order.id # Ensure this isn't persisted
-
-              # This exists to fix a problem with doing price_adjustments = [] on
-              # an unpersisted Order::Item on MongoDB >= 2.6 (which works on 2.4).
-              # On 2.4 it doesn't try to make the write so all is fine. I have no
-              # idea why this is required only on that version, but it does fix
-              # the problem.
-              #
               result.attributes = clone_order_attributes
               result
             end
         end
 
         def clone_order_attributes
-          attributes = @order.as_document.except('_id', 'id')
-
-          if attributes['items'].present?
-            attributes['items'].each do |item|
-              item['price_adjustments'] = []
-              item['flow_price_adjustments'] = []
-            end
-          end
-
-          attributes
+          @order.as_document.except('_id', 'id')
         end
 
         def shipping_address_params(address)
