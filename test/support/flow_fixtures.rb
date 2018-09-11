@@ -49,16 +49,12 @@ module Workarea
 
       def create_placed_canadian_flow_order
         order_id = "123ABC"
-        params = canadian_webhook_payload
         product = create_product(variants: [{ sku: '386555310-9', regular: 5.00 }])
         product_2 = create_product(variants: [{ sku: '332477498-5', regular: 5.00 }])
-
 
         order = create_order(
           id: order_id,
           flow: true,
-          flow_order_id: params[:order][:id],
-          imported_from_flow_at: DateTime.now,
           experience: canada_experience
          )
 

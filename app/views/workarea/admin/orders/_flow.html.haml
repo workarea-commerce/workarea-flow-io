@@ -9,12 +9,9 @@
         .card__body
           %ul.list-reset
             %li
-              %strong= t('workarea.admin.orders.cards.flow.id')
-              = order.flow_order_id
-            %li
-              %strong= t('workarea.admin.orders.cards.flow.imported_at')
-              - if order.imported_from_flow_at.present?
-                #{local_time_ago(order.imported_from_flow_at)}
+              %strong= t('workarea.admin.fields.placed_at')
+              - if order.placed_at.present?
+                #{order.placed_at}
               - else
                 #{t('workarea.admin.orders.cards.flow.pending_import')}
             %li

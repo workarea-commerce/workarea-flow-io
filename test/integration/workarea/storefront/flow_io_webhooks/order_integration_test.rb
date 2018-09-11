@@ -34,8 +34,6 @@ module Workarea
           assert_equal(Money.from_amount(9.29, "CAD"), order.flow_shipping_total)
           assert_equal(Money.from_amount(43.02, "CAD"), order.flow_tax_total)
 
-          assert(order.imported_from_flow_at.present?)
-          assert(order.flow_order_id.present?)
           assert(order.placed?)
 
           payment = Payment.find(order.id)

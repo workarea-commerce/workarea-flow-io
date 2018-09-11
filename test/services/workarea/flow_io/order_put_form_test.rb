@@ -2,7 +2,7 @@ require 'test_helper'
 
 module Workarea
   module FlowIo
-    class OrderFormTest < Workarea::TestCase
+    class OrderPutFormTest < Workarea::TestCase
       def test_to_flow_model
         order_put_form = OrderPutForm.from(order: order)
 

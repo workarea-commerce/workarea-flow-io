@@ -2,6 +2,7 @@ module Workarea
   module FlowIo
     class BogusClient
       require 'workarea/flow_io/bogus_client/proxy_client'
+      require 'workarea/flow_io/bogus_client/checkout_tokens'
       require 'workarea/flow_io/bogus_client/experiences'
       require 'workarea/flow_io/bogus_client/fulfillments'
       require 'workarea/flow_io/bogus_client/items'

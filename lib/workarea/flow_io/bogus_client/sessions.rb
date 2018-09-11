@@ -5,7 +5,7 @@ module Workarea
         def get_by_session(session = 1)
           attributes =
             case session
-            when 1, "F51MUamlJKDTPUwlhZ4D2bwYnFUbmlwv0ULNnlMs2UkURkioYJNmNY5pRjNHC3bH"
+            when 1, "1", "F51MUamlJKDTPUwlhZ4D2bwYnFUbmlwv0ULNnlMs2UkURkioYJNmNY5pRjNHC3bH"
               domestic_attributes
             when "404"
               raise ::Io::Flow::V0::HttpClient::ServerError.new(

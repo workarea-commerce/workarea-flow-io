@@ -1,9 +1,0 @@
-module Workarea
-  decorate Search::Admin::OrderTest, with: :flow_io do
-    def test_search_text_has_flow_order_id
-      order = Workarea::Order.new(created_at: Time.current, flow_order_id: 'flow-order_id')
-
-      assert_includes(Workarea::Search::Admin::Order.new(order).search_text, "flow-order_id")
-    end
-  end
-end

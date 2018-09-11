@@ -29,15 +29,12 @@
             %strong= t('workarea.admin.orders.flow.checkout.status')
             = @order.model.status.to_s.titleize
           %li
-            %strong= t('workarea.admin.orders.flow.flow_order_id')
-            = @order.flow_order_id
-          %li
-            %strong= t('workarea.admin.orders.flow.imported_at')
+            %strong= t('workarea.admin.fields.placed_at')
             - if @order.placed?
-              = local_time_ago(@order.imported_from_flow_at)
+              = local_time_ago(@order.placed_at)
           %li
             %br
-            %strong= link_to t('workarea.admin.orders.flow.console'), "https://console.flow.io/#{Workarea::FlowIo.organization_id}/orders/#{@order.flow_order_id}"
+            %strong= link_to t('workarea.admin.orders.flow.console'), "https://console.flow.io/#{Workarea::FlowIo.organization_id}/orders/#{@order.id}"
       .grid__cell.grid__cell--75
         %h2= t('workarea.admin.orders.flow.items.title')
         %table

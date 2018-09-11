@@ -6,7 +6,6 @@ en:
         cards:
           flow:
             id: Flow Order ID
-            imported_at: Imported At
             pending_import: Pending Import
             flow_total_price: Flow Total Price
             flow_tax_total: Flow Tax Total
@@ -14,9 +13,7 @@ en:
           flow:
             title: Flow
         flow:
-          imported_at: Imported At
           console: View in Flow Console
-          flow_order_id: Flow Order ID
           checkout:
             title: Flow Checkout
             customer: 'Customer:'

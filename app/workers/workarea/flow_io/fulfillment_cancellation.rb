@@ -7,7 +7,7 @@ module Workarea
         fulfillment_cancelation_form = FlowIo::FulfillmentCancellationForm.from(id: id, quantities: canceled_items)
         order = Workarea::Order.find(id)
 
-        FlowIo.client.fulfillments.put_cancellations(FlowIo.organization_id, order.flow_order_id, fulfillment_cancelation_form)
+        FlowIo.client.fulfillments.put_cancellations(FlowIo.organization_id, order.id, fulfillment_cancelation_form)
       end
     end
   end

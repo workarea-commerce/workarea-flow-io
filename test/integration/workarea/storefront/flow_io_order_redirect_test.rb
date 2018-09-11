@@ -3,7 +3,8 @@ require 'test_helper'
 module Workarea
   module Storefront
     class FlowIoOrderRedirectTest < Workarea::IntegrationTest
-      include Workarea::FlowIo::WebhookIntegrationTest
+      setup :set_organization_id
+      teardown :reset_organization_id
 
       def test_domestic_order_is_not_redirected
         cookies['_f60_session'] = 1
@@ -18,7 +19,7 @@ module Workarea
           }
 
         get storefront.checkout_path
-        assert_equal("/checkout", path)
+        assert_redirected_to storefront.checkout_addresses_url
       end
 
       def test_foreign_order_is_redirected
@@ -37,6 +38,18 @@ module Workarea
 
         assert_redirected_to %r(\Ahttps://checkout.flow.io)
       end
+
+      private
+
+        def set_organization_id
+          Rails.application.secrets.flow_io ||= {}
+          @_old_organization_id = Rails.application.secrets.flow_io[:organization_id]
+          Rails.application.secrets.flow_io[:organization_id] = "workarea-sandbox"
+        end
+
+        def reset_organization_id
+          Rails.application.secrets.flow_io[:organization_id] = @_old_organization_id
+        end
     end
   end
 end

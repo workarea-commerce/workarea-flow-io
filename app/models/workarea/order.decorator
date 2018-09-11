@@ -8,8 +8,7 @@ module Workarea
         as: :experienceable
 
       field :flow, type: Boolean, default: false
-      field :flow_order_id, type: String
-      field :imported_from_flow_at, type: DateTime
+      field :flow_checkout_token, type: String
 
       field :flow_subtotal_price, type: Money
       field :flow_shipping_total, type: Money
@@ -40,12 +39,6 @@ module Workarea
       else
         self.experience = nil
       end
-    end
-
-    def complete_flow!(flow_id)
-      self.imported_from_flow_at = Time.current
-      self.flow_order_id = flow_id
-      save!
     end
   end
 end

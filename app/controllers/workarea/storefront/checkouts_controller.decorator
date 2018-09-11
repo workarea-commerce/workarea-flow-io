@@ -1,38 +1,42 @@
 module Workarea
   decorate Storefront::CheckoutsController, with: :flow_io do
-    decorated do
-      before_action :route_flow_order
-    end
+    decorated { before_action :route_flow_order, if: :send_to_flow? }
 
     private
 
-    def flow_session
-      return unless cookies['_f60_session'].present?
+      def route_flow_order
+        current_order.update_attributes(flow_checkout_token: checkout_token.id)
 
-      @flow_session ||= FlowIo.client.sessions.get_by_session(cookies['_f60_session'])
-    end
+        redirect_to "#{FlowIo.config.checkout_uri}/tokens/#{checkout_token.id}"
+      end
 
-    def route_flow_order
-      return unless send_to_flow?
+      def flow_session
+        return unless cookies['_f60_session'].present?
 
-      redirect_to "#{FlowIo.config.checkout_uri}/#{flow_session.organization}/order/?#{flow_checkout_params.to_query}"
-    end
+        @flow_session ||= FlowIo.client.sessions.get_by_session(cookies['_f60_session'])
+      end
 
-    def send_to_flow?
-      flow_session&.geo&.present? &&
-        flow_country.present? &&
-        !FlowIo.config.domestic_order_origins.map(&:alpha3).include?(flow_country)
-    end
+      def flow_country
+        flow_session&.geo&.country&.iso_3166_3
+      end
 
-    def flow_country
-      flow_session&.geo&.country.iso_3166_3
-    end
+      def send_to_flow?
+        flow_country.present? && !FlowIo.config.domestic_order_origins.map(&:alpha3).include?(flow_country)
+      end
 
-    def flow_checkout_params
-      FlowIo::OrderForm.new(current_order).to_query_param_hash.merge(
-        country: flow_country,
-        flow_session_id: flow_session.id,
-      )
-    end
+      def checkout_token
+        @checkout_token ||=
+          begin
+            checkout_token_form = FlowIo::CheckoutTokenForm.from(
+              order: current_order,
+              session_id: flow_session.id
+            )
+
+            FlowIo.client.checkout_tokens.post_checkout_and_tokens_by_organization(
+              FlowIo.organization_id,
+              checkout_token_form
+            )
+          end
+      end
   end
 end

@@ -35,7 +35,7 @@ module Workarea
       config.image_sizes
     end
 
-    def self.client(timeout: nil, open_timeout: nil, read_timeout: nil, **_options)
+    def self.client(timeout: nil, open_timeout: nil, read_timeout: nil, logger: nil, **options)
       timeout ||= config.default_timeout
       read_timeout ||= timeout
       open_timeout ||= timeout
@@ -43,7 +43,7 @@ module Workarea
       if api_token.present?
         FlowCommerce.instance(
           token: Workarea::FlowIo.api_token,
-          http_handler: Workarea::FlowIo::HttpHandler.new(open_timeout: open_timeout, read_timeout: read_timeout)
+          http_handler: Workarea::FlowIo::HttpHandler.new(open_timeout: open_timeout, read_timeout: read_timeout, logger: logger, **options)
         )
       else
         FlowIo::BogusClient.new

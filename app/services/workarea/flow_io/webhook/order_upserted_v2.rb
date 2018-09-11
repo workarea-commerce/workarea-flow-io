@@ -16,10 +16,7 @@ module Workarea
         # builds the orders shipping and payment details
         checkout.build
 
-        # attempt to complete the order
-        if checkout.place_order
-          workarea_order.complete_flow!(flow_order.id)
-        else
+        unless checkout.place_order
           raise Webhook::Error
         end
 
