@@ -1,0 +1,60 @@
+- @page_title = t('workarea.admin.localized_prices.title', sku: @sku.name)
+
+.view
+  .view__header
+    .grid
+      .grid__cell.grid__cell--25
+        = render 'workarea/admin/releases/select'
+      .grid__cell.grid__cell--50
+        .view__heading
+          = link_to_index_for(@sku)
+          %h1= link_to @sku.name, url_for(@sku)
+      .grid__cell.grid__cell--25
+        = render_aux_navigation_for(@sku)
+
+  .view__container
+    = render_cards_for(@sku, :localized_prices)
+
+  .view__container.view__container--narrow
+    - @sku.flow_io_local_items.each do |flow_io_local_item|
+      %h2
+        #{flow_io_local_item.experience.name}(#{Money::Currency.new(flow_io_local_item.experience.currency).symbol})
+
+      - if flow_io_local_item.msrp.present?
+        %div= t('workarea.admin.pricing_skus.msrp')
+        %table
+          %tr
+            %th= t('workarea.admin.localized_prices.localized')
+            %th
+              = t('workarea.admin.localized_prices.base')
+              = link_to "#base_msrp_#{flow_io_local_item.experience.key}", data: { tooltip: '' } do
+                = inline_svg('workarea/admin/icons/help.svg', class: 'svg-icon svg-icon--small svg-icon--blue')
+              %div.tooltip-content{ id: "base_msrp_#{flow_io_local_item.experience.key}" }
+                %p= t('workarea.admin.localized_prices.base_tooltip')
+          %tr
+            %td= flow_io_local_item.msrp.price.format
+            %td= flow_io_local_item.msrp.base_currency.price.format
+
+      %h2= t('workarea.admin.prices.label')
+      %table
+        %tr
+          %th= t('workarea.admin.localized_prices.regular_localized')
+          %th
+            = t('workarea.admin.localized_prices.regular_base')
+            = link_to "#base_regular_#{flow_io_local_item.experience.key}", data: { tooltip: '' } do
+              = inline_svg('workarea/admin/icons/help.svg', class: 'svg-icon svg-icon--small svg-icon--blue')
+            %div.tooltip-content{ id: "base_regular_#{flow_io_local_item.experience.key}" }
+              %p= t('workarea.admin.localized_prices.base_tooltip')
+          %th= t('workarea.admin.localized_prices.sale_localized')
+          %th
+            = t('workarea.admin.localized_prices.sale_base')
+            = link_to "#base_sale_#{flow_io_local_item.experience.key}", data: { tooltip: '' } do
+              = inline_svg('workarea/admin/icons/help.svg', class: 'svg-icon svg-icon--small svg-icon--blue')
+            %div.tooltip-content{ id: "base_sale_#{flow_io_local_item.experience.key}" }
+              %p= t('workarea.admin.localized_prices.base_tooltip')
+        - flow_io_local_item.prices.each do |localized_price|
+          %tr
+            %td= localized_price.regular.price.format
+            %td= localized_price.regular.base_currency.price.format
+            %td= localized_price.sale&.price.format
+            %td= localized_price.sale&.base_currency&.price.format

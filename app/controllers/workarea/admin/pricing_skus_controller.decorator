@@ -1,0 +1,7 @@
+module Workarea
+  decorate Admin::PricingSkusController, with: :flow_io do
+    def flow
+      @sku = Admin::PricingSkuViewModel.wrap(@sku)
+    end
+  end
+end

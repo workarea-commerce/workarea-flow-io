@@ -8,4 +8,10 @@ Workarea::Admin::Engine.routes.draw do
       get :flow
     end
   end
+
+  resources :pricing_skus, only: [] do
+    member do
+      get :flow
+    end
+  end
 end

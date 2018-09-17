@@ -34,4 +34,17 @@ en:
             title: Totals
             total_price: Total Price
             total_value: Total Value
-
+      localized_prices:
+        label: Localized Prices
+        base: Base
+        base_tooltip: The price converted into the localized currency with rounding rules applied then converted back into the base currency.
+        localized: Localized
+        regular_base: Regular Base
+        regular_localized: Regular Localized
+        sale_localized: Sale Localized
+        sale_base: Sale Base
+        title: Localized Prices for %{sku}
+      pricing_skus:
+        cards:
+          localized_prices:
+            button: View Localized Prices

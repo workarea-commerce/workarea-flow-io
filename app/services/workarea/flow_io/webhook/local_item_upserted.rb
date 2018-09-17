@@ -46,7 +46,7 @@ module Workarea
             msrp: {
               price: msrp_attributes.to_m,
               label: msrp_attributes.label,
-              base: { price: msrp_attributes.base.to_m, label: msrp_attributes.base.label }
+              base_currency: { price: msrp_attributes.base.to_m, label: msrp_attributes.base.label }
             }
           }
         end
@@ -75,7 +75,7 @@ module Workarea
             regular: {
               price: regular.to_m,
               label: regular.label,
-              base: {
+              base_currency: {
                 price: regular.base.to_m,
                 label: regular.base.label
               }
@@ -86,7 +86,7 @@ module Workarea
             price[:sale] = {
               price: sale.to_m,
               label: sale.label,
-              base: {
+              base_currency: {
                 price: sale.base.to_m,
                 label: sale.base.label
               }
