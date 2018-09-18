@@ -3,7 +3,15 @@ module Workarea
     class BogusClient
       class Orders
         def put_by_number(_organization_id, number, order_put_form, options = {})
-          OrderResponse.new(number, order_put_form, options).flow_model
+          if order_put_form.items.empty?
+            raise ::Io::Flow::V0::HttpClient::ServerError.new(
+              422,
+              "Unprocessable Entity",
+              body: "{\"code\":\"generic_error\",\"messages\":[\"Must have at least 1 item to create an order\"]}"
+            )
+          else
+            OrderResponse.new(number, order_put_form, options).flow_model
+          end
         end
 
         private
@@ -27,7 +35,6 @@ module Workarea
 
             private
 
-              # TODO prices.discount based off of order_put_form
               def canada_order
                 ::Io::Flow::V0::Models::Order.new(
                   id: "ord-0db4008f77b24065a1b826a18b9d87ad",

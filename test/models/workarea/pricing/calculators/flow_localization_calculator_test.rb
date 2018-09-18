@@ -133,6 +133,19 @@ module Workarea
             item.flow_price_adjustments.adjusting("item").sum
           )
         end
+
+        def test_adjust_with_empty_order
+          order = Order.new(
+            experience: europe_experience_geo,
+            items: []
+          )
+
+          shipping = Shipping.new
+
+          assert_nothing_raised do
+            FlowLocalizationCalculator.test_adjust(order, shipping)
+          end
+        end
       end
     end
   end

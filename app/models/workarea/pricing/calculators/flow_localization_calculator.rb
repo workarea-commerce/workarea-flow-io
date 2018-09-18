@@ -5,7 +5,7 @@ module Workarea
         include Calculator
 
         def adjust
-          return unless order.experience.present?
+          return unless order.experience.present? && order.items.present?
 
           order_put_form = FlowIo::OrderPutForm.from(order: order, shippings: shippings)
 
@@ -17,6 +17,12 @@ module Workarea
           )
 
           FlowIo::PriceApplier.perform(order: order, flow_order: flow_order)
+        rescue => exception
+          if defined?(::Raven)
+            Raven.capture_exception(exception)
+          else
+            Rails.logger.warn "Error in FlowLocalizationCalculator: #{exception}"
+          end
         end
       end
     end
