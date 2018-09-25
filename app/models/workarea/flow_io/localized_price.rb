@@ -22,7 +22,7 @@ module Workarea
            sku: self.local_item.sku.clone, # clone the sku so this price isn't added to #prices on real record
            min_quantity: min_quantity,
            regular: regular.price,
-           sale: sale.price
+           sale: sale&.price
          )
        end
     end
