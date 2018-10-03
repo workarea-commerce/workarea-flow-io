@@ -7,7 +7,9 @@ module Workarea
         else
           pricing_sku.flow_io_local_items.create!(local_item_attributes)
         end
-        pricing_sku.save
+        Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) do
+          pricing_sku.save
+        end
       end
 
       private
@@ -50,7 +52,6 @@ module Workarea
             }
           }
         end
-
 
         def local_item_attributes
           {

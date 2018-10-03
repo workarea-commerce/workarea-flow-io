@@ -17,5 +17,11 @@ module Workarea
 
       @total_adjustments ||= flow_price_adjustments.reduce_by_description('order')
     end
+
+    # TODO base bug, product isn't passing options into product view models
+    def recommendations
+      return [] unless model.quantity > 0
+      @recommendations ||= Storefront::CartRecommendationsViewModel.new(model, options)
+    end
   end
 end

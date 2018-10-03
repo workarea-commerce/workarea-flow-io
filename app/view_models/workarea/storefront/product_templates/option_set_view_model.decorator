@@ -1,9 +1,14 @@
 module Workarea
-  decorate(
+  targets = [
     Storefront::ProductTemplates::OptionThumbnailsViewModel,
-    Storefront::ProductTemplates::OptionSelectsViewModel,
-    with: :flow_io) do
+    Storefront::ProductTemplates::OptionSelectsViewModel
+  ]
 
+  if Plugin.installed?("Workarea::Swatches")
+    targets << Storefront::ProductTemplates::SwatchesViewModel
+  end
+
+  decorate(*targets, with: :flow_io) do
     def pricing
       super.tap do |pricing_collection|
         if options[:flow_experience]

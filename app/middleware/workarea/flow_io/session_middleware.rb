@@ -13,6 +13,7 @@ module Workarea
         env['Vary'] = 'X-Requested-With, X-Flash-Messages, X-Flow-Experience'
         begin
           env['HTTP_X_FLOW_EXPERIENCE'] = flow_session.experience&.key
+          env['flow.io.experience'] = flow_session.experience
         rescue => error
           capture_exception error
           return @app.call env

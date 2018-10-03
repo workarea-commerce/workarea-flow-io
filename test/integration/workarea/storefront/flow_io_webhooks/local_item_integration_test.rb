@@ -12,6 +12,7 @@ module Workarea
         def test_local_item_update
           _sku = create_pricing_sku(id: "432981453-6")
           Workarea::IndexSkus.clear
+          Workarea::FlowIo::ItemExporter.clear
 
           post_signed storefront.flow_io_webhook_path, params: local_item_upserted
           # post a second time to ensure updating doesn't throw errors
@@ -21,11 +22,13 @@ module Workarea
           assert_equal({ "status" => 200 }, JSON.parse(response.body))
           assert_equal(200, response.status)
           assert_equal(1, Workarea::IndexSkus.jobs.size)
+          assert_equal(0, Workarea::FlowIo::ItemExporter.jobs.size)
         end
 
         def test_sku_without_msrp
           _sku = create_pricing_sku(id: "432981453-6")
           Workarea::IndexSkus.clear
+          Workarea::FlowIo::ItemExporter.clear
 
           post_signed storefront.flow_io_webhook_path, params: local_item_upserted_without_msrp
 
@@ -33,11 +36,13 @@ module Workarea
           assert_equal({ "status" => 200 }, JSON.parse(response.body))
           assert_equal(200, response.status)
           assert_equal(1, Workarea::IndexSkus.jobs.size)
+          assert_equal(0, Workarea::FlowIo::ItemExporter.jobs.size)
         end
 
         def test_sku_without_sale_price
           _sku = create_pricing_sku(id: "432981453-6")
           Workarea::IndexSkus.clear
+          Workarea::FlowIo::ItemExporter.clear
 
           post_signed storefront.flow_io_webhook_path, params: local_item_upserted_without_sale_price
 
@@ -45,6 +50,7 @@ module Workarea
           assert_equal({ "status" => 200 }, JSON.parse(response.body))
           assert_equal(200, response.status)
           assert_equal(1, Workarea::IndexSkus.jobs.size)
+          assert_equal(0, Workarea::FlowIo::ItemExporter.jobs.size)
         end
 
         def test_missing_sku
@@ -64,8 +70,11 @@ module Workarea
 
             Sidekiq::Callbacks.async(Workarea::IndexSkus)
             Sidekiq::Callbacks.enable(Workarea::IndexSkus)
+            Sidekiq::Callbacks.async(Workarea::FlowIo::ItemExporter)
+            Sidekiq::Callbacks.enable(Workarea::FlowIo::ItemExporter)
 
             Workarea::IndexSkus.clear
+            Workarea::FlowIo::ItemExporter.clear
           end
 
           def teardown_sidekiq

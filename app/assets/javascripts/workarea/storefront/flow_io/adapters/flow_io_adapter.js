@@ -42,7 +42,7 @@ WORKAREA.analytics.registerAdapter('flowIoAdapter', function () {
                     amount: payload.tax_total,
                     currency: payload.tax_total_currency_code,
                 },
-                items: _.map(payload.items. function (impression) {
+                items: _.map(payload.items, function (impression) {
                     return {
                         number: impression.sku,
                         price: {

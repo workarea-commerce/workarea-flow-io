@@ -7,6 +7,7 @@ require 'workarea'
 require 'workarea/storefront'
 require 'workarea/admin'
 require 'workarea/freedom_patches/flow_io'
+require 'workarea/flow_io/controller_log_subscriber'
 
 require 'workarea/flow_io/engine'
 require 'workarea/flow_io/version'
