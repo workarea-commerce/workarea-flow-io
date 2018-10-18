@@ -106,19 +106,17 @@ module Workarea
         end
       end
 
-      private
+      def sku_price
+        @sku_price ||= pricing_sku.find_price(quantity: 1)
+      end
 
-        def sku_price
-          @sku_price ||= pricing_sku.find_price(quantity: 1)
-        end
+      def variant_attributes
+        variant.details.map { |k, v| [k, v.join(', ')] }.to_h
+      end
 
-        def variant_attributes
-          variant.details.map { |k, v| [k, v.join(', ')] }.to_h
-        end
-
-        def mounted_core
-          self
-        end
+      def mounted_core
+        self
+      end
     end
   end
 end

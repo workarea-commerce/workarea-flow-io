@@ -10,7 +10,8 @@ module Workarea
 
       def perform!
         return true if @credit_card.token.present?
-         response = handle_active_merchant_errors do
+
+        response = handle_active_merchant_errors do
           gateway.store(@credit_card.to_active_merchant)
         end
 

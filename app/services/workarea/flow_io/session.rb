@@ -16,6 +16,14 @@ module Workarea
         end
       end
 
+      def flow_country
+        if cookies.key?("flow_country")
+          cookies["flow_country"]
+        else
+          session&.geo&.country&.iso_3166_3&.downcase
+        end
+      end
+
       def id
         session.id
       end
@@ -30,6 +38,10 @@ module Workarea
 
       def set_flow_experience_cookie?
         !cookies.key?('flow_experience')
+      end
+
+      def set_flow_country_cookie?
+        !cookies.key?('flow_country')
       end
 
       private

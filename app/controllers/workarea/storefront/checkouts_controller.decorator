@@ -16,12 +16,8 @@ module Workarea
         @flow_session ||= FlowIo.client.sessions.get_by_session(cookies['_f60_session'])
       end
 
-      def flow_country
-        flow_session&.geo&.country&.iso_3166_3
-      end
-
       def send_to_flow?
-        flow_country.present? && !FlowIo.config.domestic_order_origins.map(&:alpha3).include?(flow_country)
+        flow_country.present? && !FlowIo.config.domestic_order_origins.map{ |c| c.alpha3.downcase }.include?(flow_country)
       end
 
       def checkout_token

@@ -14,6 +14,7 @@ module Workarea
         begin
           env['HTTP_X_FLOW_EXPERIENCE'] = flow_session.experience&.key
           env['flow.io.experience'] = flow_session.experience
+          env['flow.io.country'] = flow_session.flow_country
         rescue => error
           capture_exception error
           return @app.call env
@@ -43,6 +44,10 @@ module Workarea
               path: "/",
               expires: 1.year.from_now
             })
+          end
+
+          if flow_session.set_flow_country_cookie?
+            set_cookie_header!(headers, "flow_country", flow_session.flow_country)
           end
         end
 

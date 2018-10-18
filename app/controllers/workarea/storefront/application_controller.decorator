@@ -21,12 +21,19 @@ module Workarea
       nil
     end
 
+    def flow_country
+      @flow_country ||=
+        if request.has_header?('flow.io.country')
+          request.headers['flow.io.country']
+        elsif cookies[:flow_country]
+          cookies[:flow_country]
+        end&.downcase
+    end
+
     def default_url_options(*)
-      flow_locale = flow_experience&.country&.downcase
+      return super unless flow_experience && flow_country.present?
 
-      return super unless flow_locale.present?
-
-      super.merge(locale: flow_locale)
+      super.merge(locale: flow_country)
     end
 
     def current_order

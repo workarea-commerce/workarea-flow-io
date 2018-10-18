@@ -12,6 +12,7 @@ require "action_view/railtie"
 require "action_cable/engine"
 require "sprockets/railtie"
 require "rails/test_unit/railtie"
+require 'teaspoon-mocha'
 
 # Workarea must be required before other gems to ensure control over Rails.env
 # for running tests

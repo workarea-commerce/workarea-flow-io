@@ -73,7 +73,7 @@ ActiveMerchant::Billing::FlowGateway.class_eval do
     end
   end
 
-   def refund(amount, capture_id, options = {})
+  def refund(amount, capture_id, options = {})
     refund_form = {}
     refund_form[:amount]     = amount if amount
     refund_form[:capture_id] = capture_id if capture_id
