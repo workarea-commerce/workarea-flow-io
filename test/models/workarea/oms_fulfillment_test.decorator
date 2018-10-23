@@ -1,0 +1,14 @@
+module Workarea
+  if Plugin.installed?(:oms)
+    decorate OmsFulfillmentTest, with: :flow_io do
+      decorated { setup :stub_flow_workers }
+
+      private
+
+        def stub_flow_workers
+          Workarea::FlowIo::ShippingNotifications.any_instance.stubs(:perform).returns(stub_everything)
+          Workarea::FlowIo::FulfillmentCancellation.any_instance.stubs(:perform).returns(stub_everything)
+        end
+    end
+  end
+end

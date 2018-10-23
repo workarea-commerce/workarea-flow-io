@@ -31,7 +31,7 @@ module Workarea
 
             {
               item_number: order_item.sku,
-              quantity: quantity
+              quantity: quantity.to_i
             }
           end.compact
         end
