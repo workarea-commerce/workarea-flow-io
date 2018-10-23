@@ -26,12 +26,6 @@ https://docs.flow.io/type/attribute-form
 
 All international orders will be routed to a Flow.io hosted checkout page. By default the order confirmation page will hosted with Flow.io as well.
 
-By default all US orders are considered domestic and will go through the normal Workarea checkout.
-This can be modified by changing this config value:
-
-    config.flow_io.domestic_order_origins = ['USA']
-
-
 Customers will be redirected to the default Flow.io checkout url. However, most clients will choose to redirect to a subdomain.
 The redirect domain is controlled via the following config:
 
@@ -39,7 +33,7 @@ The redirect domain is controlled via the following config:
 
 ## Installation
 
-    bundle exec rake workarea:flow_io:create_localization_attributes
+    bundle exec rake workarea:flow_io:install
 
 This rake task will just run the following rake tasks in order:
 
@@ -93,6 +87,14 @@ Cache keys are decorated to include the current `Experience` key.  The Http Vary
 is adjusted to include `X-Flow-Experience`  The current country ISO-3166-3 code is added
 to the `locale` as added measure agaisnt browser caching and the etag is updated to include
 the `Experience` key
+
+## Client Considerations
+
+It's assumed that Flow will be the payment processor for foreign orders, and that Flow will `purchase`
+those funds.
+
+3PL(Third Party Logistics) Will need to discussed between the client Flow for foreign orders.
+
 Workarea Platform Documentation
 --------------------------------------------------------------------------------
 

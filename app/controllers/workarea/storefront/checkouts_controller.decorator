@@ -17,7 +17,7 @@ module Workarea
       end
 
       def send_to_flow?
-        flow_country.present? && !FlowIo.config.domestic_order_origins.map{ |c| c.alpha3.downcase }.include?(flow_country)
+        flow_experience.present?
       end
 
       def checkout_token

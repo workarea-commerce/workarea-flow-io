@@ -16,11 +16,6 @@ Workarea.configure do |config|
     medium_thumb: ["checkout"],
   }
 
-  # The countries that will be considered domestic
-  # countries not in array will be sent to a
-  # flow.io hosted checkout.
-  config.flow_io.domestic_order_origins = [Country[:us]]
-
   # URI that flow checkouts will be redirected to.
   # Exclude the trailing slash.
   config.flow_io.checkout_uri = "https://checkout.flow.io"
