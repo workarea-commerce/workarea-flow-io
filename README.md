@@ -95,6 +95,10 @@ those funds.
 
 3PL(Third Party Logistics) Will need to discussed between the client Flow for foreign orders.
 
+## Incompatibilities
+Workarea Flow and Workarea Segmentation both decorate `Workarea::Pricing::Sku#find_price` in incompatible ways.
+If using both, you'll need to manually merge the logic of both implmentations in your build.
+
 Workarea Platform Documentation
 --------------------------------------------------------------------------------
 

@@ -20,7 +20,6 @@ module Workare
         assert(page.has_content?(@product.name))
         assert(page.has_content?('Recommendation Product'))
         assert(page.has_content?("$120"))
-        save_and_open_screenshot
       end
 
       private
