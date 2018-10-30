@@ -17,8 +17,8 @@ module Workarea
 
           transaction.response = handle_active_merchant_errors do
             gateway.authorize(
-              transaction.amount.to_f,
               tender.to_token_or_active_merchant,
+              order_id,
               transaction_options
             )
           end
@@ -28,7 +28,7 @@ module Workarea
           return unless transaction.success?
 
           transaction.cancellation = handle_active_merchant_errors do
-            gateway.void(0, transaction.response.authorization[:key], {})
+            gateway.void(nil, transaction.response.authorization)
           end
         end
 
@@ -36,8 +36,10 @@ module Workarea
 
         def transaction_options
           {
+            amount: transaction.amount.to_f,
             currency: currency_code,
-            customer: customer_data
+            customer: customer_data,
+            discriminator: :direct_authorization_form
           }
         end
       end

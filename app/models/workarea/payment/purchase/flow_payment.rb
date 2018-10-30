@@ -17,8 +17,8 @@ module Workarea
 
           transaction.response = handle_active_merchant_errors do
             gateway.purchase(
-              transaction.amount.cents,
               tender.to_token_or_active_merchant,
+              order_id,
               transaction_options
             )
           end
@@ -32,8 +32,10 @@ module Workarea
 
         def transaction_options
           {
+            amount: transaction.amount.cents,
             currency: currency_code,
-            customer: customer_data
+            customer: customer_data,
+            discriminator: :direct_authorization_form
           }
         end
       end

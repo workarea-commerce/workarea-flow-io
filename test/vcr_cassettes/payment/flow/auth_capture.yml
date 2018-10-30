@@ -1,0 +1,188 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://api.flow.io/workarea-sandbox/cards
+    body:
+      encoding: UTF-8
+      string: '{"number":"4012888888881881","name":"Ben Crouse","cvv":"999","expiration_year":2019,"expiration_month":1}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      - apibuilder 0.14.3 app.apibuilder.io/flow/api/0.6.68/ruby_client
+      Authorization:
+      - Basic RzhqUmV4QkJRdmV1TEwyczZUUWZjSWk2TnZDanhjQjQ3Z3dudmNkbDR4VU5QRUp6QlV0Z3h0b1BRNkZFUjZpSkxmeG1TNGd4M0JxejB4VE5uMlZnenlXTmg4U1hxTHRuSnBjZk1iYTdlaDhyOGxNQTRWd2xOVjNtSUJNZTBBNXI6
+      X-Apidoc-Version:
+      - 0.6.58
+      X-Apidoc-Version-Major:
+      - '0'
+      Content-Type:
+      - application/json; charset=UTF-8
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Tue, 30 Oct 2018 18:12:03 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '244'
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=d144c4330921d5cf0a564b7a0d64899d31540923123; expires=Wed, 30-Oct-19
+        18:12:03 GMT; path=/; domain=.api.flow.io; HttpOnly
+      - __cfduid=d70a656edb6b84b8e1daf3fdaa68c89291540923123; Max-Age=31536000; Expires=Wed,
+        30 Oct 2019 18:12:03 GMT; Path=/; Domain=.payment.api.flow.io; HTTPOnly
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Request-Time:
+      - '67'
+      Vary:
+      - Origin
+      X-Flow-Request-Id:
+      - api4bdcb3caee5c4e69a6e5e967c386b91f
+      X-Flow-Server:
+      - payment
+      X-Trace-Token:
+      - 4bbb36f76f75-163855
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 471fd90fbe6021ec-EWR
+    body:
+      encoding: UTF-8
+      string: '{"id":"crd-d43b941ac92647caa20ebed9d0eef741","token":"F96xnau6qT8SSUHABE6CEnA4Ez5949YZiR5US5QhGCh6D0CsiqUrBFWWcIUcY6vb","type":"visa","expiration":{"month":1,"year":2019},"iin":"401288","last4":"1881","name":"Ben
+        Crouse","discriminator":"card"}'
+    http_version: 
+  recorded_at: Tue, 30 Oct 2018 18:12:03 GMT
+- request:
+    method: post
+    uri: https://api.flow.io/workarea-sandbox/authorizations
+    body:
+      encoding: UTF-8
+      string: '{"amount":5.0,"currency":"USD","discriminator":"direct_authorization_form","token":"F96xnau6qT8SSUHABE6CEnA4Ez5949YZiR5US5QhGCh6D0CsiqUrBFWWcIUcY6vb","order_number":"C65EE4D317"}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      - apibuilder 0.14.3 app.apibuilder.io/flow/api/0.6.68/ruby_client
+      Authorization:
+      - Basic RzhqUmV4QkJRdmV1TEwyczZUUWZjSWk2TnZDanhjQjQ3Z3dudmNkbDR4VU5QRUp6QlV0Z3h0b1BRNkZFUjZpSkxmeG1TNGd4M0JxejB4VE5uMlZnenlXTmg4U1hxTHRuSnBjZk1iYTdlaDhyOGxNQTRWd2xOVjNtSUJNZTBBNXI6
+      X-Apidoc-Version:
+      - 0.6.58
+      X-Apidoc-Version-Major:
+      - '0'
+      Content-Type:
+      - application/json; charset=UTF-8
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Tue, 30 Oct 2018 18:12:03 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '996'
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=dc1be01431d8288401db1b8ca23e00a6a1540923123; Max-Age=31536000; Expires=Wed,
+        30 Oct 2019 18:12:03 GMT; Path=/; Domain=.payment.api.flow.io; HTTPOnly
+      - __cfduid=dfe9e9438baf4eef250f4716aa6cb59cd1540923123; expires=Wed, 30-Oct-19
+        18:12:03 GMT; path=/; domain=.api.flow.io; HttpOnly
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Request-Time:
+      - '92'
+      Vary:
+      - Origin
+      X-Flow-Request-Id:
+      - api62081fd6640046a497c3769a10a685be
+      X-Flow-Server:
+      - payment
+      X-Trace-Token:
+      - 38321f897552-163649
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 471fd9117dc6220a-EWR
+    body:
+      encoding: UTF-8
+      string: '{"id":"aut-U92rVsbwJ0gbr0keceDZdPW2bjOzGTEW","key":"aut-U92rVsbwJ0gbr0keceDZdPW2bjOzGTEW","merchant_of_record":"flow","card":{"id":"crd-d43b941ac92647caa20ebed9d0eef741","token":"F96xnau6qT8SSUHABE6CEnA4Ez5949YZiR5US5QhGCh6D0CsiqUrBFWWcIUcY6vb","discriminator":"card_reference"},"amount":5,"currency":"USD","customer":{"name":{}},"attributes":{},"result":{"status":"authorized","description":{"display":"VISA
+        ending with 1881"}},"created_at":"2018-10-30T18:12:03.522Z","method":{"id":"visa","type":"card","name":"VISA","images":{"small":{"url":"https://flowcdn.io/util/logos/payment-methods/visa/30/original.png","width":65,"height":41},"medium":{"url":"https://flowcdn.io/util/logos/payment-methods/visa/60/original.png","width":100,"height":60},"large":{"url":"https://flowcdn.io/util/logos/payment-methods/visa/120/original.png","width":256,"height":256}},"regions":["world"]},"requested":{"amount":5,"currency":"USD"},"base":{"amount":5,"currency":"USD"},"discriminator":"card_authorization"}'
+    http_version: 
+  recorded_at: Tue, 30 Oct 2018 18:12:03 GMT
+- request:
+    method: post
+    uri: https://api.flow.io/workarea-sandbox/captures
+    body:
+      encoding: UTF-8
+      string: '{"authorization_id":"aut-U92rVsbwJ0gbr0keceDZdPW2bjOzGTEW","key":null,"amount":"5.0","currency":"USD","attributes":null}'
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      - apibuilder 0.14.3 app.apibuilder.io/flow/api/0.6.68/ruby_client
+      Authorization:
+      - Basic RzhqUmV4QkJRdmV1TEwyczZUUWZjSWk2TnZDanhjQjQ3Z3dudmNkbDR4VU5QRUp6QlV0Z3h0b1BRNkZFUjZpSkxmeG1TNGd4M0JxejB4VE5uMlZnenlXTmg4U1hxTHRuSnBjZk1iYTdlaDhyOGxNQTRWd2xOVjNtSUJNZTBBNXI6
+      X-Apidoc-Version:
+      - 0.6.58
+      X-Apidoc-Version-Major:
+      - '0'
+      Content-Type:
+      - application/json; charset=UTF-8
+  response:
+    status:
+      code: 201
+      message: Created
+    headers:
+      Date:
+      - Tue, 30 Oct 2018 18:12:04 GMT
+      Content-Type:
+      - application/json
+      Content-Length:
+      - '381'
+      Connection:
+      - keep-alive
+      Set-Cookie:
+      - __cfduid=d1383bf5d329b7bff3f335a74d0f6d2821540923124; expires=Wed, 30-Oct-19
+        18:12:04 GMT; path=/; domain=.api.flow.io; HttpOnly
+      - __cfduid=d1bc80bec5180a33e93ec6bfb79fccf3b1540923124; Max-Age=31536000; Expires=Wed,
+        30 Oct 2019 18:12:04 GMT; Path=/; Domain=.payment.api.flow.io; HTTPOnly
+      Expect-Ct:
+      - max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"
+      Request-Time:
+      - '70'
+      Vary:
+      - Origin
+      X-Flow-Request-Id:
+      - api8a7099cfdb4a4d21a5854e0dec3a94c5
+      X-Flow-Server:
+      - payment
+      X-Trace-Token:
+      - d062fb223f28-163899
+      Server:
+      - cloudflare
+      Cf-Ray:
+      - 471fd9155d7a21c8-EWR
+    body:
+      encoding: UTF-8
+      string: '{"id":"cap-fb29d31ad7b54a94bb6f90e23c1be9cc","key":"cap-fb29d31ad7b54a94bb6f90e23c1be9cc","authorization":{"id":"aut-U92rVsbwJ0gbr0keceDZdPW2bjOzGTEW","key":"aut-U92rVsbwJ0gbr0keceDZdPW2bjOzGTEW"},"amount":5,"currency":"USD","created_at":"2018-10-30T18:12:04.119Z","status":"succeeded","requested":{"amount":5,"currency":"USD"},"attributes":{},"base":{"amount":5,"currency":"USD"}}'
+    http_version: 
+  recorded_at: Tue, 30 Oct 2018 18:12:04 GMT
+recorded_with: VCR 2.9.3

@@ -15,7 +15,8 @@ module Workarea
           gateway.store(@credit_card.to_active_merchant)
         end
 
-        @credit_card.token = response.params['token']
+        # response.params['response] is a ::Io::Flow::V0::Models::Card
+        @credit_card.token = response.params['response'].token
 
         response.success?
       end

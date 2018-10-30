@@ -10,7 +10,7 @@ module Workarea
       end
 
       def currency_code
-        @currency_code = order.flow_total_price.currency.iso_code
+        order.currency
       end
 
       def customer_data

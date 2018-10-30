@@ -7,7 +7,7 @@ module Workarea
       include FlowIoVCRConfig
 
       def test_store_auth
-        VCR.use_cassette 'credit_card/flow/store_auth' do
+        VCR.use_cassette 'payment/flow/store_auth' do
           transaction = tender.build_transaction(action: 'authorize')
           Payment::Authorize::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?, 'expected transaction to be successful')
@@ -17,7 +17,7 @@ module Workarea
       end
 
       def test_store_purchase
-        VCR.use_cassette 'credit_card/flow/store_purchase' do
+        VCR.use_cassette 'payment/flow/store_purchase' do
           transaction = tender.build_transaction(action: 'purchase')
           Payment::Purchase::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?)
@@ -27,7 +27,7 @@ module Workarea
       end
 
       def test_auth_capture
-        VCR.use_cassette 'credit_card/flow/auth_capture' do
+        VCR.use_cassette 'payment/flow/auth_capture' do
           transaction = tender.build_transaction(action: 'authorize')
           Payment::Authorize::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?)
@@ -42,11 +42,12 @@ module Workarea
 
           capture_transaction = payment.transactions.detect(&:captures)
           assert(capture_transaction.valid?)
+          assert(capture_transaction.success?)
         end
       end
 
       def test_auth_void
-        VCR.use_cassette 'credit_card/flow/auth_void' do
+        VCR.use_cassette 'payment/flow/auth_void' do
           transaction = tender.build_transaction(action: 'authorize')
           operation = Payment::Authorize::FlowPayment.new(tender, transaction)
           operation.complete!
@@ -62,10 +63,10 @@ module Workarea
         end
       end
 
-       def test_auth_capture_refund
+      def test_auth_capture_refund
         pass && return unless Workarea.config.run_credit_card_refund_tests
 
-        VCR.use_cassette 'credit_card/flow/auth_capture_refund' do
+        VCR.use_cassette 'payment/flow/auth_capture_refund' do
           transaction = tender.build_transaction(action: 'authorize')
           Payment::Authorize::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?, 'expected transaction to be successful')
@@ -95,7 +96,7 @@ module Workarea
       def test_purchase_refund
         pass && return unless Workarea.config.run_credit_card_refund_tests
 
-        VCR.use_cassette 'credit_card/flow/purchase_refund' do
+        VCR.use_cassette 'payment/flow/purchase_refund' do
           transaction = tender.build_transaction(action: 'purchase')
           Payment::Purchase::FlowPayment.new(tender, transaction).complete!
           assert(transaction.success?)

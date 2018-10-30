@@ -1,19 +1,23 @@
 module Workarea
-  decorate Storefront::OrderViewModel, with: :flow_io do
+  decorate Storefront::OrderViewModelTest, with: :flow_io do
     decorated { include Workarea::FlowIo::FlowFixtures }
 
     def test_subtotal_price_with_flow
       @order.experience = europe_experience
       @order.flow_subtotal_price = 10.to_m "EUR"
 
-      assert_equal(10.to_m("EUR"), @view_model.subtotal_price)
+      view_model = Storefront::OrderViewModel.wrap(@order)
+
+      assert_equal(10.to_m("EUR"), view_model.subtotal_price)
     end
 
     def test_total_price_with_flow
       @order.experience = europe_experience
       @order.flow_total_price = 10.to_m "EUR"
 
-      assert_equal(10.to_m("EUR"), @view_model.total_price)
+      view_model = Storefront::OrderViewModel.wrap(@order)
+
+      assert_equal(10.to_m("EUR"), view_model.total_price)
     end
   end
 end

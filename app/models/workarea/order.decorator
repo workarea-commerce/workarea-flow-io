@@ -1,8 +1,6 @@
 module Workarea
   decorate Order, with: :flow_io do
     decorated do
-      delegate :currency, to: :experience, allow_nil: true
-
       embeds_one :experience,
         class_name: "Workarea::FlowIo::ExperienceGeo",
         as: :experienceable
@@ -15,6 +13,10 @@ module Workarea
       field :flow_tax_total,      type: Money
       field :flow_total_value,    type: Money
       field :flow_total_price,    type: Money
+    end
+
+    def currency
+      experience&.currency || Money.default_currency.iso_code
     end
 
     # All flow price adjustments on this order.

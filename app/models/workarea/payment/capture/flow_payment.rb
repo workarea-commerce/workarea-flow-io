@@ -12,7 +12,8 @@ module Workarea
           transaction.response = handle_active_merchant_errors do
             gateway.capture(
               transaction.amount.to_f,
-              transaction.reference.response.authorization
+              transaction.reference.response.authorization,
+              transaction_options
             )
           end
         end
@@ -20,6 +21,14 @@ module Workarea
         def cancel!
           # noop, can't cancel a capture
         end
+
+        private
+
+          def transaction_options
+            {
+              currency: currency_code
+            }
+          end
       end
     end
   end

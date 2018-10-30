@@ -1,5 +1,7 @@
 module Workarea
   decorate OrderTest, with: :flow_io do
+    decorated { include Workarea::FlowIo::FlowFixtures }
+
     def test_discount_ids
       order = Order.new(
         items: [
@@ -79,6 +81,17 @@ module Workarea
       )
 
       assert_equal(["5b60ba1f87c68b6b757cde58", "5b60ba1f87c68b6b757cde59"], order.discount_ids)
+    end
+
+    def test_currency_without_experience
+      order = Order.new
+
+      assert_equal(Money.default_currency.iso_code, order.currency)
+    end
+
+    def test_currency_with_experience
+      order = Order.new(experience: europe_experience_geo)
+      assert_equal("EUR", order.currency)
     end
   end
 end
