@@ -6,7 +6,7 @@ module Workarea
 
         payload = event.payload
 
-        info "  Flow Experience: #{payload[:headers]['flow.io.experience'].to_hash}"
+        info "  Flow Experience: #{payload[:headers]['flow.io.experience']&.to_hash}"
       end
 
       private
