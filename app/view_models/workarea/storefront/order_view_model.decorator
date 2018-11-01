@@ -17,5 +17,23 @@ module Workarea
 
       @total_adjustments ||= flow_price_adjustments.reduce_by_description('order')
     end
+
+    def store_credit_amount
+      if store_credit.present?
+        store_credit.amount
+      else
+        0.to_m(order.currency)
+      end
+    end
+
+    if Plugin.installed?(:gift_cards)
+      def gift_card_tender_amount
+        if gift_card?
+          gift_card_tender.amount
+        else
+          0.to_m(order.currency)
+        end
+      end
+    end
   end
 end

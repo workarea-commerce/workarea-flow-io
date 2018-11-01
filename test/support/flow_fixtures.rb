@@ -52,6 +52,12 @@ module Workarea
         product = create_product(variants: [{ sku: '386555310-9', regular: 5.00 }])
         product_2 = create_product(variants: [{ sku: '332477498-5', regular: 5.00 }])
 
+        ['386555310-9', '332477498-5'].each do |sku|
+          Pricing::Sku.find(sku).tap do |pricing_sku|
+            pricing_sku.flow_io_local_items << build_flow_io_local_item(regular: 6.to_m("CAD"))
+          end
+        end
+
         order = create_order(
           id: order_id,
           flow: true,
@@ -60,6 +66,8 @@ module Workarea
 
         order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)
         order.add_item(product_id: product_2.id, sku: '332477498-5', quantity: 1)
+
+        Pricing.perform(order)
 
         flow_order = ::Io::Flow::V0::Models::OrderUpsertedV2.new(canadian_webhook_payload).order
 

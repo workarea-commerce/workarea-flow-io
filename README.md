@@ -95,9 +95,11 @@ those funds.
 
 3PL(Third Party Logistics) Will need to discussed between the client Flow for foreign orders.
 
-## Incompatibilities
+## Incompatibilities and Gotchas
 Workarea Flow and Workarea Segmentation both decorate `Workarea::Pricing::Sku#find_price` in incompatible ways.
 If using both, you'll need to manually merge the logic of both implmentations in your build.
+
+If using both Flow Io and Gift Cards, Flow Io should appear after Gift cards in your Gemfile.
 
 Workarea Platform Documentation
 --------------------------------------------------------------------------------
