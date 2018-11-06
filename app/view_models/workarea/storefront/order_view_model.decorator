@@ -12,6 +12,18 @@ module Workarea
       model.flow_total_price
     end
 
+    def shipping_total
+      return super unless model.experience.present?
+
+      model.flow_shipping_total
+    end
+
+    def tax_total
+      return super unless model.experience.present?
+
+      model.flow_tax_total
+    end
+
     def total_adjustments
       return super unless model.experience.present?
 
