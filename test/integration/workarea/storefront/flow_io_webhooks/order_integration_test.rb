@@ -72,7 +72,7 @@ module Workarea
           params = canadian_webhook_payload
           params[:order][:payments].first.delete(:address)
 
-          post storefront.flow_io_webhook_path, params: params.to_json, headers: headers
+          post_signed storefront.flow_io_webhook_path, params: params.to_json
 
           order.reload
           payment = Payment.find(order.id)
