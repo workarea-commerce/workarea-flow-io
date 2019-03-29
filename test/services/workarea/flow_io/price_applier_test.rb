@@ -570,12 +570,10 @@ module Workarea
                     }
                   },
                   window: {
-                    from: "Mon,
-13 Aug 2018 00:00:00 +0000",
-to: "Wed,
-15 Aug 2018 00:00:00 +0000",
-timezone: "Etc/GMT",
-label: "2-4 Business Days"
+                    from: "Mon, 13 Aug 2018 00:00:00 +0000",
+                    to: "Wed, 15 Aug 2018 00:00:00 +0000",
+                    timezone: "Etc/GMT",
+                    label: "2-4 Business Days"
                   },
                   rule_outcome: {
                     price: {
@@ -674,12 +672,10 @@ label: "2-4 Business Days"
                     }
                   },
                   window: {
-                    from: "Mon,
-13 Aug 2018 00:00:00 +0000",
-to: "Wed,
-15 Aug 2018 00:00:00 +0000",
-timezone: "Etc/GMT",
-label: "2-4 Business Days"
+                    from: "Mon, 13 Aug 2018 00:00:00 +0000",
+                    to: "Wed, 15 Aug 2018 00:00:00 +0000",
+                    timezone: "Etc/GMT",
+                    label: "2-4 Business Days"
                   },
                   rule_outcome: {
                     price: {
