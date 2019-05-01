@@ -59,10 +59,10 @@ module Workarea
             },
             dimensions: {
               packing: {
-                depth: { value: 3, units: :inches },
-                length: { value: 1, units: :inches },
+                depth: { value: 1, units: :inches },
+                length: { value: 3, units: :inches },
                 width: { value: 2, units: :inches },
-                weight: { value: 5.0, units: :grams }
+                weight: { value: 5.0, units: :ounces }
               }
             }
           }

@@ -15,6 +15,7 @@ module Workarea
       @original_params = @params.deep_dup
 
       @customization = options[:customization]
+      @trace = []
 
       reset!(@params)
     end

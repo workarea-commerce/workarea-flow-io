@@ -23,7 +23,6 @@ module Workarea
 
         if result
           CreateFulfillment.new(order).perform
-          SaveOrderAnalytics.new(order).perform
         end
 
         result
