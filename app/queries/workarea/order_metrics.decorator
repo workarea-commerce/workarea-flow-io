@@ -1,0 +1,23 @@
+module Workarea
+  decorate OrderMetrics, with: :flow do
+    def discount_adjustments
+      return super unless order.flow?
+
+      PriceAdjustmentSet.new(all_price_adjustments.discounts.flat_map do |adjustment|
+        next adjustment unless adjustment.data['original_discounts'].present?
+
+        adjustment.data['original_discounts'].map do |adjustment_hash|
+          amount = Money.demongoize(adjustment_hash["amount"])
+
+          PriceAdjustment.new(
+            amount: amount,
+            quantity: adjustment_hash["quantity"],
+            data: {
+              "discount_id" => adjustment_hash["id"]
+            }
+          )
+        end
+      end)
+    end
+  end
+end

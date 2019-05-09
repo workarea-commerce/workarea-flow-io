@@ -93,4 +93,6 @@ Workarea.configure do |config|
   ]
 
   config.run_credit_card_refund_tests = true
+
+  config.exclude_from_search_results_breadcrumbs.push(:experience)
 end
