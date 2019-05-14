@@ -1,3 +1,17 @@
+Workarea Flow Io 1.2.0 (2019-05-14)
+--------------------------------------------------------------------------------
+
+*   Upgrade for Workarea V3.4
+
+    Remove call to removed class `SaveOrderAnalytics` and update
+    `Workarea::OrderMetrics#discount_adjustments` to use `original_discounts`
+    for flow orders
+
+    FLOW-57
+    Eric Pigeon
+
+
+
 Workarea Flow Io 1.1.0 (2019-04-16)
 --------------------------------------------------------------------------------
 
