@@ -31,7 +31,8 @@ module Workarea
               longitude: nil
             },
             center_key: nil,
-            center_reference: nil
+            center_reference: nil,
+            service: nil
           },
           order_number: "1234",
           package: {
@@ -50,7 +51,8 @@ module Workarea
                 price: nil,
                 attributes: nil,
                 center: nil,
-                discount: nil
+                discount: nil,
+                discounts: nil
               }
             ],
           reference_number: nil
