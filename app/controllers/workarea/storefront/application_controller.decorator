@@ -53,6 +53,19 @@ module Workarea
         end
     end
 
+    def set_site_locale
+      @previous_locale = I18n.locale
+      I18n.locale =
+        if I18n.available_locales.include?(params[:locale])
+          params[:locale]
+        else
+          current_site.try(:locale) || I18n.default_locale
+        end
+      yield
+    ensure
+      I18n.locale = @previous_locale
+    end
+
     def view_model_options
       super.merge(flow_experience: flow_experience)
     end
