@@ -1,3 +1,16 @@
+Workarea Flow Io 1.1.1 (2019-07-18)
+--------------------------------------------------------------------------------
+
+*   Update setting site locale with multiste
+
+    Multisite uses it's own method to set I18n.locale; override this method
+    to prevent from setting the locale from a flow experience
+
+    FLOW-59
+    Eric Pigeon
+
+
+
 Workarea Flow Io 1.1.0 (2019-04-16)
 --------------------------------------------------------------------------------
 
