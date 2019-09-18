@@ -99,6 +99,17 @@ module Workarea
           )
         end
 
+        def test_order_placed_in_different_currency
+          order = create_order(id: '6F3A2186EB', experience: canada_experience)
+          _cart = create_cart(order: order)
+
+          post_signed storefront.flow_io_webhook_path, params: euro_order_placed_payload(order: order)
+
+          order.reload
+
+          assert_equal 'EUR', order.currency
+        end
+
         private
 
         def invalid_order_params
