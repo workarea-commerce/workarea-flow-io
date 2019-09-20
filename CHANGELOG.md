@@ -1,3 +1,17 @@
+Workarea Flow Io 1.1.2 (2019-09-20)
+--------------------------------------------------------------------------------
+
+*   Handle orders changing currency during flow checkout
+
+    Changing shipping address in flow checkout would update the experience
+    and currency causing the webhook to error.  Update the
+    `Order#experience` when processing the order upserted webhook
+
+    FLOW-60
+    Eric Pigeon
+
+
+
 Workarea Flow Io 1.1.1 (2019-07-18)
 --------------------------------------------------------------------------------
 
