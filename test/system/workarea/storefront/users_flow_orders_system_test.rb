@@ -14,11 +14,11 @@ module Workarea
 
         visit storefront.users_account_path
 
-        assert page.has_text?(232.31)
+        assert_text('232.31')
 
         visit storefront.users_order_path(order)
 
-        assert page.has_text?("$6.00")
+        assert_text('9.29')
       end
     end
   end

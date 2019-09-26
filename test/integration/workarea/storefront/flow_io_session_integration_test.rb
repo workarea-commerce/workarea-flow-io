@@ -109,6 +109,8 @@ module Workarea
           use Workarea::FlowIo::SessionMiddleware
           use Rack::Cache, metastore: 'heap:/', entitystore: 'heap:/', verbose: true
           use ActionDispatch::Cookies
+          use ActionDispatch::Session::CookieStore
+          use Workarea::TrackingMiddleware
           run Rails.application.endpoint
         end
       end

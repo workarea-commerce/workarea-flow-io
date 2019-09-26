@@ -3,7 +3,6 @@ require 'test_helper'
 module Workarea
   class Payment
     class FlowCreditCardIntegrationTest < Workarea::TestCase
-
       include FlowIoVCRConfig
 
       def test_store_auth
@@ -64,8 +63,6 @@ module Workarea
       end
 
       def test_auth_capture_refund
-        pass && return unless Workarea.config.run_credit_card_refund_tests
-
         VCR.use_cassette 'payment/flow/auth_capture_refund' do
           transaction = tender.build_transaction(action: 'authorize')
           Payment::Authorize::FlowPayment.new(tender, transaction).complete!
@@ -94,8 +91,6 @@ module Workarea
       end
 
       def test_purchase_refund
-        pass && return unless Workarea.config.run_credit_card_refund_tests
-
         VCR.use_cassette 'payment/flow/purchase_refund' do
           transaction = tender.build_transaction(action: 'purchase')
           Payment::Purchase::FlowPayment.new(tender, transaction).complete!

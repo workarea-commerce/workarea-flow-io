@@ -36,9 +36,6 @@ module Workarea
       )
 
       cookies['_f60_session'] = 2
-      get storefront.searches_path(q: "shirt", format: :json)
-      assert response.ok?
-
       get storefront.search_path(q: "shirt")
       assert_match("Cheap Shirt", response.body)
       assert_match("Expensive Shirt", response.body)

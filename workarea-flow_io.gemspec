@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
 
   s.files = `git ls-files`.split("\n")
 
-  s.add_dependency 'workarea', '~> 3.x', ">= 3.4.0"
+  s.add_dependency 'workarea', '~> 3.x', '>= 3.5.x'
   s.add_dependency 'flowcommerce', ">= 0.2.69"
   s.add_dependency 'flowcommerce-activemerchant', ">= 0.1.3"
 end
