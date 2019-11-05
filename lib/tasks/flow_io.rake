@@ -34,18 +34,13 @@ namespace :workarea do
 
     desc 'create webhooks'
     task create_webhooks: :environment do
-      puts "Creating webhooks..."
-      unless Workarea::FlowIo.webhook_shared_secret.present?
-        warn <<~eos
-          **************************************************
-          ⛔️ Webhooks require flow_io.webhook_shared_secret to be set in your credentials/secrets
-          **************************************************
-        eos
-        next
-      end
-
+      puts "Creating webhook shared secret..."
       client = Workarea::FlowIo.client
+      secret = Workarea::FlowIo::Webhook::SharedSecret.first_or_create!
       organization_id = Workarea::FlowIo.organization_id
+      client.webhook_settings.put(organization_id, secret: secret.token)
+
+      puts "Creating webhooks..."
       host = Workarea.config.host
 
       webhook_url = Workarea::Storefront::Engine

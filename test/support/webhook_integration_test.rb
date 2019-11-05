@@ -33,7 +33,10 @@ module Workarea
         end
 
         def webhook_shared_secret
-          Workarea::FlowIo.webhook_shared_secret
+          @webhook_shared_secret ||= begin
+            secret = Workarea::FlowIo::Webhook::SharedSecret.first_or_create!
+            secret.token
+          end
         end
     end
   end
