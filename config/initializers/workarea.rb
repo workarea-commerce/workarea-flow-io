@@ -3,6 +3,10 @@ Workarea.configure do |config|
 
   config.flow_io ||= ActiveSupport::Configurable::Configuration.new
 
+  # Enable JS integration for real-time price updates. Defaults to
+  # `false`.
+  config.flow_io.enable_javascript = false
+
   # default payment action. FlowIO recomends purchase (auth/cap)
   config.flow_io.default_payment_action = "purchase"
 
