@@ -24,6 +24,9 @@ flow_io:
   # under 'Organization Settings > Integrations"
   api_token:
   organization_id:
+  # the following credentials are provided by flow.io representatives..
+  ftp_username:
+  ftp_password:
 ```
 
 Finally, run the generator to set up Flow for use with your application:
@@ -90,21 +93,21 @@ end
 
 ## Under The Hood
 
-This section explains a bit about how Flow is integrated with your
-Workarea store.
+This section explains a bit about how Flow integrates their pricing
+model into your Workarea store.
 
 ### Item Exporting / Importing
 
-A callbacks worker gets enqueued on `Catalog::Product`, `Shipping::Sku`,
-`Pricing::Sku`, and `Pricing::Price` save.  Depending on the number of
+A callbacks worker gets enqueued when `Catalog::Product`, `Shipping::Sku`,
+`Pricing::Sku`, or `Pricing::Price` are saved.  Depending on the number of
 skus changed, the worker will export the affected items to Flow.  Flow
-will then create Local Items to represent those skus in each experiece,
-and push those prices back to Workarea.  The plugin embeds those local
-items on the `Pricing::Sku` for display.  The base price of a localized
-price will not necessarily be the same.  After the initial price is
-converted into the localized currency, rounding and margin rules are
-applied and then it is converted back into the default currency as the
-base price.
+will then create Local Items to represent those skus in each experience,
+and push those prices back to Workarea in a flat file sent over SFTP.
+The plugin embeds those local items on the `Pricing::Sku` for display.
+The base price of a localized price will not necessarily be the same.
+After the initial price is converted into the localized currency,
+rounding and margin rules are applied and then it is converted back into
+the default currency as the base price.
 
 ### Order Pricing
 
@@ -134,7 +137,7 @@ checkout.  Flow will send an `OrderUpsertedV2` webhook with a
 `#submitted_at` value.  The `Workarea::Order` will be updated and marked
 as placed.
 
-When `Fulfillment::Item`s are shipped or cancaled in Workarea, workers
+When `Fulfillment::Item`s are shipped or canceled in Workarea, workers
 will update Flow with `ShippingNotifications` or
 `FulfillmentCancellations`.
 
