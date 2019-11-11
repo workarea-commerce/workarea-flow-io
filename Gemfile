@@ -2,8 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'workarea', '>= 3.2.0', source: 'https://gems.weblinc.com'
-gem 'workarea-ci', source: "https://gems.weblinc.com"
+gem 'workarea', github: 'workarea-commerce/workarea', branch: 'v3.4-stable'
 gem 'byebug'
 
 group :test do
