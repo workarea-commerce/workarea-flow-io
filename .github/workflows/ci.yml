@@ -14,6 +14,12 @@ jobs:
       env:
         BUNDLE_GEMS__WEBLINC__COM: ${{ secrets.BUNDLE_GEMS__WEBLINC__COM }}
         BUNDLE_GITHUB__COM: ${{ secrets.BUNDLE_GITHUB__COM }}
+    - uses: workarea-commerce/ci/eslint@v1
+      with:
+        args: '**/*.js'
+    - uses: workarea-commerce/ci/stylelint@v1
+      with:
+        args: '**/*.scss'
 
   admin_tests:
     runs-on: ubuntu-latest
