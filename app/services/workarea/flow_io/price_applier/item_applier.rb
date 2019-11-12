@@ -1,7 +1,6 @@
 module Workarea
   module FlowIo
     class PriceApplier::ItemApplier
-
       def self.perform(order_item:, localized_line_item:)
         new(order_item: order_item, localized_line_item: localized_line_item).perform!
       end

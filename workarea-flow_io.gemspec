@@ -7,9 +7,9 @@ Gem::Specification.new do |s|
   s.version     = Workarea::FlowIo::VERSION
   s.authors     = ["Eric Pigeon"]
   s.email       = ["epigeon@weblinc.com"]
-  s.homepage    = ""
-  s.summary     = "Flow Commerce integration for Workarea"
-  s.description = "Integration Flow Commerce internationl checkout"
+  s.homepage    = 'https://plugins.workarea.com/plugins/flow-io'
+  s.summary     = 'Flow Commerce integration for the Workarea Commerce Platform'
+  s.description = "Integrate Flow Commerce's international payments into the Workarea Commerce Platform"
 
   s.files = `git ls-files`.split("\n")
 

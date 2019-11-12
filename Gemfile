@@ -2,12 +2,11 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'workarea', '>= 3.2.0', source: 'https://gems.weblinc.com'
-gem 'workarea-ci', source: "https://gems.weblinc.com"
 gem 'byebug'
+gem 'simplecov', require: false
+gem 'sprockets', '~> 3'
 
-group :test do
-  gem 'simplecov', require: false
-  gem 'workarea-oms', source: "https://gems.weblinc.com"
-  gem 'workarea-testing', '>= 3.2.0', source: 'https://gems.weblinc.com'
+source 'https://gems.weblinc.com' do
+  gem 'workarea-ci'
+  gem 'workarea-oms', '~> 5.1.1'
 end

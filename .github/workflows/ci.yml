@@ -2,21 +2,33 @@ name: CI
 on: [push]
 
 jobs:
-  static_analysis:
+  rubocop:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
-    - uses: workarea-commerce/ci/bundler-audit@v1
+    - uses: workarea-commerce/ci/rubocop@ruby-2.4
       env:
         BUNDLE_GEMS__WEBLINC__COM: ${{ secrets.BUNDLE_GEMS__WEBLINC__COM }}
         BUNDLE_GITHUB__COM: ${{ secrets.BUNDLE_GITHUB__COM }}
-    - uses: workarea-commerce/ci/rubocop@v1
+  bundler_audit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: workarea-commerce/ci/bundler-audit@ruby-2.4
       env:
         BUNDLE_GEMS__WEBLINC__COM: ${{ secrets.BUNDLE_GEMS__WEBLINC__COM }}
         BUNDLE_GITHUB__COM: ${{ secrets.BUNDLE_GITHUB__COM }}
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
     - uses: workarea-commerce/ci/eslint@v1
       with:
         args: '**/*.js'
+  stylelint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
     - uses: workarea-commerce/ci/stylelint@v1
       with:
         args: '**/*.scss'
@@ -27,7 +39,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.6.x
+        ruby-version: 2.4.x
     - uses: workarea-commerce/ci/test@v1
       with:
         command: bin/rails app:workarea:test:admin
@@ -41,7 +53,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.6.x
+        ruby-version: 2.4.x
     - uses: workarea-commerce/ci/test@v1
       with:
         command: bin/rails app:workarea:test:core
@@ -55,7 +67,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.6.x
+        ruby-version: 2.4.x
     - uses: workarea-commerce/ci/test@v1
       with:
         command: bin/rails app:workarea:test:storefront
@@ -69,7 +81,7 @@ jobs:
     - uses: actions/checkout@v1
     - uses: actions/setup-ruby@v1
       with:
-        ruby-version: 2.6.x
+        ruby-version: 2.4.x
     - uses: workarea-commerce/ci/test@v1
       with:
         command: bin/rails app:workarea:test:plugins
