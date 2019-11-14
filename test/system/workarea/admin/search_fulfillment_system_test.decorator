@@ -1,0 +1,25 @@
+module Workarea
+  if Plugin.installed?(:oms)
+    decorate Admin::SearchFulfillmentsSystemTest, with: :flow_io do
+      def test_results_include_fulfillments
+        visit admin.search_path(q: 'fulfillment')
+
+        assert_text(t('workarea.admin.bulk_action_fulfillments.summary.fulfillment'))
+        assert_text(fulfillment.created_at.strftime('%Y-%m-%d'))
+        assert_text(fulfillment.created_at.strftime('%l:%M%p'))
+
+        visit admin.search_path(q: '67890')
+
+        assert_text(t('workarea.admin.bulk_action_fulfillments.summary.fulfillment'))
+        assert_text(fulfillment.created_at.strftime('%Y-%m-%d'))
+        assert_text(fulfillment.created_at.strftime('%l:%M%p'))
+
+        visit admin.search_path(q: fulfillment.id)
+
+        assert_text(t('workarea.admin.bulk_action_fulfillments.summary.fulfillment'))
+        assert_text(fulfillment.created_at.strftime('%Y-%m-%d'))
+        assert_text(fulfillment.created_at.strftime('%l:%M%p'))
+      end
+    end
+  end
+end
