@@ -52,7 +52,7 @@ module Workarea
                 attributes: nil,
                 center: nil,
                 discount: nil,
-                discounts: nil
+                discounts: { discounts: [] },
               }
             ],
           reference_number: nil

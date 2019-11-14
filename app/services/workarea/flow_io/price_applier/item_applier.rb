@@ -1,35 +1,32 @@
 module Workarea
   module FlowIo
+    # Updates a `Wokrarea::Order::Item` pricing with information from a
+    # `::Io::Flow::V0::Models::LocalizedLineItem`.
+    #
     class PriceApplier::ItemApplier
-      def self.perform(order_item:, localized_line_item:)
-        new(order_item: order_item, localized_line_item: localized_line_item).perform!
+      def self.perform(order_item:, localized_line_item:, discounts:)
+        new(
+          order_item: order_item,
+          localized_line_item: localized_line_item,
+          discounts: discounts
+        ).perform!
       end
 
       attr_reader :order_item,
         :localized_line_item,
-        :original_discounts,
+        :discounts,
         :item_calculator_data,
         :flow_item_calculator_data
 
-      # @param ::Worakrea::Order::Item
-      # @param ::Io::Flow::V0::Models::LocalizedLineItem
-      def initialize(order_item:, localized_line_item:)
+      # @param order_item [::Worakrea::Order::Item]
+      # @param localized_line_item [::Io::Flow::V0::Models::LocalizedLineItem]
+      #
+      def initialize(order_item:, localized_line_item:, discounts:)
         @order_item = order_item
         @localized_line_item = localized_line_item
+        @discounts = discounts
         @item_calculator_data = order_item.price_adjustments&.first&.data || {}
         @flow_item_calculator_data = order_item.flow_price_adjustments&.first&.data || {}
-        # Need to store original discount price adjustments: discount_id, quantity and amount
-        # for Workarea::SaveOrderAnalytics#discounts_by, used for Analytics::Discount and
-        # Analytics::DiscountsSummary.  If this is called from the webhook after the order
-        # was placed in Flow's Hosted checkout, just read the "original_discounts" already
-        # stored in the price adjustments data
-        @original_discounts = order_item
-          .price_adjustments
-          .adjusting("item")
-          .select(&:discount?)
-          .flat_map do |pa|
-            pa.data["original_discounts"] || { id: pa.data['discount_id'], quantity: pa.quantity, amount: pa.amount }
-          end
       end
 
       def perform!
@@ -37,10 +34,8 @@ module Workarea
         order_item.reset_flow_price_adjustments
 
         add_base_adjustments
-        if localized_line_item.discount.present?
-          add_item_discount
-          add_unit_price_rounding
-        end
+        add_line_item_discounts
+        add_unit_price_rounding
       end
 
       private
@@ -70,32 +65,44 @@ module Workarea
           )
         end
 
-        def add_item_discount
-          order_item.adjust_pricing(
-            item_adjustment_data.merge(
-              quantity: order_item.quantity,
-              amount: -localized_line_item.discount.base.to_m,
-              description: "Discount",
-              data: {
-                "localized_line_item_discount" => localized_line_item.discount.to_hash,
-                "description" => 'Flow Localized Line Item Discount Base',
-                "discount_amount" => localized_line_item.discount.base.to_m,
-                "original_discounts" => original_discounts
-              }.deep_stringify_keys
-            )
-          )
+        def add_line_item_discounts
+          return unless localized_line_item.discounts.present?
 
-          order_item.adjust_flow_pricing(
-            item_adjustment_data.merge(
-              quantity: order_item.quantity,
-              amount: -localized_line_item.discount.to_m,
-              description: "Discount",
-              data: {
-                "description" => 'Flow Localized Line Item Discount',
-                "discount_amount" => localized_line_item.discount.to_m
-              }
+          localized_line_item.discounts.each do |localized_line_item_discount|
+            discount = discounts.detect do |pricing_discount|
+              pricing_discount.name == localized_line_item_discount.discount_label
+            end
+
+            price_level = discount&.class&.price_level || "item"
+
+            order_item.adjust_pricing(
+              item_adjustment_data.merge(
+                quantity: order_item.quantity,
+                price: price_level,
+                amount: localized_line_item_discount.base.to_m,
+                description: localized_line_item_discount.discount_label,
+                data: {
+                  "localized_line_item_discount" => localized_line_item_discount.to_hash,
+                  "discount_id" => discount&.id&.to_s,
+                  "description" => localized_line_item_discount.discount_label,
+                  "discount_amount" => localized_line_item_discount.base.to_m.abs
+                }.deep_stringify_keys.compact
+              )
             )
-          )
+
+            order_item.adjust_flow_pricing(
+              item_adjustment_data.merge(
+                quantity: order_item.quantity,
+                price: price_level,
+                amount: localized_line_item_discount.to_m,
+                description: localized_line_item_discount.discount_label,
+                data: {
+                  "description" => localized_line_item_discount.discount_label,
+                  "discount_amount" => localized_line_item_discount.to_m.abs
+                }
+              )
+            )
+            end
         end
 
         # flow will add or subtract money to make the line item price

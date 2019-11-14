@@ -1,24 +1,35 @@
 module Workarea
   module FlowIo
     class OrderPutForm
-      def self.from(order:, shippings: nil)
+      # @param order [Workarea::Order]
+      # @param shippings [Array<Workarea::Shipping>, nil]
+      # @param discounts [Array<Workarea::Pricing::Discount>, nil]
+      #
+      def self.from(order:, shippings: nil, discounts: nil)
         new(order: order, shippings: shippings).to_flow_model
       end
 
-      attr_reader :order, :shippings
+      attr_reader :order, :shippings, :discounts
 
-      def initialize(order:, shippings: nil)
+      # @param order [Workarea::Order]
+      # @param shippings [Array<Workarea::Shipping>, nil]
+      # @param discounts [Array<Workarea::Pricing::Discount>, nil]
+      #
+      def initialize(order:, shippings: nil, discounts: nil)
         @order = order
         @shippings = shippings || []
+        @discounts = discounts || []
       end
 
+      # @return [::Io::Flow::V0::Models::OrderPutForm]
+      #
       def to_flow_model
         ::Io::Flow::V0::Models::OrderPutForm.new(
           {
             attributes: { number: order.id },
             customer: customer,
             items: items
-          }.merge(discount)
+          }
         )
       end
 
@@ -44,20 +55,7 @@ module Workarea
         end
 
         def items
-          order.items.map { |item| FlowIo::LineItemForm.from(order_item: item) }
-        end
-
-        def discount
-          discount_amount = order
-            .price_adjustments
-            .adjusting("order")
-            .select { |pa| pa.discount? }
-            .sum
-            .abs
-
-          return {} if discount_amount.amount.zero?
-
-          { discount: { amount: discount_amount.to_f, currency: discount_amount.currency.iso_code } }
+          order.items.map { |item| FlowIo::LineItemForm.from(order_item: item, discounts: discounts) }
         end
     end
   end
