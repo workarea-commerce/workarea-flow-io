@@ -1,0 +1,10 @@
+
+(function () {
+    'use strict';
+
+  <% if Workarea.config.flow_io.enable_javascript %>
+    WORKAREA.config.flow = {
+      organizationID: "<%= Workarea::FlowIo.organization_id %>"
+    };
+  <% end %>
+})();

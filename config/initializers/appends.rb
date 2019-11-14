@@ -1,11 +1,11 @@
 Workarea.append_javascripts(
   'storefront.modules',
-  'workarea/storefront/flow_io/flow_country_picker'
+  'workarea/storefront/flow_io/flow'
 )
 
-Workarea.append_partials(
-  'storefront.document_head',
-  'workarea/storefront/flow_beacon'
+Workarea.append_javascripts(
+  'storefront.config',
+  'workarea/storefront/flow_io/configuration'
 )
 
 Workarea.append_partials(
