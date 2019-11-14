@@ -1,0 +1,27 @@
+module Workarea
+  decorate PriceAdjustmentSet, with: :flow_io do
+    # todo test this
+    #
+    def group_discounts_by_id
+      reduce({}) do |memo, adjustment|
+        if adjustment.discount?
+          memo[adjustment.data["discount_id"]] ||= PriceAdjustment.new(
+            quantity: adjustment.quantity,
+            data: adjustment.data.merge("discount_value" => 0.0),
+            price: adjustment.price,
+            description: adjustment.description,
+            calculator: adjustment.calculator,
+            amount: 0.to_m(adjustment.amount.currency)
+          )
+
+          memo[adjustment.data["discount_id"]].amount += adjustment.amount
+          memo[adjustment.data["discount_id"]].data["discount_value"] += adjustment.data["discount_value"]
+        else
+          memo[adjustment.id] = adjustment
+        end
+
+        memo
+      end.values
+    end
+  end
+end
