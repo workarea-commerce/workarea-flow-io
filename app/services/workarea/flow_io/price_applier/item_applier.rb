@@ -1,5 +1,7 @@
 module Workarea
   module FlowIo
+    # Updates a `Wokrarea::Order::Item` pricing with information from a
+    # `::Io::Flow::V0::Models::LocalizedLineItem`.
     class PriceApplier::ItemApplier
       def self.perform(order_item:, localized_line_item:)
         new(order_item: order_item, localized_line_item: localized_line_item).perform!
@@ -11,8 +13,9 @@ module Workarea
         :item_calculator_data,
         :flow_item_calculator_data
 
-      # @param ::Worakrea::Order::Item
-      # @param ::Io::Flow::V0::Models::LocalizedLineItem
+      # @param order_item [::Worakrea::Order::Item]
+      # @param localized_line_item [::Io::Flow::V0::Models::LocalizedLineItem]
+      #
       def initialize(order_item:, localized_line_item:)
         @order_item = order_item
         @localized_line_item = localized_line_item
@@ -25,8 +28,8 @@ module Workarea
         # stored in the price adjustments data
         @original_discounts = order_item
           .price_adjustments
+          .discounts
           .adjusting("item")
-          .select(&:discount?)
           .flat_map do |pa|
             pa.data["original_discounts"] || { id: pa.data['discount_id'], quantity: pa.quantity, amount: pa.amount }
           end
@@ -37,9 +40,9 @@ module Workarea
         order_item.reset_flow_price_adjustments
 
         add_base_adjustments
+        add_line_item_discounts
         if localized_line_item.discount.present?
-          add_item_discount
-          add_unit_price_rounding
+          # add_unit_price_rounding
         end
       end
 
@@ -70,32 +73,33 @@ module Workarea
           )
         end
 
-        def add_item_discount
-          order_item.adjust_pricing(
-            item_adjustment_data.merge(
-              quantity: order_item.quantity,
-              amount: -localized_line_item.discount.base.to_m,
-              description: "Discount",
-              data: {
-                "localized_line_item_discount" => localized_line_item.discount.to_hash,
-                "description" => 'Flow Localized Line Item Discount Base',
-                "discount_amount" => localized_line_item.discount.base.to_m,
-                "original_discounts" => original_discounts
-              }.deep_stringify_keys
+        def add_line_item_discounts
+          localized_line_item.discounts.each do |localized_line_item_discount|
+            order_item.adjust_pricing(
+              item_adjustment_data.merge(
+                quantity: order_item.quantity,
+                amount: localized_line_item_discount.base.to_m,
+                description: localized_line_item_discount.discount_label,
+                data: {
+                  "localized_line_item_discount" => localized_line_item_discount.to_hash,
+                  "description" => localized_line_item_discount.discount_label,
+                  "discount_amount" => localized_line_item_discount.base.to_m.abs
+                }.deep_stringify_keys
+              )
             )
-          )
 
-          order_item.adjust_flow_pricing(
-            item_adjustment_data.merge(
-              quantity: order_item.quantity,
-              amount: -localized_line_item.discount.to_m,
-              description: "Discount",
-              data: {
-                "description" => 'Flow Localized Line Item Discount',
-                "discount_amount" => localized_line_item.discount.to_m
-              }
+            order_item.adjust_flow_pricing(
+              item_adjustment_data.merge(
+                quantity: order_item.quantity,
+                amount: localized_line_item_discount.to_m,
+                description: localized_line_item_discount.discount_label,
+                data: {
+                  "description" => localized_line_item_discount.discount_label,
+                  "discount_amount" => localized_line_item_discount.to_m.abs
+                }
+              )
             )
-          )
+            end
         end
 
         # flow will add or subtract money to make the line item price
