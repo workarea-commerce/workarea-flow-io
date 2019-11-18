@@ -52,7 +52,7 @@ module Workarea
     end
 
     def self.webhook_shared_secret
-       credentials[:webhook_shared_secret]
+      Workarea::FlowIo::Webhook::SharedSecret.first.try(:token)
     end
 
     # Conditionally use the real gateway when secrets are present.

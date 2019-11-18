@@ -7,6 +7,8 @@ module Workarea
         include Workarea::FlowIo::WebhookIntegrationTest
         include Workarea::FlowIo::FlowFixtures
 
+        setup :setup_shared_secret
+
         def test_order_update
           product = create_product(variants: [{ sku: '386555310-9', regular: 5.00 }])
           product_2 = create_product(variants: [{ sku: '332477498-5', regular: 5.00 }])
@@ -737,6 +739,10 @@ module Workarea
 
         def order_upserted
           canadian_webhook_payload.to_json
+        end
+
+        def setup_shared_secret
+          FlowIo::Webhook::SharedSecret.first_or_create!
         end
       end
     end
