@@ -38,7 +38,13 @@ namespace :workarea do
       client = Workarea::FlowIo.client
       secret = Workarea::FlowIo::Webhook::SharedSecret.first_or_create!
       organization_id = Workarea::FlowIo.organization_id
-      client.webhook_settings.put(organization_id, secret: secret.token)
+      client.webhook_settings.put(
+        organization_id,
+        secret: secret.token,
+        retry_max_attempts: 5,
+        retry_sleep_ms: 30,
+        sleep_ms: 30
+      )
 
       puts "Creating webhooks..."
       host = Workarea.config.host
