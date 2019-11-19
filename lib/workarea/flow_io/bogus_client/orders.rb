@@ -399,18 +399,17 @@ module Workarea
                         }
                       }
                     },
-                    shipment_estimate: nil
+                    shipment_estimate: nil,
+                    discounts: line_item_form.discounts.discounts.map do |discount_form|
+                      {
+                        amount: 0.36,
+                        currency: "CAD",
+                        label: "CA$0.36",
+                        base: line_item_form.discount.to_hash.merge(label: "US$0.25"),
+                        requested: line_item_form.discount
+                      }
+                    end
                   }
-
-                  if line_item_form.discount.present?
-                    item.merge!(discount: {
-                      amount: 0.36,
-                      currency: "CAD",
-                      label: "CA$0.36",
-                      base: line_item_form.discount.to_hash.merge(label: "US$0.25"),
-                      requested: line_item_form.discount
-                    })
-                  end
 
                   item
                 end

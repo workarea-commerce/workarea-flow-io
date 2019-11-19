@@ -78,6 +78,9 @@ module Workarea
           end
         end
 
+        def add_order_discounts
+        end
+
         def add_order_discount
           base_distribution = Pricing::PriceDistributor.for_items(localized_order_discount.base.to_m.abs, order.items)
           local_distribution = Pricing::PriceDistributor.for_flow_order(localized_order_discount.to_m.abs, order)

@@ -74,6 +74,8 @@ module Workarea
         end
 
         def add_line_item_discounts
+          return unless localized_line_item.discounts.present?
+
           localized_line_item.discounts.each do |localized_line_item_discount|
             order_item.adjust_pricing(
               item_adjustment_data.merge(

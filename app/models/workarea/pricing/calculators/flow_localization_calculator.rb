@@ -16,13 +16,16 @@ module Workarea
             experience: order.experience.key
           )
 
+          Rails.logger.debug(order_put_form.to_hash.to_json)
+          Rails.logger.debug(flow_order.to_hash.to_json)
+
           FlowIo::PriceApplier.perform(order: order, flow_order: flow_order)
-        rescue => exception
-          if defined?(::Raven)
-            Raven.capture_exception(exception)
-          else
-            Rails.logger.warn "Error in FlowLocalizationCalculator: #{exception}"
-          end
+        # rescue => exception
+        #   if defined?(::Raven)
+        #     Raven.capture_exception(exception)
+        #   else
+        #     Rails.logger.warn "Error in FlowLocalizationCalculator: #{exception}"
+        #   end
         end
       end
     end
