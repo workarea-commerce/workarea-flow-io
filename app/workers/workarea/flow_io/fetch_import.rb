@@ -15,12 +15,15 @@ module Workarea
         Net::SFTP.start(FlowIo::FTP_HOST, username, password: password) do |sftp|
           sftp.dir.glob(path.to_s, '*.csv') do |entry|
             Import.find_or_create_by!(name: entry.name) do |import|
-              sftp.file.open(path.join(entry.name).to_s) do |file|
-                tmp = Tempfile.new(entry.name)
-                tmp.write(file.gets)
-                tmp.close
+              import.file = Tempfile.new(entry.name).tap do |tmp|
+                begin
+                  filepath = path.join(entry.name).to_s
+                  csv = sftp.download!(filepath)
 
-                import.file = tmp
+                  tmp.write(csv)
+                ensure
+                  tmp.close
+                end
               end
             end
           end
