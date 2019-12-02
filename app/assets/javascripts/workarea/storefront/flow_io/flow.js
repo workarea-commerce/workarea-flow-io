@@ -61,7 +61,7 @@ WORKAREA.registerModule('flow', (function () {
             WORKAREA.url.redirectTo(redirectUrl(url, country));
         },
 
-        initCountryPicker = function ($scope) {
+        initCountryPicker = function (flow, $scope) {
           $("[data-country-picker]", $scope).each(function() {
             flow.countryPicker.createCountryPicker({
                 type: "modal",
@@ -71,7 +71,7 @@ WORKAREA.registerModule('flow', (function () {
           });
         },
 
-        localizePrices = function() {
+        localizePrices = function(flow) {
             flow.cmd('localize');
         },
 
