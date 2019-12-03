@@ -6,26 +6,16 @@
 WORKAREA.registerModule('flow', (function () {
     'use strict';
 
-    var getScript = function ($scope) {
-            return new Promise(function(resolve, reject) {
-                var existingFlowScripts = $('#flow-fraud-riskified-script'),
-                    shouldLoadFlow = _.isEmpty(existingFlowScripts);
+    var getScript = _.once(function () {
+            !function (f, l, o, w, i, n, g) {
+            f[i] = f[i] || {};f[i].cmd = f[i].cmd || function () {
+            (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
+            n.src = w;g = l.getElementsByTagName(o)[0];g.parentNode.insertBefore(n, g);
+            }(window,document,'script','https://cdn.flow.io/flowjs/latest/flow.min.js','flow');
 
-                if (shouldLoadFlow) {
-                  try {
-                    !function (f, l, o, w, i, n, g) {
-                    f[i] = f[i] || {};f[i].cmd = f[i].cmd || function () {
-                    (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
-                    n.src = w;g = l.getElementsByTagName(o)[0];g.parentNode.insertBefore(n, g);
-                    }(window,document,'script','https://cdn.flow.io/flowjs/latest/flow.min.js','flow');
-                  } catch(error) {
-                    return reject(error, $scope);
-                  }
-
-                  return resolve(flow, $scope);
-                }
-            });
-        },
+            flow.cmd('set', 'organization', WORKAREA.config.flow.organizationID);
+            flow.cmd('init');
+        }),
 
         urlLocale = function (url) {
             var parsedUrl = WORKAREA.url.parse(url),
@@ -61,25 +51,18 @@ WORKAREA.registerModule('flow', (function () {
             WORKAREA.url.redirectTo(redirectUrl(url, country));
         },
 
-        initCountryPicker = function (flow, $scope) {
-          $("[data-country-picker]", $scope).each(function() {
-            flow.countryPicker.createCountryPicker({
-                type: "modal",
-                containerId: "country-picker",
-                onSessionUpdate: updateSession
+        initCountryPicker = _.once(function() {
+            flow.cmd('on', 'ready', function () {
+                flow.countryPicker.createCountryPicker({
+                    type: "modal",
+                    containerId: "country-picker",
+                    onSessionUpdate: updateSession
+                });
             });
-          });
-        },
+        }),
 
-        localizePrices = function(flow) {
+        localizePrices = function() {
             flow.cmd('localize');
-        },
-
-        initFlow = function(flow) {
-            if (WORKAREA.config.flow) {
-                flow.cmd('set', 'organization', WORKAREA.config.flow.organizationID);
-                flow.cmd('init');
-            }
         },
 
         /**
@@ -87,11 +70,15 @@ WORKAREA.registerModule('flow', (function () {
          * @name init
          * @memberof WORKAREA.flow
          */
-        init = function ($scope) {
-          getScript($scope)
-              .then(initFlow)
-              .then(localizePrices)
-              .then(initCountryPicker);
+        init = function () {
+            if (_.isUndefined(WORKAREA.config.flow)) { return; }
+
+            getScript();
+            localizePrices();
+
+            if (!_.isEmpty($("#country-picker"))) {
+                initCountryPicker();
+            }
         };
 
         // urlLocale and redirectUrl are only exposed for testing and

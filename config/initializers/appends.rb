@@ -1,3 +1,8 @@
+Workarea.append_partials(
+  'storefront.document_head',
+  'workarea/storefront/flow_io_country_picker_javascript'
+)
+
 Workarea.append_javascripts(
   'storefront.modules',
   'workarea/storefront/flow_io/flow'
