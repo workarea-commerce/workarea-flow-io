@@ -3,15 +3,19 @@ Workarea::Storefront::Engine.routes.draw do
 end
 
 Workarea::Admin::Engine.routes.draw do
-  resources :orders, only: [] do
-    member do
-      get :flow
-    end
-  end
+  scope '(:locale)', constraints: Workarea::I18n.routes_constraint do
+    resources :flow_imports, only: :index
 
-  resources :pricing_skus, only: [] do
-    member do
-      get :flow
+    resources :orders, only: [] do
+      member do
+        get :flow
+      end
+    end
+
+    resources :pricing_skus, only: [] do
+      member do
+        get :flow
+      end
     end
   end
 end

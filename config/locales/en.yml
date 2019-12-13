@@ -1,6 +1,35 @@
 en:
   workarea:
     admin:
+      flow_imports:
+        errors:
+          error: Error
+          page_title: Errors for %{name} %{type}
+          dashboard_link: All Imports & Exports
+          title: Errors for %{name} %{type}
+          unknown_type: Unknown
+          table:
+            id_or_line: ID or Line Number
+            field: Field
+            message: Message
+        index:
+          dashboard_link: Settings dashboard
+          import: Import
+          info: Review details of imports from the last %{duration}
+          page_title: Flow Imports
+          showing: Showing %{count},
+          title: Flow Imports
+          view_imports: view imports
+      localized_prices:
+        label: Localized Prices
+        base: Base
+        base_tooltip: The price converted into the localized currency with rounding rules applied then converted back into the base currency.
+        localized: Localized
+        regular_base: Regular Base
+        regular_localized: Regular Localized
+        sale_localized: Sale Localized
+        sale_base: Sale Base
+        title: Localized Prices for %{sku}
       orders:
         view_flow_order: View Order in Flow Console
         cards:
@@ -34,17 +63,10 @@ en:
             title: Totals
             total_price: Total Price
             total_value: Total Value
-      localized_prices:
-        label: Localized Prices
-        base: Base
-        base_tooltip: The price converted into the localized currency with rounding rules applied then converted back into the base currency.
-        localized: Localized
-        regular_base: Regular Base
-        regular_localized: Regular Localized
-        sale_localized: Sale Localized
-        sale_base: Sale Base
-        title: Localized Prices for %{sku}
       pricing_skus:
         cards:
           localized_prices:
             button: View Localized Prices
+      shared:
+        primary_nav:
+          flow_imports: Flow Imports
