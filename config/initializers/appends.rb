@@ -32,3 +32,8 @@ Workarea::Plugin.append_stylesheets(
   'storefront.components',
   'flow_io/storefront/country_picker'
 )
+
+Workarea.append_partials(
+  'admin.settings_menu',
+  'workarea/admin/shared/flow_imports_link'
+)

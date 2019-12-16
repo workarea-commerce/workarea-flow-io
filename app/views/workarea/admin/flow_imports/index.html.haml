@@ -1,0 +1,44 @@
+- @page_title = t('workarea.admin.flow_imports.index.page_title')
+
+.view
+  .view__header
+    .view__heading
+      = link_to "↑ #{t('workarea.admin.flow_imports.index.dashboard_link')}", settings_dashboards_path, class: 'view__dashboard-button'
+      %h1= t('workarea.admin.flow_imports.index.title')
+
+      %p
+        = t('workarea.admin.flow_imports.index.info', duration: distance_of_time_in_words(@flow_imports.ttl))
+
+  .view__container
+
+    .browsing-controls.browsing-controls--with-divider.browsing-controls--center
+      %p.browsing-controls__count
+        = t('workarea.admin.flow_imports.index.showing', count: pluralize(@flow_imports.results.total, t('workarea.admin.flow_imports.index.import')))
+
+    - if @flow_imports.results.any?
+      %table.index-table
+        %thead
+          %tr
+            %th= t('workarea.admin.fields.file')
+            %th.align-right= t('workarea.admin.fields.created_at')
+            %th.align-right= t('workarea.admin.fields.started_at')
+            %th= t('workarea.admin.fields.completed_at')
+        %tbody
+          - @flow_imports.results.each do |data_file|
+            %tr
+              %td
+                = link_to data_file.name, data_file.file.url, target: '_blank'
+              %td.align-right= local_time_ago(data_file.created_at)
+              %td.align-right
+                - if data_file.started_at.present?
+                  = local_time_ago(data_file.started_at)
+                - else
+                  \-
+              %td
+                - if data_file.complete?
+                  = local_time_ago(data_file.completed_at)
+                - else
+                  \-
+
+      - if @flow_imports.results.total_pages > 1
+        = render 'workarea/admin/shared/pagination', collection: @flow_imports.results

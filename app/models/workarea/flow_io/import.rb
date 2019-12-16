@@ -18,6 +18,14 @@ module Workarea
       validates :name, presence: true, uniqueness: true
 
       index({ name: 1 }, { unique: true, background: true })
+      index(
+        { created_at: 1 },
+        { expire_after_seconds: Workarea.config.data_file_operation_ttl.seconds.to_i }
+      )
+
+      def complete?
+        completed_at.present?
+      end
     end
   end
 end
