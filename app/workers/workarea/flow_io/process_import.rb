@@ -15,8 +15,10 @@ module Workarea
 
         import.update!(started_at: Time.current)
 
+        experiences = FlowIo.client.experiences.get(FlowIo.organization_id)
+
         CSV.foreach(import.file_path, headers: true) do |row|
-          ImportedItem.process(row)
+          ImportedItem.process(row, experiences)
         end
 
         import.update!(completed_at: Time.current)
