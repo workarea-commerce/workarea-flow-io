@@ -60,12 +60,22 @@ module Workarea
           )
         end
 
+        def discounts
+          @discounts ||= Pricing::Discount
+            .where(:_id.in => order.discount_ids)
+            .to_a
+        end
+
         # TODO - IMPROVEMENT if using workarea-oms send package information
+        #
         def package
           {
             dimensions: {},
             items: workarea_package.items.map do |fulfillment_item_view_model|
-              FlowIo::LineItemForm.from(order_item: fulfillment_item_view_model)
+              FlowIo::LineItemForm.from(
+                order_item: fulfillment_item_view_model,
+                discounts: discounts
+              )
             end
           }
         end
