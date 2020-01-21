@@ -1,2 +1,2 @@
-inherit_gem:
-  workarea-ci: rubocop.yml
+inherit_from:
+  - https://raw.githubusercontent.com/workarea-commerce/workarea/master/.rubocop.yml
