@@ -58,7 +58,9 @@ module Workarea
                 center: nil,
                 discount: nil,
                 discounts: { discounts: [] },
-          reference_number: nil
+              }
+            ],
+            reference_number: nil
           },
           service: "001",
           origin: nil,
