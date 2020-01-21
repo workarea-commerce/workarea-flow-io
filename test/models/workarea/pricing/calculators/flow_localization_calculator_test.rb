@@ -60,12 +60,12 @@ module Workarea
           item = order.items.first
 
           assert_equal(
-            88.41.to_m("USD"),
+            88.16.to_m("USD"),
             item.price_adjustments.adjusting("item").sum
           )
 
           assert_equal(
-            119.64.to_m("CAD"),
+            109.28.to_m("CAD"),
             item.flow_price_adjustments.adjusting("item").sum
           )
         end
@@ -124,12 +124,12 @@ module Workarea
           item = order.items.first
 
           assert_equal(
-            104.03.to_m("USD"),
+            88.16.to_m("USD"),
             item.price_adjustments.adjusting("item").sum
           )
 
           assert_equal(
-            92.72.to_m("EUR"),
+            109.28.to_m("EUR"),
             item.flow_price_adjustments.adjusting("item").sum
           )
         end

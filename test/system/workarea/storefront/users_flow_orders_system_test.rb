@@ -18,7 +18,7 @@ module Workarea
 
         visit storefront.users_order_path(order)
 
-        assert page.has_text?("$6.00")
+        assert page.has_text?("$9.29")
       end
     end
   end

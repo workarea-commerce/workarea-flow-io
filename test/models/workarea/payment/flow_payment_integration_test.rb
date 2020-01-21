@@ -3,7 +3,6 @@ require 'test_helper'
 module Workarea
   class Payment
     class FlowCreditCardIntegrationTest < Workarea::TestCase
-
       include FlowIoVCRConfig
 
       def test_store_auth

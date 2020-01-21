@@ -1,5 +1,9 @@
 module Workarea
   decorate Storefront::ProductViewModel, with: :flow_io do
+    def flow_item_number
+      current_sku || id
+    end
+
     def pricing
       super.tap do |pricing_collection|
         if options[:flow_experience]

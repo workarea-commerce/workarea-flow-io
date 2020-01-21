@@ -3,6 +3,10 @@ Workarea.configure do |config|
 
   config.flow_io ||= ActiveSupport::Configurable::Configuration.new
 
+  # Enable JS integration for real-time price updates. Defaults to
+  # `false`.
+  config.flow_io.enable_javascript = false
+
   # default payment action. FlowIO recomends purchase (auth/cap)
   config.flow_io.default_payment_action = "purchase"
 
@@ -86,7 +90,6 @@ Workarea.configure do |config|
   config.pricing_calculators << "Workarea::Pricing::Calculators::FlowLocalizationCalculator"
 
   config.flow_io.webhook_events = [
-    "local_item_upserted",
     "order_upserted_v2",
     "experience_deleted_v2",
     "experience_upserted_v2"

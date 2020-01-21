@@ -7,7 +7,7 @@ module Workarea
         def adjust
           return unless order.experience.present? && order.items.present?
 
-          order_put_form = FlowIo::OrderPutForm.from(order: order, shippings: shippings)
+          order_put_form = FlowIo::OrderPutForm.from(order: order, shippings: shippings, discounts: discounts)
 
           flow_order = FlowIo.client.orders.put_by_number(
             FlowIo.organization_id,

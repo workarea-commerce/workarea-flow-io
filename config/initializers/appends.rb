@@ -1,11 +1,16 @@
-Workarea.append_javascripts(
-  'storefront.modules',
-  'workarea/storefront/flow_io/flow_country_picker'
-)
-
 Workarea.append_partials(
   'storefront.document_head',
-  'workarea/storefront/flow_beacon'
+  'workarea/storefront/flow_io_country_picker_javascript'
+)
+
+Workarea.append_javascripts(
+  'storefront.modules',
+  'workarea/storefront/flow_io/flow'
+)
+
+Workarea.append_javascripts(
+  'storefront.config',
+  'workarea/storefront/flow_io/configuration'
 )
 
 Workarea.append_partials(
@@ -26,4 +31,9 @@ Workarea.append_partials(
 Workarea::Plugin.append_stylesheets(
   'storefront.components',
   'flow_io/storefront/country_picker'
+)
+
+Workarea.append_partials(
+  'admin.settings_menu',
+  'workarea/admin/shared/flow_imports_link'
 )

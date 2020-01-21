@@ -2,6 +2,7 @@ require 'flowcommerce'
 require 'flowcommerce-activemerchant'
 require 'active_merchant/billing/bogus_flow_gateway'
 require 'active_merchant/billing/flow_gateway'
+require 'net/sftp'
 
 require 'workarea'
 require 'workarea/storefront'
@@ -16,8 +17,10 @@ require 'workarea/flow_io/bogus_client'
 
 module Workarea
   module FlowIo
+    FTP_HOST = 'ftp.flow.io'
+
     def self.credentials
-      (Rails.application.secrets.flow_io || {}).deep_symbolize_keys
+      (Rails.application.secrets.flow_io || config.to_h).deep_symbolize_keys
     end
 
     def self.config
@@ -52,7 +55,7 @@ module Workarea
     end
 
     def self.webhook_shared_secret
-       credentials[:webhook_shared_secret]
+      Workarea::FlowIo::Webhook::SharedSecret.first.try(:token)
     end
 
     # Conditionally use the real gateway when secrets are present.

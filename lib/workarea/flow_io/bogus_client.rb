@@ -10,6 +10,8 @@ module Workarea
       require 'workarea/flow_io/bogus_client/organizations'
       require 'workarea/flow_io/bogus_client/sessions'
       require 'workarea/flow_io/bogus_client/shipping_notifications'
+      require 'workarea/flow_io/bogus_client/webhooks'
+      require 'workarea/flow_io/bogus_client/webhook_settings'
 
       thread_cattr_accessor :requests, :store_requests
 

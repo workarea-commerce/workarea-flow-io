@@ -7,6 +7,8 @@ module Workarea
         include Workarea::FlowIo::WebhookIntegrationTest
         include Workarea::FlowIo::FlowFixtures
 
+        setup :setup_shared_secret
+
         def test_order_update
           product = create_product(variants: [{ sku: '386555310-9', regular: 5.00 }])
           product_2 = create_product(variants: [{ sku: '332477498-5', regular: 5.00 }])
@@ -97,6 +99,17 @@ module Workarea
             "Document(s) not found for class Workarea::Order with id(s) 95F11ED6B6.",
             message["problem"]
           )
+        end
+
+        def test_order_placed_in_different_currency
+          order = create_order(id: '6F3A2186EB', experience: canada_experience)
+          _cart = create_cart(order: order)
+
+          post_signed storefront.flow_io_webhook_path, params: euro_order_placed_payload(order: order)
+
+          order.reload
+
+          assert_equal 'EUR', order.currency
         end
 
         private
@@ -726,6 +739,10 @@ module Workarea
 
         def order_upserted
           canadian_webhook_payload.to_json
+        end
+
+        def setup_shared_secret
+          FlowIo::Webhook::SharedSecret.first_or_create!
         end
       end
     end

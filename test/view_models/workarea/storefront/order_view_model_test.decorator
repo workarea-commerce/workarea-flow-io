@@ -24,14 +24,18 @@ module Workarea
       @order.experience = europe_experience
       @order.flow_shipping_total = 10.to_m "EUR"
 
-      assert_equal(10.to_m("EUR"), @view_model.shipping_total)
+      view_model = Storefront::OrderViewModel.wrap(@order)
+
+      assert_equal(10.to_m("EUR"), view_model.shipping_total)
     end
 
     def tax_total_with_flow
       @order.experience = europe_experience
       @order.tax_total = 10.to_m "EUR"
 
-      assert_equal(10.to_m("EUR"), @view_model.tax_total)
+      view_model = Storefront::OrderViewModel.wrap(@order)
+
+      assert_equal(10.to_m("EUR"), view_model.tax_total)
     end
   end
 end

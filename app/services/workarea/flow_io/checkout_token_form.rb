@@ -13,7 +13,7 @@ module Workarea
       end
 
       def to_flow_model
-        ::Io::Flow::V0::Models::CheckoutTokenForm.new(attributes)
+        ::Io::Flow::V0::Models::CheckoutTokenReferenceForm.new(attributes)
       end
 
       def attributes

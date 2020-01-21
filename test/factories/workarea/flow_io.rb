@@ -84,6 +84,53 @@ module Workarea
           Factories.shipping_service_count += 1
         end
       end
+
+      # @param order [Workarea::Order]
+      #
+      def euro_order_placed_payload(order:)
+        EuroOrderUpsertedPayload.new(order: order).to_json
+      end
+
+      # Creates cart
+      #
+      # @param order [Workarea::Order] order to use as base
+      # @param items [Array<Hash>] array of hashes with keys
+      #   * product - Catalog::Product
+      #   * sku - String
+      #   * quantity - Integer
+      # @param user [Workarea::User] optional user for order
+      #
+      def create_cart(order: nil, items: nil, user: nil)
+        order ||= create_order(
+          email: user&.email,
+          checkout_started_at: Time.current,
+          user_id: user&.id&.to_s
+        )
+        items = items ||
+          begin
+            product = create_product
+            [
+              {
+                product: product,
+                sku: product.skus.first,
+                quantity: 2
+              }
+            ]
+          end
+
+        items.each do |item|
+          item_details = OrderItemDetails
+            .find!(item[:sku])
+            .to_h
+            .merge(product_id: item[:product].id, sku: item[:sku], quantity: item[:quantity])
+
+          order.add_item(item_details)
+        end
+
+        Workarea::Pricing.perform(order)
+
+        order.tap(&:save!)
+      end
     end
   end
 end

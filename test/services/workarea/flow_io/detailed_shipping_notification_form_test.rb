@@ -3,7 +3,9 @@ require 'test_helper'
 module Workarea
   module FlowIo
     class DetailedShippingNotificationFormTest < Workarea::TestCase
-      setup :order, :shipping, :fulfillment
+      include FlowFixtures
+
+      setup :pricing, :order, :shipping, :fulfillment
 
       def test_to_flow_model
         shipping_notification_form = FlowIo::DetailedShippingNotificationForm.from(id: id, tracking_number: tracking_number)
@@ -48,13 +50,14 @@ module Workarea
                 number: "SKU1",
                 quantity: 1,
                 shipment_estimate: nil,
-                price: nil,
+                price: {
+                  amount: 0,
+                  currency: 'USD'
+                },
                 attributes: nil,
                 center: nil,
                 discount: nil,
-                discounts: nil
-              }
-            ],
+                discounts: { discounts: [] },
           reference_number: nil
           },
           service: "001",
@@ -79,6 +82,7 @@ module Workarea
       def order
         @order ||= Workarea::Order.create!(
           id: id,
+          experience: canada_experience_geo,
           items: [
             {
               id: "1",
@@ -127,6 +131,12 @@ module Workarea
             }
           ]
         )
+      end
+
+      def pricing
+        @pricing ||= Pricing::Sku.create!(id: 'SKU1') do |pricing|
+          pricing.prices.build(regular: 2.to_m, sale: 1.to_m)
+        end
       end
     end
   end

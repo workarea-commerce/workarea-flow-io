@@ -1,13 +1,20 @@
 source 'https://rubygems.org'
 
+git_source :github do |repo|
+  if ENV['GITHUB_TOKEN']
+    "https://x-access-token:#{ENV['GITHUB_TOKEN']}@github.com/#{repo}.git"
+  else
+    "https://github.com/#{repo}.git"
+  end
+end
+
 gemspec
 
-gem 'workarea', '>= 3.2.0', source: 'https://gems.weblinc.com'
-gem 'workarea-ci', source: "https://gems.weblinc.com"
 gem 'byebug'
+gem 'simplecov', require: false
+gem 'sprockets', '~> 3'
 
-group :test do
-  gem 'simplecov', require: false
-  gem 'workarea-oms', source: "https://gems.weblinc.com"
-  gem 'workarea-testing', '>= 3.2.0', source: 'https://gems.weblinc.com'
+source 'https://gems.weblinc.com' do
+  gem 'workarea-ci', '~> 3.3.0'
+  gem 'workarea-oms', '~> 5.1.1'
 end
