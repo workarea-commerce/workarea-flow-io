@@ -15,7 +15,8 @@ module Workarea
             urls: {
               continue_shopping: checkout_token_form.urls.continue_shopping
             },
-            expires_at: 1.day.from_now.utc.iso8601(3)
+            expires_at: 1.day.from_now.utc.iso8601(3),
+            checkout: { id: 'foo' }
           )
         end
       end

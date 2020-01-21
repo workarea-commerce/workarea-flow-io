@@ -5,8 +5,9 @@ module Workarea
 
       attr_reader :order, :flow_order
 
-      # @param ::Io::Flow::V0::Models::Order,
-      # @param  ::Workarea::Order
+      # @param flow_order [::Io::Flow::V0::Models::Order]
+      # @param order [::Workarea::Order]
+      #
       def initialize(flow_order, order)
         @order = order
         @flow_order = flow_order
@@ -30,6 +31,15 @@ module Workarea
 
       def build
         order.update_attributes!(
+          experience: {
+            key: experience.key,
+            name: experience.name,
+            region: experience.region.to_hash,
+            country: experience.country,
+            currency: experience.currency,
+            language: experience.language,
+            measurement_system: experience.measurement_system
+          },
           flow: true,
           email: customer.email
         )
@@ -88,6 +98,14 @@ module Workarea
       end
 
       private
+
+        def experience
+          @experience ||=
+            Workarea::FlowIo.client.experiences.get_by_key(
+              Workarea::FlowIo.organization_id,
+              flow_order.experience.key
+          )
+        end
 
         # creates a clone of the persisted shipping
         def pricing_shipping

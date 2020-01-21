@@ -61,7 +61,7 @@ module Workarea
         order = create_order(
           id: order_id,
           flow: true,
-          experience: canada_experience
+          experience: canada_experience_geo
          )
 
         order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)

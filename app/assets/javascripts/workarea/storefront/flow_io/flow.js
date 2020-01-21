@@ -1,16 +1,21 @@
 /**
- * @namespace WORKAREA.flowCountryPicker
+ * Integrate flow.io's JS into your Workarea application.
+ *
+ * @namespace WORKAREA.flow
  */
-WORKAREA.registerModule('flowCountryPicker', (function () {
+WORKAREA.registerModule('flow', (function () {
     'use strict';
 
-    var getScript = function () {
-            return $.ajax({
-                dataType: "script",
-                cache: true,
-                url: "https://cdn.flow.io/country-picker/js/v0/country-picker.js"
-            });
-        },
+    var getScript = _.once(function () {
+            !function (f, l, o, w, i, n, g) {
+            f[i] = f[i] || {};f[i].cmd = f[i].cmd || function () {
+            (f[i].q = f[i].q || []).push(arguments);};n = l.createElement(o);
+            n.src = w;g = l.getElementsByTagName(o)[0];g.parentNode.insertBefore(n, g);
+            }(window,document,'script','https://cdn.flow.io/flowjs/latest/flow.min.js','flow');
+
+            flow.cmd('set', 'organization', WORKAREA.config.flow.organizationID);
+            flow.cmd('init');
+        }),
 
         urlLocale = function (url) {
             var parsedUrl = WORKAREA.url.parse(url),
@@ -46,29 +51,34 @@ WORKAREA.registerModule('flowCountryPicker', (function () {
             WORKAREA.url.redirectTo(redirectUrl(url, country));
         },
 
-        initCountryPicker = function () {
-            window.flow.countryPicker.createCountryPicker({
-                type: "modal",
-                containerId: "country-picker",
-                onSessionUpdate: updateSession
+        initCountryPicker = _.once(function() {
+            flow.cmd('on', 'ready', function () {
+                flow.countryPicker.createCountryPicker({
+                    type: "modal",
+                    containerId: "country-picker",
+                    onSessionUpdate: updateSession
+                });
             });
+        }),
+
+        localizePrices = function() {
+            flow.cmd('localize');
         },
 
         /**
          * @method
          * @name init
-         * @memberof WORKAREA.flowCountryPicker
+         * @memberof WORKAREA.flow
          */
-        init = function ($scope) {
-            if (_.isUndefined(window.flow) || _.isUndefined(window.flow.beacon)) { return; }
+        init = function () {
+            if (_.isUndefined(WORKAREA.config.flow)) { return; }
 
-            var $container = $("#country-picker", $scope);
+            getScript();
+            localizePrices();
 
-            if (_.isEmpty($container)) { return; }
-
-            getScript().done(function() {
-                window.flow.beacon('on', 'ready', initCountryPicker);
-            });
+            if (!_.isEmpty($("#country-picker"))) {
+                initCountryPicker();
+            }
         };
 
         // urlLocale and redirectUrl are only exposed for testing and

@@ -7,8 +7,7 @@ SimpleCov.start "rails" do
 
   add_filter 'lib/workarea/flow_io/version.rb'
   add_filter 'lib/active_merchant/billing/bogus_flow_gateway.rb'
-  add_filter 'lib/workarea/flow_io/bogus_client.rb'
-  add_filter 'lib/workarea/flow_io/bogus_client/orders.rb'
+  add_filter %r{lib/workarea/flow_io/bogus_client}
 
   # ignore coverage on base bug fixes
   add_filter 'app/controllers/workarea/storefront/recent_views_controller.decorator'
