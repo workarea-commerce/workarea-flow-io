@@ -18,3 +18,4 @@ test/dummy/db/*.sqlite3-journal
 coverage/
 node_modules/
 yarn.lock
+.rubocop-http*
