@@ -42,6 +42,7 @@ task :release do
   system 'git push origin HEAD --follow-tags'
 
   system "gem build workarea-flow_io.gemspec"
+  system "gem push workarea-flow_io-#{Workarea::FlowIo::VERSION}.gem #{host}"
   system "gem push workarea-flow_io-#{Workarea::FlowIo::VERSION}.gem --host #{host}"
   system "rm workarea-flow_io-#{Workarea::FlowIo::VERSION}.gem"
 end
