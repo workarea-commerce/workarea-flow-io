@@ -88,3 +88,14 @@ jobs:
       env:
         BUNDLE_GEMS__WEBLINC__COM: ${{ secrets.BUNDLE_GEMS__WEBLINC__COM }}
         GITHUB_TOKEN: ${{ secrets.github_access_token }}
+
+teaspoon:
+  runs-on: ubuntu-latest
+  steps:
+  - uses: actions/checkout@v1
+  - uses: actions/setup-ruby@v1
+    with:
+      ruby-version: 2.6.x
+  - uses: workarea-commerce/ci/test@v1
+    with:
+      command: bin/rails app:teaspoon
