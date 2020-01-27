@@ -1,14 +1,13 @@
 module Workarea
-  if Plugin.installed?("Workarea::PackageProducts")
+  if Plugin.installed?(:package_products)
     decorate Storefront::ProductTemplates::PackageViewModel, with: :flow_io do
-      private
-        def pricing
-          super.tap do |pricing_collection|
-            if options[:flow_experience]
-              pricing_collection.flow_experience = options[:flow_experience]
-            end
+      def pricing
+        super.tap do |pricing_collection|
+          if options[:flow_experience]
+            pricing_collection.flow_experience = options[:flow_experience]
           end
         end
+      end
     end
   end
 end

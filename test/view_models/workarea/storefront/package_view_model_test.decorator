@@ -1,11 +1,13 @@
 module Workarea
-  decorate Storefront::PackageViewModelTest, with: :flow_io do
-    decorated { setup :stub_flow_worker }
+  if Plugin.installed?(:package_products)
+    decorate Storefront::PackageViewModelTest, with: :flow_io do
+      decorated { setup :stub_flow_worker }
 
-    private
+      private
 
-      def stub_flow_worker
-        Workarea::FlowIo::ShippingNotifications.any_instance.stubs(:perform).returns(stub_everything)
-      end
+        def stub_flow_worker
+          Workarea::FlowIo::ShippingNotifications.any_instance.stubs(:perform).returns(stub_everything)
+        end
+    end
   end
 end
