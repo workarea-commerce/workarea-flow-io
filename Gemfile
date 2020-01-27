@@ -17,3 +17,5 @@ gem 'sprockets', '~> 3'
 source 'https://gems.weblinc.com' do
   gem 'workarea-oms', '~> 5.1.1'
 end
+
+gem 'workarea-package_products'
