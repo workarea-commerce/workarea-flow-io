@@ -18,6 +18,7 @@ module Workarea
         dir.expects(:glob).at_least_once.with(path.to_s, '*.csv').yields(entry)
         sftp.expects(:dir).at_least_once.returns(dir)
         sftp.expects(:download!).at_least_once.returns(fixture.read)
+        sftp.expects(:remove!).at_least_once
         FlowIo.expects(:credentials).at_least_once.returns(
           ftp_username: username,
           ftp_password: password

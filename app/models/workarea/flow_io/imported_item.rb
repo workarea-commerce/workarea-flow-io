@@ -19,8 +19,8 @@ module Workarea
       end
 
       def save!
-        # We don't care about world experience since it it needs to be converted
-        # by Flows javascript on the storefront
+        # World experience will be converted by Flow's javascript on the
+        # storefront
         return if experience_key.match?(/world/i)
 
         Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) do
@@ -48,8 +48,8 @@ module Workarea
             ExperienceSummary.new(
               key: experience_key,
               name: exp.name,
-              country: exp.country,
-              currency: Country.find_country_by_alpha3(exp.currency),
+              country: Country.find_country_by_alpha3(exp.country),
+              currency: exp.currency,
               language: exp.language
             )
           end
