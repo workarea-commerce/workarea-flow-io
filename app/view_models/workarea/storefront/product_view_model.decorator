@@ -11,5 +11,10 @@ module Workarea
         end
       end
     end
+
+    def one_price?
+      return false if original_min_price.nil?
+      super
+    end
   end
 end

@@ -90,10 +90,12 @@ module Workarea
       def variant_specific_images
         @variant_specific_images ||=
           begin
-            sku_options = variant.details.values.flat_map { |options| options.map(&:optionize) }
+            sku_options = variant.details.values.flat_map do |options|
+              options.compact.map(&:optionize)
+            end
 
             product.images.select do |image|
-              sku_options.include?(image.option.optionize)
+              sku_options.include?(image.option&.optionize)
             end
           end
       end
