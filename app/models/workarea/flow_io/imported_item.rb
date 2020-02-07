@@ -19,8 +19,8 @@ module Workarea
       end
 
       def save!
-        # We don't care about world experience since it it needs to be converted
-        # by Flows javascript on the storefront
+        # World experience will be converted by Flow's javascript on the
+        # storefront
         return if experience_key.match?(/world/i)
 
         Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) do
@@ -48,8 +48,8 @@ module Workarea
             ExperienceSummary.new(
               key: experience_key,
               name: exp.name,
-              country: exp.country,
-              currency: Country.find_country_by_alpha3(exp.currency),
+              country: Country.find_country_by_alpha3(exp.country),
+              currency: exp.currency,
               language: exp.language
             )
           end
@@ -78,12 +78,17 @@ module Workarea
       def msrp
         return {} unless msrp_attributes = pricing_attributes[:msrp]
 
+        msrp = price_from_amount(msrp_attributes[:amount].to_f, msrp_attributes[:currency])
+        msrp_base = price_from_amount(msrp_attributes[:base][:amount].to_f, msrp_attributes[:base][:currency])
+
+        return {} if msrp.blank? || msrp_base.blank?
+
         {
           msrp: {
-            price: Money.from_amount(msrp_attributes[:amount].to_f, msrp_attributes[:currency]),
+            price: msrp,
             label: msrp_attributes[:label],
             base_currency: {
-              price: Money.from_amount(msrp_attributes[:base][:amount].to_f, msrp_attributes[:base][:currency]),
+              price: msrp_base,
               label: msrp_attributes[:base][:label]
             }
           }
@@ -93,31 +98,46 @@ module Workarea
       def prices
         regular = pricing_attributes[:regular_price]
         sale    = pricing_attributes[:sale_price]
+        regular_price = price_from_amount(regular[:amount].to_f, regular[:currency])
+        regular_base_price = price_from_amount(regular[:base][:amount].to_f, regular[:base][:currency])
+
+        return [] if regular_price.blank? || regular_base_price.blank?
 
         price = {
           min_quantity: 1,
           regular: {
-            price: Money.from_amount(regular[:amount].to_f, regular[:currency]),
+            price: regular_price,
             label: regular[:label],
             base_currency: {
-              price: Money.from_amount(regular[:base][:amount].to_f, regular[:base][:currency]),
+              price: regular_base_price,
               label: regular[:base][:label]
             }
           }
         }
 
         if sale.present?
-          price[:sale] = {
-            price: Money.from_amount(sale[:amount].to_f, sale[:currency]),
-            label: sale[:label],
-            base_currency: {
-              price: Money.from_amount(sale[:base][:amount].to_f, sale[:base][:currency]),
-              label: sale[:base][:label]
+          sale_price = price_from_amount(sale[:amount].to_f, sale[:currency])
+          sale_base_price = price_from_amount(sale[:base][:amount].to_f, sale[:base][:currency])
+
+          if sale_price.present? && sale_base_price.present?
+            price[:sale] = {
+              price: sale_price,
+              label: sale[:label],
+              base_currency: {
+                price: sale_base_price,
+                label: sale[:base][:label]
+              }
             }
-          }
+          end
         end
 
         [price]
+      end
+
+      def price_from_amount(amount = nil, currency = nil)
+        return if amount.blank? || currency.blank?
+
+        Money.from_amount(amount, currency)
       end
     end
   end
