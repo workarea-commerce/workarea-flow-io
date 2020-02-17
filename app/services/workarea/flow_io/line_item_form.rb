@@ -14,7 +14,7 @@ module Workarea
 
       def price
         ::Io::Flow::V0::Models::Money.new(
-          amount: base_item_price.cents,
+          amount: base_item_price.to_f,
           currency: base_item_price.currency.to_s
         )
       end

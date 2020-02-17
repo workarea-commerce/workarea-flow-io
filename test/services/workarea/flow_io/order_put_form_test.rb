@@ -21,7 +21,7 @@ module Workarea
 
         assert_equal(order_put_form.customer.name.first, user.first_name)
         assert_equal(order_put_form.customer.name.last, user.last_name)
-        assert_equal(11000, line_item_form.price.amount)
+        assert_equal(110.0, line_item_form.price.amount)
         assert_equal('CAD', line_item_form.price.currency)
       end
 

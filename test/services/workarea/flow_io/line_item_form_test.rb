@@ -25,7 +25,7 @@ module Workarea
         )
         discounts = item.to_h[:discounts]
 
-        assert_equal(11000, item.price.amount)
+        assert_equal(110.0, item.price.amount)
         assert_equal(order.experience.currency, item.price.currency)
         refute_empty(discounts.discounts)
       end
