@@ -47,7 +47,9 @@ module Workarea
             .flow_price_adjustments
             .adjusting('item')
             .reject(&:discount?)
+            .map(&:unit)
             .sum
+            .to_m
         end
 
         def discounts_form
