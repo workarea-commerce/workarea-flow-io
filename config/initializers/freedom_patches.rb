@@ -3,7 +3,7 @@
 # to the gem running in Ruby 2.6, which deprecated `BigDecimal.new` and
 # replaced it with the `BigDecimal()` method. Every time
 # `Helper.to_big_decimal` is called by the FlowCommerce gem, we get a
-# big ol' deprecation warning in the console. This should silence those
+# big old deprecation warning in the console. This should silence those
 # warnings until https://github.com/flowcommerce/ruby-sdk/issues/25 is
 # resolved.
 module Io

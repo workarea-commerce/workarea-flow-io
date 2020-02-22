@@ -4,13 +4,25 @@ module Workarea
       embeds_many :flow_io_local_items, class_name: "Workarea::FlowIo::LocalItem"
     end
 
-    # @return Money
-    def msrp_for_experience(experience)
-      local_item = flow_io_local_items.detect do |item|
-        item.experience.key == experience.key
-      end
+    def localized_price_hash(&block)
+      flow_io_local_items.map do |local_item|
+        [
+          "#{local_item.experience.key}-#{local_item.experience.currency}",
+          block.call(local_item)
+        ]
+      end.to_h.compact
+    end
 
-      local_item&.msrp&.price
+    # Flow pricing attribute to be used when localizing this price on the
+    # storefront, should match a Flow Pricing Attribute configured and exported
+    # to flow
+    #
+    def sell_price_key
+      if on_sale? && sale.present?
+        'sale'
+      else
+        'regular'
+      end + '_price'
     end
 
     # Find the price to sell at for a specific options.
@@ -31,16 +43,6 @@ module Workarea
 
       local_item&.to_price(quantity) ||
         Pricing::Price.new(regular: 0.to_m(options[:experience].currency))
-    end
-
-    # @param Io::Flow::V0::Models::Item
-    def import_flow_item(flow_item)
-      local_item = flow_io_local_items.detect { |li| li.experience.key == flow_item.local.experience.key } ||
-        flow_io_local_items.new
-
-      local_item.update_from_flow_item(flow_item)
-
-      Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) { save! }
     end
   end
 end

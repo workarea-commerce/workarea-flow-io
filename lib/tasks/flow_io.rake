@@ -90,6 +90,7 @@ namespace :workarea do
 
       experiences.each do |experience|
         next unless experience.status.value == "active"
+        next unless experience.key == "world"
 
         page_size  = 100
         offset     = 0

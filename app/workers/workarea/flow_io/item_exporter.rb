@@ -4,15 +4,15 @@ module Workarea
       include Sidekiq::Worker
       include Sidekiq::CallbacksWorker
 
-      sidekiq_options(
-        enqueue_on: {
-          Catalog::Product => :save,
-          Shipping::Sku => :save,
-          Pricing::Sku => :save,
-          Pricing::Price => :save,
-          with: -> { ItemExporter.perform_with(self) }
-        }
-      )
+      #sidekiq_options(
+      #  enqueue_on: {
+      #    Catalog::Product => :save,
+      #    Shipping::Sku => :save,
+      #    Pricing::Sku => :save,
+      #    Pricing::Price => :save,
+      #    with: -> { ItemExporter.perform_with(self) }
+      #  }
+      #)
 
       def self.perform_with(model)
         case model.class.name

@@ -1,20 +1,51 @@
 module Workarea
   decorate Storefront::ProductViewModel, with: :flow_io do
-    def flow_item_number
-      current_sku || skus.first
-    end
+    decorated do
+      delegate :regular_min_price_sku,
+        :regular_max_price_sku,
+        :sale_min_price_sku,
+        :sale_max_price_sku,
+        :sell_min_price_sku,
+        :sell_max_price_sku,
+        :msrp_min_price_sku,
+        :msrp_max_price_sku,
+        :original_min_price_sku,
+        :original_max_price_sku,
+        :original_min_price_attribute,
+        :original_max_price_attribute,
+        to: :pricing
 
-    def pricing
-      super.tap do |pricing_collection|
-        if options[:flow_experience]
-          pricing_collection.flow_experience = options[:flow_experience]
+      def localized_sell_min_prices
+        sell_min_price_sku.localized_price_hash do |local_item|
+          local_item.generic_price&.sell&.label
         end
       end
-    end
 
-    def one_price?
-      return false if original_min_price.nil?
-      super
+      def localized_sell_max_prices
+        sell_max_price_sku.localized_price_hash do |local_item|
+          local_item.generic_price&.sell&.label
+        end
+      end
+
+      def localized_original_min_prices
+        original_min_price_sku.localized_price_hash do |local_item|
+          if pricing.msrp_min_price.present? && pricing.msrp_min_price > pricing.sell_min_price
+            local_item.msrp.label
+          else
+            local_item.generic_price&.regular&.label
+          end
+        end
+      end
+
+      def localized_original_max_prices
+        original_max_price_sku.localized_price_hash do |local_item|
+          if pricing.msrp_max_price.present? && pricing.msrp_min_price > pricing.sell_max_price
+            local_item.msrp.label
+          else
+            local_item.generic_price&.regular&.label
+          end
+        end
+      end
     end
   end
 end

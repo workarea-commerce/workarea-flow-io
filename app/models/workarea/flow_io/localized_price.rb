@@ -12,6 +12,16 @@ module Workarea
 
       validates_presence_of :regular
 
+      delegate :on_sale?, to: :local_item
+
+      def sell
+        if on_sale? && sale.present?
+          sale
+        else
+          regular
+        end
+      end
+
        # Creates a Pricing::Price from this local item
        # used in Pricing::Sku#find_price
        #
