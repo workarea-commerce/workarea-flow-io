@@ -1,20 +1,17 @@
 module Workarea
   decorate Storefront::ProductViewModel, with: :flow_io do
-    def flow_item_number
-      current_sku || id
-    end
-
-    def pricing
-      super.tap do |pricing_collection|
-        if options[:flow_experience]
-          pricing_collection.flow_experience = options[:flow_experience]
-        end
-      end
-    end
-
-    def one_price?
-      return false if original_min_price.nil?
-      super
+    decorated do 
+      delegate :regular_min_price_sku,
+        :regular_max_price_sku,
+        :sale_min_price_sku,
+        :sale_max_price_sku,
+        :sell_min_price_sku,
+        :sell_max_price_sku,
+        :msrp_min_price_sku,
+        :msrp_max_price_sku,
+        :original_min_price_sku,
+        :original_max_price_sku,
+        to: :pricing
     end
   end
 end

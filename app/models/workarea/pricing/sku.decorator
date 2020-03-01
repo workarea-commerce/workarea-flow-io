@@ -4,6 +4,15 @@ module Workarea
       embeds_many :flow_io_local_items, class_name: "Workarea::FlowIo::LocalItem"
     end
 
+    def localized_price_hash(&block)
+      flow_io_local_items.map do |local_item|
+        [
+          "#{local_item.experience.key}-#{local_item.experience.currency}",
+          local_item.to_flow_label(&block)
+        ]
+      end.to_h.compact
+    end
+
     # @return Money
     def msrp_for_experience(experience)
       local_item = flow_io_local_items.detect do |item|
@@ -31,16 +40,6 @@ module Workarea
 
       local_item&.to_price(quantity) ||
         Pricing::Price.new(regular: 0.to_m(options[:experience].currency))
-    end
-
-    # @param Io::Flow::V0::Models::Item
-    def import_flow_item(flow_item)
-      local_item = flow_io_local_items.detect { |li| li.experience.key == flow_item.local.experience.key } ||
-        flow_io_local_items.new
-
-      local_item.update_from_flow_item(flow_item)
-
-      Sidekiq::Callbacks.disable(Workarea::FlowIo::ItemExporter) { save! }
     end
   end
 end

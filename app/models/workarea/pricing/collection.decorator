@@ -1,81 +1,87 @@
 module Workarea
   decorate Pricing::Collection, with: :flow_io do
-    decorated { attr_accessor :flow_experience }
-
-    def regular_min_price
-      return super unless flow_experience.present?
-
-      @regular_min_price ||= records
-        .map { |pricing_sku| pricing_sku.find_price(experience: flow_experience).regular }
-        .sort
+    def regular_min_price_sku
+      @regular_min_price_sku ||= generic_prices
+        .map { |p| [p.sku, p.regular] }
+        .sort_by { |(_sku, regular)| regular }
+        .first
         .first
     end
 
-    def regular_max_price
-      return super unless flow_experience.present?
-
-      @regular_max_price ||= records
-        .map { |pricing_sku| pricing_sku.find_price(experience: flow_experience).regular }
-        .sort
+    def regular_max_price_sku
+      @regular_max_price_sku ||= generic_prices
+        .map { |p| [p.sku, p.regular] }
+        .sort_by { |(_sku, regular)| regular }
         .last
-    end
-
-    def sale_min_price
-      return super unless flow_experience.present?
-
-      @sale_min_price ||= records
-        .map { |pricing_sku| pricing_sku.find_price(experience: flow_experience).sale }
-        .compact
-        .sort
         .first
     end
 
-    def sale_max_price
-      return super unless flow_experience.present?
-
-      @sale_max_price ||= records
-        .map { |pricing_sku| pricing_sku.find_price(experience: flow_experience).sale }
+    def sale_min_price_sku
+      @sale_min_price_sku ||= generic_prices
+        .map { |p| [p.sku, p.sale] if p.sale.present? }
         .compact
-        .sort
-        .last
-    end
-
-    def sell_min_price
-      return super unless flow_experience.present?
-
-      @sell_min_price ||= records
-        .map { |pricing_sku| pricing_sku.find_price(experience: flow_experience).sell }
-        .sort
+        .sort_by { |(_sku, sale)| sale }
+        .first
         .first
     end
 
-    def sell_max_price
-      return super unless flow_experience.present?
-
-      @sell_max_price ||= records
-        .map { |pricing_sku| pricing_sku.find_price(experience: flow_experience).sell }
-        .sort
-        .last
-    end
-
-    def msrp_min_price
-      return super unless flow_experience.present?
-
-      @msrp_min_price ||= records
-        .map { |pricing_sku| pricing_sku.msrp_for_experience(flow_experience) }
+    def sale_max_price_sku
+      @sale_max_price_sku ||= generic_prices
+        .map { |p| [p.sku, p.sale] if p.sale.present? }
         .compact
-        .sort
+        .sort_by { |(_sku, sale)| sale }
+        .last
         .first
     end
 
-    def msrp_max_price
-      return super unless flow_experience.present?
+    def sell_min_price_sku
+      @sell_min_price_sku ||= generic_prices
+        .map { |price| [price.sku, price.sell] }
+        .sort_by { |(_sku, sell)| sell }
+        .first
+        .first
+    end
 
-      @msrp_max_price ||= records
-        .map { |pricing_sku| pricing_sku.msrp_for_experience(flow_experience) }
-        .compact
-        .sort
+    def sell_max_price_sku
+      @sell_max_price_sku ||= generic_prices
+        .map { |price| [price.sku, price.sell] }
+        .sort_by { |(_sku, regular)| regular }
         .last
+        .first
+    end
+
+    def msrp_min_price_sku
+      @msrp_min_price_sku ||= records
+        .map { |sku| [sku, sku.msrp] if sku.msrp.present? }
+        .compact
+        .sort_by { |(_sku, msrp)| msrp }
+        .first
+        .first
+    end
+
+    def msrp_max_price_sku
+      @msrp_max_price_sku ||= records
+        .map { |sku| [sku, sku.msrp] if sku.msrp.present? }
+        .compact
+        .sort_by { |(_sku, msrp)| msrp }
+        .last
+        .first
+    end
+
+    def original_min_price_sku
+      if msrp_min_price.present? && msrp_min_price > sell_min_price
+        msrp_min_price_sku
+      else
+        regular_min_price_sku
+      end
+    end
+
+    def original_max_price_sku
+      if msrp_max_price.present? && msrp_max_price > sell_max_price
+        msrp_max_price_sku
+      else
+        regular_max_price_sku
+      end
     end
 
     # All localized selling prices grouped by experience_key

@@ -1,11 +1,11 @@
-module Workarea
-  decorate Storefront::SearchesController, with: :flow_io do
-    decorated { before_action :add_flow_experience }
-
-    private
-
-      def add_flow_experience
-        params.merge!(experience: flow_experience)
-      end
-  end
-end
+# module Workarea
+#   decorate Storefront::SearchesController, with: :flow_io do
+#     decorated { before_action :add_flow_experience }
+# 
+#     private
+# 
+#       def add_flow_experience
+#         params.merge!(experience: flow_experience)
+#       end
+#   end
+# end

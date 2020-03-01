@@ -1,6 +1,5 @@
 module Workarea
   decorate Admin::OrdersController, with: :flow_io do
-    def flow
-    end
+    def flow; end
   end
 end
