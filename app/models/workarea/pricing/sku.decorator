@@ -8,18 +8,21 @@ module Workarea
       flow_io_local_items.map do |local_item|
         [
           "#{local_item.experience.key}-#{local_item.experience.currency}",
-          local_item.to_flow_label(&block)
+          block.call(local_item)
         ]
       end.to_h.compact
     end
 
-    # @return Money
-    def msrp_for_experience(experience)
-      local_item = flow_io_local_items.detect do |item|
-        item.experience.key == experience.key
-      end
-
-      local_item&.msrp&.price
+    # Flow pricing attribute to be used when localizing this price on the
+    # storefront, should match a Flow Pricing Attribute configured and exported
+    # to flow
+    #
+    def sell_price_key
+      if on_sale? && sale.present?
+        'sale'
+      else
+        'regular'
+      end + '_price'
     end
 
     # Find the price to sell at for a specific options.

@@ -68,11 +68,27 @@ module Workarea
         .first
     end
 
+    def original_min_price_attribute
+      if msrp_min_price.present? && msrp_min_price > sell_min_price
+        "msrp"
+      else
+        "regular_price"
+      end
+    end
+
     def original_min_price_sku
       if msrp_min_price.present? && msrp_min_price > sell_min_price
         msrp_min_price_sku
       else
         regular_min_price_sku
+      end
+    end
+
+    def original_max_price_attribute
+      if msrp_max_price.present? && msrp_max_price > sell_max_price
+        "msrp"
+      else
+        "reguar_price"
       end
     end
 
