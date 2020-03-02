@@ -37,7 +37,7 @@
           %s.product-prices__original-price.product-prices__original-price--range
             #{number_to_currency product.original_min_price} – #{number_to_currency product.original_max_price}
         - else
-          %s.product-prices__original-price{ data: { flow: { localize: 'item-price-attribute', item_price_attribute: 'regular' } } }
+          %s.product-prices__original-price{ data: { flow: { localize: 'item-price-attribute', item_price_attribute: 'original_price' } } }
             = number_to_currency product.original_min_price
 
   = append_partials('storefront.product_pricing', product: product)

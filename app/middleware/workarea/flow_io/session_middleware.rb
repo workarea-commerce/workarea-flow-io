@@ -10,7 +10,7 @@ module Workarea
       def call(env)
         flow_session = FlowIo::Session.new(env)
 
-        env['Vary'] = 'X-Requested-With, X-Flash-Messages, X-Flow-Experience'
+        env['Vary'] = 'X-Requested-With, X-Flash-Messages'
         begin
           env['HTTP_X_FLOW_EXPERIENCE'] = flow_session.experience&.key
           env['flow.io.experience'] = flow_session.experience

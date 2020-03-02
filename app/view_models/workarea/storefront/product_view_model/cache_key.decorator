@@ -1,7 +1,0 @@
-module Workarea
-  decorate Storefront::ProductViewModel::CacheKey, with: :flow_io do
-    def option_parts
-      super + [@options[:flow_experience]&.key]
-    end
-  end
-end

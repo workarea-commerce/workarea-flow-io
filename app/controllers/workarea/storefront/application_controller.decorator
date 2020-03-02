@@ -69,12 +69,5 @@ module Workarea
     def view_model_options
       super.merge(flow_experience: flow_experience)
     end
-
-    def set_vary_headers
-      super
-
-      response.headers['X-Flow-Experience'] = flow_experience&.key
-      response.headers['Vary'] = [response.headers['Vary'], 'X-Flow-Experience'].compact.join(', ')
-    end
   end
 end
