@@ -1,7 +1,27 @@
 module Workarea
   decorate Storefront::ProductViewModel, with: :flow_io do
-    def flow_item_number
-      current_sku || skus.first
+    decorated do
+      delegate :sell_min_sku, :sell_max_sku, :original_min_sku, :original_max_sku, to: :pricing
+    end
+
+    def original_min_sku
+      return nil unless has_prices?
+
+      if pricing.msrp_min_price.present? && pricing.msrp_min_price > sell_min_price
+        pricing.msrp_min_sku
+      else
+        pricing.regular_min_sku
+      end
+    end
+
+    def original_max_sku
+      return nil unless has_prices?
+
+      if pricing.msrp_max_price.present? && pricing.msrp_max_price > sell_max_price
+        pricing.msrp_max_sku
+      else
+        pricing.regular_max_sku
+      end
     end
 
     def pricing
