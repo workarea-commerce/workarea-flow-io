@@ -144,7 +144,7 @@
               %tr
                 %th
                   %span= t('workarea.storefront.orders.shipping')
-                %td
+                %td{ data: { flow: { localize: 'cart-shipping' } } }
                   - if @cart.show_shipping_services?
                     #{@cart.shipping_service} - #{number_to_currency(@cart.shipping_total)}
                   - else
@@ -152,7 +152,7 @@
             %tr
               %th
                 %span= t('workarea.storefront.orders.tax')
-              %td
+              %td{ data: { flow: { localize: 'cart-tax' } } }
                 - if @cart.show_taxes?
                   = number_to_currency @cart.tax_total
                 - else
