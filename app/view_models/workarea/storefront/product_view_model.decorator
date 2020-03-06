@@ -29,7 +29,7 @@ module Workarea
 
       def localized_original_min_prices
         original_min_price_sku.localized_price_hash do |local_item|
-          if pricing.msrp_min_price.present? && pricing.msrp_min_price > pricing.sell_min_price
+          if pricing.msrp_min_price.present? && local_item.msrp.present? && pricing.msrp_min_price > pricing.sell_min_price
             local_item.msrp.label
           else
             local_item.generic_price&.regular&.label
@@ -39,7 +39,7 @@ module Workarea
 
       def localized_original_max_prices
         original_max_price_sku.localized_price_hash do |local_item|
-          if pricing.msrp_max_price.present? && pricing.msrp_min_price > pricing.sell_max_price
+          if pricing.msrp_max_price.present? && local_item.msrp.present? && pricing.msrp_min_price > pricing.sell_max_price
             local_item.msrp.label
           else
             local_item.generic_price&.regular&.label
