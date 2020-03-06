@@ -44,7 +44,7 @@ module Workarea
     private
 
     def sell_price_key_type
-      if on_sale? && sale.present?
+      if on_sale?
         'sale'
       else
         'regular'
