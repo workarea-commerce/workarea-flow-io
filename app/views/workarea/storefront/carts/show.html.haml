@@ -32,7 +32,7 @@
 
     %ul.product-list{ data: { analytics: product_list_analytics_data('Cart').to_json } }
       - @cart.items.each_with_index do |item, index|
-        %li.product-list__item{ data: { flow: { cart_item_number: item.sku, cart_item_quantity: item.quantity } } }
+        %li.product-list__item{ data: { flow: { item_number: item.sku, cart_item_number: item.sku, cart_item_quantity: item.quantity } } }
           .product-list__item-cell
             .product-list__summary
               %p.product-list__media= link_to image_tag(product_image_url(item.image, :small_thumb), alt: item.product_name, class: 'product-list__media-image'), product_url(item.product, sku: item.sku), class: 'product-list__media-link'
