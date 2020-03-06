@@ -39,7 +39,7 @@ module Workarea
     end
 
     def sale_min_sku
-      @sale_min_sku ||= records.find { |price| price.sale == regular_sale_price }.sku.id
+      @sale_min_sku ||= find_sku_by_price(sale: sale_min_price)
     end
 
     def sale_max_price
@@ -52,6 +52,10 @@ module Workarea
         .last
     end
 
+    def sale_max_sku
+      @sale_max_sku ||= find_sku_by_price(sale: sale_max_price)
+    end
+
     def sell_min_price
       return super unless flow_experience.present?
 
@@ -62,7 +66,7 @@ module Workarea
     end
 
     def sell_min_sku
-      @sell_min_sku ||= records.find { |price| price.sell == sell_min_price }.sku.id
+      @sell_min_sku ||= find_sku_by_price(sell: sell_min_price)
     end
 
     def sell_max_price
@@ -75,7 +79,7 @@ module Workarea
     end
 
     def sell_max_sku
-      @sell_max_sku ||= records.find { |price| price.sell == sell_max_price }.sku.id
+      @sell_max_sku ||= find_sku_by_price(sell: sell_max_price)
     end
 
     def msrp_min_price
@@ -89,7 +93,7 @@ module Workarea
     end
 
     def msrp_min_sku
-      @msrp_min_sku ||= records.find { |price| price.msrp == msrp_min_price }.sku.id
+      @msrp_min_sku ||= find_sku_by_price(msrp: msrp_min_price)
     end
 
     def msrp_max_price
@@ -103,7 +107,7 @@ module Workarea
     end
 
     def msrp_max_sku
-      @msrp_max_sku ||= records.find { |price| price.msrp == msrp_max_price }.sku.id
+      @msrp_max_sku ||= find_sku_by_price(msrp: msrp_max_price)
     end
 
     # All localized selling prices grouped by experience_key
@@ -136,6 +140,12 @@ module Workarea
           end
         end
       end
+    end
+
+    private
+
+    def find_sku_by_price(params = {})
+      records.map { |pricing_sku| pricing_sku.prices.find_by(params) }.id
     end
   end
 end
