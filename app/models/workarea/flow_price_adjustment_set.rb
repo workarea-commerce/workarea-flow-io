@@ -12,11 +12,11 @@ module Workarea
     end
 
     def select(*args)
-      self.class.new(super, experience)
+      self.class.new(super, experience, currency)
     end
 
     def reject(*args)
-      self.class.new(super, experience)
+      self.class.new(super, experience, currency)
     end
 
     def adjusting(type)
@@ -32,7 +32,7 @@ module Workarea
     end
 
     def +(val)
-      self.class.new(to_a + val.to_a, experience)
+      self.class.new(to_a + val.to_a, experience, currency)
     end
 
     def reduce_by_description(type)
@@ -49,7 +49,8 @@ module Workarea
             amount: amounts[description]
           )
         end,
-        experience
+        experience,
+        currency
       )
     end
 
