@@ -88,7 +88,7 @@ module Workarea
       if msrp_max_price.present? && msrp_max_price > sell_max_price
         "msrp"
       else
-        "reguar_price"
+        "regular_price"
       end
     end
 
