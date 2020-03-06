@@ -3,5 +3,15 @@ module Workarea
     decorated do
       helper Workarea::Storefront::FlowAnalyticsHelper
     end
+
+    def flow_experience
+      @flow_experience ||=
+        if request.has_header?('flow.io.experience')
+          request.headers['flow.io.experience']
+        elsif cookies[:flow_experience] && experience = JSON.parse(cookies[:flow_experience], quirks_mode: true)
+          ::Io::Flow::V0::Models::ExperienceGeo.new(experience)
+        end
+    rescue
+    end
   end
 end
