@@ -37,7 +37,6 @@ module Workarea
             name: experience.name,
             region: experience.region.to_hash,
             country: experience.country,
-            currency: flow_order.total.currency,
             language: experience.language,
             measurement_system: experience.measurement_system
           },

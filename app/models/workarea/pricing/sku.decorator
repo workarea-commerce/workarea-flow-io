@@ -18,11 +18,7 @@ module Workarea
     # to flow
     #
     def sell_price_key
-      if on_sale? && sale.present?
-        'sale'
-      else
-        'regular'
-      end + '_price'
+      "#{sell_price_key_type}_price"
     end
 
     # Find the price to sell at for a specific options.
@@ -43,6 +39,16 @@ module Workarea
 
       local_item&.to_price(quantity) ||
         Pricing::Price.new(regular: 0.to_m(options[:experience].currency))
+    end
+
+    private
+
+    def sell_price_key_type
+      if on_sale? && sale.present?
+        'sale'
+      else
+        'regular'
+      end
     end
   end
 end

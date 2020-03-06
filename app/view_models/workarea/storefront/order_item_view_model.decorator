@@ -16,7 +16,8 @@ module Workarea
     def flow_price_adjustments
       @flow_price_adjustments ||= FlowPriceAdjustmentSet.new(
         model.flow_price_adjustments,
-        order.experience
+        order.experience,
+        order.currency
       )
     end
 

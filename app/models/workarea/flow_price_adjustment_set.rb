@@ -1,13 +1,14 @@
 module Workarea
   class FlowPriceAdjustmentSet < Array
-    attr_reader :experience
+    attr_reader :experience, :currency
 
     # @param [Workarea::PriceAdjustment] price_adjustments
     # @param (::Io::Flow::V0::Models::ExperienceSummary || ::Io::Flow::V0::Models::ExperienceGeo) experience
     #
-    def initialize(price_adjustments, experience)
+    def initialize(price_adjustments, experience, currency)
       super(price_adjustments)
       @experience = experience
+      @currency = currency
     end
 
     def select(*args)
@@ -23,7 +24,7 @@ module Workarea
     end
 
     def sum
-      super(&:amount).to_m(experience.currency)
+      super(&:amount).to_m(currency)
     end
 
     def discounts
@@ -36,7 +37,7 @@ module Workarea
 
     def reduce_by_description(type)
       amounts = adjusting(type).reduce({}) do |memo, adjustment|
-        memo[adjustment.description] ||= 0.to_m(experience.currency)
+        memo[adjustment.description] ||= 0.to_m(currency)
         memo[adjustment.description] += adjustment.amount
         memo
       end
@@ -53,7 +54,7 @@ module Workarea
     end
 
     def taxable_share_for(adjustment)
-      return 0.to_m(experience.currency) if taxable_total.zero?
+      return 0.to_m(currency) if taxable_total.zero?
 
       discount_share = adjustment.amount / taxable_total
       discount_amount = discount_total * discount_share
@@ -70,11 +71,11 @@ module Workarea
     private
 
     def taxable_total
-      reject { |a| a.discount? || a.data['tax_code'].blank? }.sum(&:amount).to_m(experience.currency)
+      reject { |a| a.discount? || a.data['tax_code'].blank? }.sum(&:amount).to_m(currency)
     end
 
     def discount_total
-      discounts.sum(&:amount).to_m(experience.currency).abs
+      discounts.sum(&:amount).to_m(currency).abs
     end
   end
 end
