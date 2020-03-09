@@ -27,7 +27,7 @@ module Workarea
           product = create_product(variants: [{ sku: '386555310-9', regular: 5.00 }])
           product_2 = create_product(variants: [{ sku: '332477498-5', regular: 5.00 }])
 
-          order = create_order
+          order = create_order(currency: 'CAD')
 
           order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)
           order.add_item(product_id: product_2.id, sku: '332477498-5', quantity: 1)
