@@ -7,7 +7,7 @@ module Workarea
       def route_flow_order
         current_order.update_attributes(
           flow_checkout_token: checkout_token.id,
-          currency: flow_session&.geo&.currency
+          currency: flow_currency
         )
 
         redirect_to "#{FlowIo.config.checkout_uri}/tokens/#{checkout_token.id}"
@@ -21,6 +21,12 @@ module Workarea
 
       def send_to_flow?
         flow_experience.present?
+      end
+
+      def flow_currency
+        return unless flow_session.present?
+
+        flow_session.geo.currency.iso_4217_3
       end
 
       def checkout_token
