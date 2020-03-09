@@ -13,5 +13,9 @@ module Workarea
         end
     rescue
     end
+
+    def view_model_options
+      super.merge(flow_experience: flow_experience)
+    end
   end
 end
