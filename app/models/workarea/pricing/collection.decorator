@@ -50,6 +50,14 @@ module Workarea
         .first
     end
 
+    def sell_max_price_attribute
+      if sell_max_price_sku.on_sale?
+        "sale_price"
+      else
+        "regular_price"
+      end
+    end
+
     def msrp_min_price_sku
       @msrp_min_price_sku ||= records
         .map { |sku| [sku, sku.msrp] if sku.msrp.present? }

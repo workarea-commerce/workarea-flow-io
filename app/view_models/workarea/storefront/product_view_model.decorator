@@ -13,6 +13,7 @@ module Workarea
         :original_max_price_sku,
         :original_min_price_attribute,
         :original_max_price_attribute,
+        :sell_max_price_attribute,
         to: :pricing
 
       def localized_sell_min_prices
