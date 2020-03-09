@@ -17,52 +17,47 @@ WORKAREA.registerModule('flow', (function () {
             flow.cmd('init');
         }),
 
-        urlLocale = function (url) {
-            var parsedUrl = WORKAREA.url.parse(url),
-                parts = _.filter(parsedUrl.path.split("/"), function(part) { return part !== ""; } ),
-                matches = (parts[0] || "").match(/^(\w{3})$/);
-
-            if (matches === null) {
-                return;
-            }
-            else {
-                return matches[1];
-            }
-        },
-
-        redirectUrl = function(url, locale) {
-           var oldLocale = urlLocale(url),
-               parsedUrl;
-
-            if (_.isUndefined(oldLocale)) {
-                parsedUrl = WORKAREA.url.parse(url);
-                return url.replace(new RegExp(parsedUrl.path + "$"), "/" + locale + parsedUrl.path);
-            } else {
-                return url.replace(oldLocale, locale);
-            }
-        },
-
-        updateSession = function(status, session) {
-            var country = session.geo.country.iso_3166_3.toLowerCase(),
-                url = WORKAREA.url.current();
-
-            WORKAREA.cookie.create('flow_country', country, 365);
-            WORKAREA.cookie.create('flow_experience', encodeURIComponent(JSON.stringify(session.experience)), 365);
-            WORKAREA.url.redirectTo(redirectUrl(url, country));
-        },
-
         initCountryPicker = _.once(function() {
             flow.cmd('on', 'ready', function () {
                 flow.countryPicker.createCountryPicker({
                     type: "modal",
-                    containerId: "country-picker",
-                    onSessionUpdate: updateSession
+                    containerId: "country-picker"
                 });
             });
         }),
 
-        localizePrices = function() {
-            flow.cmd('localize');
+        localizePrice = function(index, priceWrapper, experienceKey, currencyCode) {
+            var $priceWrapper = $(priceWrapper),
+                localPrices = _.merge({}, $priceWrapper.data('localPrices')),
+                priceKey = experienceKey + "-" + currencyCode,
+                priceLabel = localPrices[priceKey],
+                priceAttr;
+
+            if (_.isUndefined(priceLabel)) {
+              priceAttr = $priceWrapper.data('flowPriceAttr');
+              if (_.isUndefined(priceAttr)) {
+                $priceWrapper.attr('data-flow-localize', 'item-price');
+              }
+              else {
+                $priceWrapper.attr('data-flow-localize', 'item-price-attribute');
+                $priceWrapper.attr('data-flow-item-price-attribute', priceAttr);
+              }
+            }
+            else{
+              $priceWrapper.removeAttr('data-flow-localize');
+              $priceWrapper.removeAttr('data-flow-item-price-attribute');
+              $priceWrapper.html(priceLabel);
+           }
+        },
+
+        localizePrices = function($scope) {
+            flow.cmd('on', 'ready', function () {
+                var experienceKey = flow.session.getExperience(),
+                    currencyCode = flow.session.getCurrency();
+
+                $('[data-local-prices]', $scope).each(_.partialRight(localizePrice, experienceKey, currencyCode));
+                flow.cmd('localize');
+            });
         },
 
         /**
@@ -70,22 +65,18 @@ WORKAREA.registerModule('flow', (function () {
          * @name init
          * @memberof WORKAREA.flow
          */
-        init = function () {
+        init = function ($scope) {
             if (_.isUndefined(WORKAREA.config.flow)) { return; }
 
             getScript();
-            localizePrices();
+            localizePrices($scope);
 
-            if (!_.isEmpty($("#country-picker"))) {
+            if (!_.isEmpty($("#country-picker", $scope))) {
                 initCountryPicker();
             }
         };
 
-        // urlLocale and redirectUrl are only exposed for testing and
-        // shouldn't be used as part of public API
         return {
-            init: init,
-            urlLocale: urlLocale,
-            redirectUrl: redirectUrl
+            init: init
         };
 }()));
