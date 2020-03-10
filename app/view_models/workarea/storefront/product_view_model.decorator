@@ -17,18 +17,24 @@ module Workarea
         to: :pricing
 
       def localized_sell_min_prices
+        return {} unless sell_min_price_sku.present?
+
         sell_min_price_sku.localized_price_hash do |local_item|
           local_item.generic_price&.sell&.label
         end
       end
 
       def localized_sell_max_prices
+        return {} unless sell_max_price_sku.present?
+
         sell_max_price_sku.localized_price_hash do |local_item|
           local_item.generic_price&.sell&.label
         end
       end
 
       def localized_original_min_prices
+        return {} unless original_min_price_sku.present?
+
         original_min_price_sku.localized_price_hash do |local_item|
           if pricing.msrp_min_price.present? && local_item.msrp.present? && pricing.msrp_min_price > pricing.sell_min_price
             local_item.msrp.label
@@ -39,6 +45,8 @@ module Workarea
       end
 
       def localized_original_max_prices
+        return {} unless original_max_price_sku.present?
+
         original_max_price_sku.localized_price_hash do |local_item|
           if pricing.msrp_max_price.present? && local_item.msrp.present? && pricing.msrp_min_price > pricing.sell_max_price
             local_item.msrp.label
