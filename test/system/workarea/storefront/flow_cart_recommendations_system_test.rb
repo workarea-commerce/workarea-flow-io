@@ -17,9 +17,10 @@ module Workare
         click_link t('workarea.storefront.carts.view_cart')
 
         visit storefront.cart_path
-        assert(page.has_content?(@product.name))
-        assert(page.has_content?('Recommendation Product'))
-        assert(page.has_content?("$120"))
+
+        assert_text(@product.name)
+        assert_text('Recommendation Product')
+        assert_text("Total $110")
       end
 
       private
