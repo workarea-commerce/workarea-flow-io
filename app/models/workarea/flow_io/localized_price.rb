@@ -12,7 +12,7 @@ module Workarea
 
       validates_presence_of :regular
 
-      delegate :on_sale?, to: :local_item
+      delegate :sku, :on_sale?, to: :local_item
 
       def sell
         if on_sale? && sale.present?
@@ -29,6 +29,7 @@ module Workarea
        #
        def to_price
          Workarea::Pricing::Price.new(
+           sku: sku,
            min_quantity: min_quantity,
            regular: regular.price,
            sale: sale&.price
