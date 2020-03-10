@@ -45,7 +45,7 @@ module Workarea
     def sell_max_price_sku
       @sell_max_price_sku ||= generic_prices
         .map { |price| [price.sku, price.sell] }
-        .sort_by { |(_sku, regular)| regular }
+        .sort_by { |(_sku, sell)| sell }
         .last
         .first
     end
