@@ -71,7 +71,7 @@ WORKAREA.registerModule('flow', (function () {
             getScript();
             localizePrices($scope);
 
-            if (!_.isEmpty($("#country-picker", $scope))) {
+            if (!_.isEmpty($("#country-picker"))) {
                 initCountryPicker();
             }
         };
