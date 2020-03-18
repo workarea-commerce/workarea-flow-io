@@ -139,5 +139,11 @@ module Workarea
         end
       end
     end
+
+    def generic_prices
+      @generic_prices ||= records.map(&:prices).flatten.select do |price|
+        price.generic? && price.regular.currency == Money.default_currency
+      end
+    end
   end
 end
