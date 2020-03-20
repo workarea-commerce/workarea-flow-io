@@ -7,10 +7,6 @@ module Workare
       setup :set_recommendation
 
       def test_showing_recommendations
-        Workarea::FlowIo::BogusClient::Sessions.any_instance.stubs(:post_organizations_by_organization).returns(
-          Workarea::FlowIo::BogusClient::Sessions.new.get_by_session(3)
-        )
-
         visit storefront.product_path(@product)
         select @product.skus.first, from: 'sku'
         click_button t('workarea.storefront.products.add_to_cart')
@@ -20,7 +16,7 @@ module Workare
 
         assert_text(@product.name)
         assert_text('Recommendation Product')
-        assert_text("Total $110")
+        assert_text("Total $5")
       end
 
       private
