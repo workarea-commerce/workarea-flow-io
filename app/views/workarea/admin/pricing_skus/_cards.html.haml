@@ -77,7 +77,8 @@
           %ul.list-reset
             - model.flow_io_local_items.take(10).each do |flow_io_local_item|
               %li
-                #{flow_io_local_item.experience.name}(#{Money::Currency.new(flow_io_local_item.experience.currency).symbol})
+                = flow_io_local_item.experience.name
+                = "(#{Money::Currency.new(flow_io_local_item.experience.currency).symbol})" if flow_io_local_item.experience.currency.present?
 
           = link_to flow_pricing_sku_path(model), class: 'card__button' do
             %span.button.button--small= t('workarea.admin.pricing_skus.cards.localized_prices.button')
