@@ -4,41 +4,23 @@ module Workarea
       helper_method :flow_experience
       helper Workarea::Storefront::FlowContentHelper
       helper Workarea::Storefront::FlowAnalyticsHelper
+    end
 
-      etag { flow_experience&.key }
+    def flow_session
+      return unless cookies['_f60_session'].present?
+
+      @flow_session ||= FlowIo.client.sessions.get_by_session(cookies['_f60_session'])
     end
 
     def flow_experience
-      @flow_experience ||=
-        if request.has_header?('flow.io.experience')
-          request.headers['flow.io.experience']
-        elsif cookies[:flow_experience] && experience = JSON.parse(cookies[:flow_experience], quirks_mode: true)
-          ::Io::Flow::V0::Models::ExperienceGeo.new(experience)
-        else
-          nil
-        end
-    rescue
-      nil
-    end
-
-    def flow_country
-      @flow_country ||=
-        if request.has_header?('flow.io.country')
-          request.headers['flow.io.country']
-        elsif cookies[:flow_country]
-          cookies[:flow_country]
-        end&.downcase
-    end
-
-    def default_url_options(*)
-      return super unless flow_experience && flow_country.present?
-
-      super.merge(locale: flow_country)
+      flow_session&.experience
     end
 
     def current_order
       @current_order ||= super.tap do |order|
-        order.build_experience_from_flow_model(flow_experience)
+        if flow_experience.present?
+          order.build_experience_from_flow_model(flow_experience)
+        end
       end
     end
 

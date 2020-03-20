@@ -13,12 +13,6 @@ module Workarea
         redirect_to "#{FlowIo.config.checkout_uri}/tokens/#{checkout_token.id}"
       end
 
-      def flow_session
-        return unless cookies['_f60_session'].present?
-
-        @flow_session ||= FlowIo.client.sessions.get_by_session(cookies['_f60_session'])
-      end
-
       def send_to_flow?
         flow_experience.present?
       end
