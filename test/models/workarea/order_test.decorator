@@ -3,14 +3,19 @@ module Workarea
     decorated { include Workarea::FlowIo::FlowFixtures }
 
     def test_currency_without_experience
-      order = Order.new
+      order = create_order
 
       assert_equal(Money.default_currency.iso_code, order.currency)
     end
 
     def test_currency_with_experience
-      order = Order.new(experience: europe_experience_geo)
+      order = create_order(experience: europe_experience_geo)
       assert_equal("EUR", order.currency)
+    end
+
+    def test_currency
+      order = create_order(currency: 'RUB')
+      assert_equal('RUB', order.currency)
     end
   end
 end

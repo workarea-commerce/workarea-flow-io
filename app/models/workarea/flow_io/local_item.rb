@@ -13,6 +13,16 @@ module Workarea
 
       validates_presence_of :experience
 
+      delegate :on_sale?, to: :sku
+
+      # @return [nil, Workarea::FlowIo::LocalizedPrice]
+      #
+      def generic_price
+        prices.sort_by(&:min_quantity).reverse.detect do |localized_price|
+          1 >= localized_price.min_quantity
+        end
+      end
+
       # Creates a Pricing::Price from this local item
       # used in Pricing::Sku#find_price
       #

@@ -13,10 +13,13 @@ module Workarea
       field :flow_tax_total,      type: Money
       field :flow_total_value,    type: Money
       field :flow_total_price,    type: Money
+      field :currency, type: String
+
+      before_validation :ensure_currency
     end
 
-    def currency
-      experience&.currency || Money.default_currency.iso_code
+    def ensure_currency
+      self.currency ||= experience&.currency || Money.default_currency.iso_code
     end
 
     # All flow price adjustments on this order.

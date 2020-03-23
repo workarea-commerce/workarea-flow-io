@@ -15,7 +15,7 @@ module Workarea
 
           _shipping_service = create_shipping_service
 
-          order = create_order(id: '6F3A2186EB', experience: canada_experience)
+          order = create_order(id: '6F3A2186EB', experience: canada_experience, currency: 'CAD')
 
           order.add_item(product_id: product.id, sku: '386555310-9', quantity: 1)
           order.add_item(product_id: product_2.id, sku: '332477498-5', quantity: 1)
@@ -99,17 +99,6 @@ module Workarea
             "Document(s) not found for class Workarea::Order with id(s) 95F11ED6B6.",
             message["problem"]
           )
-        end
-
-        def test_order_placed_in_different_currency
-          order = create_order(id: '6F3A2186EB', experience: canada_experience)
-          _cart = create_cart(order: order)
-
-          post_signed storefront.flow_io_webhook_path, params: euro_order_placed_payload(order: order)
-
-          order.reload
-
-          assert_equal 'EUR', order.currency
         end
 
         private

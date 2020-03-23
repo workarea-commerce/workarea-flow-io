@@ -12,6 +12,16 @@ module Workarea
 
       validates_presence_of :regular
 
+      delegate :sku, :on_sale?, to: :local_item
+
+      def sell
+        if on_sale? && sale.present?
+          sale
+        else
+          regular
+        end
+      end
+
        # Creates a Pricing::Price from this local item
        # used in Pricing::Sku#find_price
        #
@@ -19,7 +29,7 @@ module Workarea
        #
        def to_price
          Workarea::Pricing::Price.new(
-           sku: self.local_item.sku.clone, # clone the sku so this price isn't added to #prices on real record
+           sku: sku,
            min_quantity: min_quantity,
            regular: regular.price,
            sale: sale&.price

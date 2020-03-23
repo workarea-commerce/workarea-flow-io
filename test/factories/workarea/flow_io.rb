@@ -43,8 +43,8 @@ module Workarea
               sale: { cents: 8141.0, currency_iso: "USD" }
             }
           ],
-          flow_io_local_items: overrides[:flow_io_local_items] || [build_flow_io_local_item]
-        }.merge(overrides)
+          flow_io_local_items: [build_flow_io_local_item]
+        }.deep_merge(overrides)
 
         Workarea::Pricing::Sku.new(attributes).tap(&:save!)
       end

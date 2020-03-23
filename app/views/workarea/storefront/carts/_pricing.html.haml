@@ -2,9 +2,10 @@
   %p{class: "#{css_block}__price"}
     %span{class: "#{css_block}__label"} #{t('workarea.storefront.orders.price_now')}:
     %strong{ data: { flow: { localize: 'cart-item-price' } } }= number_to_currency(item.original_unit_price)
-  %p{class: "#{css_block}__price"}
+  %p{class: "#{css_block}__price", data: { flow: { item_number: item.sku } }}
     %span{class: "#{css_block}__label"} #{t('workarea.storefront.orders.price_was')}:
-    %s{ data: { flow: { localize: 'cart-item-price' } } }= number_to_currency(item.original_price)
+    %s{ data: { flow: { localize: 'item-price-attribute', item_price_attribute: 'regular_price' } } }
+      = number_to_currency(item.original_price)
 - else
   %p{class:"#{css_block}__price"}
     %span{ data: { flow: { localize: 'cart-item-price' } } }= number_to_currency(item.original_unit_price)
